@@ -1,0 +1,5 @@
+pnpm-lock.yaml
+.next
+out
+build
+node_modules
