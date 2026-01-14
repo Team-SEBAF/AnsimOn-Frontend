@@ -1,11 +1,11 @@
 name: CI
 
 on:
-  # main/develop에 push 또는 PR 생성/업데이트 시 실행
+  # main/dev에 push 또는 PR 생성/업데이트 시 실행
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main, develop]
+    branches: [main, dev]
 
 # 같은 브랜치에서 연속 실행되면 이전 CI 취소(최신 커밋만 검사)
 concurrency:
