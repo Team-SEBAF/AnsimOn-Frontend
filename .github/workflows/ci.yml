@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  # main/develop에 push 또는 PR 생성/업데이트 시 실행
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# 같은 브랜치에서 연속 실행되면 이전 CI 취소(최신 커밋만 검사)
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# 최소 권한
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    # GitHub에서 제공하는 Ubuntu 러너에서 실행
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1) 레포 코드를 CI 러너로 가져오기
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) pnpm 설치
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # 3) Node.js 설치 + pnpm 캐시 활성화
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # 4) 의존성 설치
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5) 포맷 체크(수정 X, 규칙 위반 여부만 확인)
+      - name: Prettier check
+        run: pnpm format:check
+
+      # 6) 린트 검사
+      - name: ESLint
+        run: pnpm lint
+
+      # 7) 프로덕션 빌드가 되는지 확인
+      - name: Build
+        run: pnpm build
