@@ -46,3 +46,29 @@
   --color-black: #000000;
   --color-white: #ffffff;
 }
+
+/* Tailwind v4 theme mapping
+  - semantic 토큰만 utility로 노출
+  - primitive(gray / brand-orange)는 노출하지 않음 */
+@theme {
+  --color-primary: var(--brand-orange-500);
+  --color-primary-light: var(--brand-orange-100);
+  --color-primary-soft: var(--brand-orange-300);
+  --color-primary-dark: var(--brand-orange-700);
+
+  --color-btn: var(--brand-orange-500);
+  --color-btn-hover: var(--brand-orange-400);
+  --color-btn-pressed: var(--brand-orange-700);
+  --color-btn-disabled: var(--brand-orange-300);
+
+  --color-bg-1: #fafaf9;
+  --color-bg-2: #fff;
+
+  --color-info: #3b82f6;
+  --color-success: #2e9d5b;
+  --color-warning: #f4a300;
+  --color-error: #e75402;
+
+  --color-black: #000;
+  --color-white: #fff;
+}
