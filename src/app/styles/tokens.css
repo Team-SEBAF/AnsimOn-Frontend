@@ -1,0 +1,48 @@
+:root {
+  /* Brand Orange */
+  --brand-orange-50: #fff4e8;
+  --brand-orange-100: #ffe6cc;
+  --brand-orange-200: #ffd2a3;
+  --brand-orange-300: #ffbd7a;
+  --brand-orange-400: #ffa452;
+  --brand-orange-500: #fb8e28;
+  --brand-orange-600: #e67f1f;
+  --brand-orange-700: #c86c19;
+  --brand-orange-800: #9e5514;
+  --brand-orange-900: #6f3c0d;
+
+  /* Gray */
+  --gray-50: #fafaf9;
+  --gray-100: #f5f5f4;
+  --gray-200: #e7e5e4;
+  --gray-300: #d6d3d1;
+  --gray-400: #a6a09b;
+  --gray-500: #79716b;
+  --gray-600: #57534d;
+  --gray-700: #44403b;
+  --gray-800: #292524;
+  --gray-900: #1c1917;
+  --gray-950: #0c0a09;
+
+  /* Semantic */
+  --color-primary: var(--brand-orange-500);
+  --color-primary-light: var(--brand-orange-100);
+  --color-primary-soft: var(--brand-orange-300);
+  --color-primary-dark: var(--brand-orange-700);
+
+  --color-btn: var(--brand-orange-500);
+  --color-btn-hover: var(--brand-orange-400);
+  --color-btn-pressed: var(--brand-orange-700);
+  --color-btn-disabled: var(--brand-orange-300);
+
+  --color-bg-1: #fafaf9;
+  --color-bg-2: #ffffff;
+
+  --color-info: #3b82f6;
+  --color-success: #2e9d5b;
+  --color-warning: #f4a300;
+  --color-error: #e75402;
+
+  --color-black: #000000;
+  --color-white: #ffffff;
+}
