@@ -1,0 +1,33 @@
+﻿# .github/ISSUE_TEMPLATE/issue.yml
+name: 기능 요청
+description: 기능 요청 템플릿
+title: '[Feature] '
+labels: ['enhancement']
+assignees: []
+
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: 기능 설명
+      description: 간단히 적어주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 작업 내용
+      value: |
+        - [ ] TODO
+        - [ ] TODO
+        - [ ] TODO
+    validations:
+      required: false
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: 참고사항
+    validations:
+      required: false
