@@ -26,7 +26,14 @@ export async function POST(req: NextRequest) {
     // 5. 성공 응답
     return NextResponse.json(data, { status: 200 });
   } catch (err) {
-    // zod 에러 or 예상 못한 에러
-    return NextResponse.json({ message: 'Invalid request' }, { status: 400 });
+    console.error('[API /auth/signup] error:', err);
+
+    return NextResponse.json(
+      {
+        message: 'Invalid request',
+        error: err instanceof Error ? err.message : err,
+      },
+      { status: 400 },
+    );
   }
 }
