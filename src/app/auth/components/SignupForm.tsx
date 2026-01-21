@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, SignupFormValues } from '@/schemas/auth/signup.schema';
 import { Input } from '@/components/ui/input';
 import { ErrorMessage } from './ErrorMessage';
+import { useRouter } from 'next/navigation';
 
 type SignupErrorResponse = {
   code: string;
@@ -12,6 +13,8 @@ type SignupErrorResponse = {
 };
 
 export function SignupForm() {
+  const router = useRouter();
+
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     mode: 'onBlur',
@@ -41,11 +44,12 @@ export function SignupForm() {
       } else {
         console.error('회원가입 실패:', data);
       }
+      sessionStorage.removeItem('signupEmail');
       return;
     }
 
-    // 성공 → 이메일 인증 화면 이동
-    console.log('이메일 인증 화면으로 이동');
+    sessionStorage.setItem('signupEmail', values.email);
+    router.push('/auth/verify');
   };
 
   return (
