@@ -8,7 +8,7 @@
 
   body {
     font-family:
-      Pretendard,
+      var(--font-inter),
       system-ui,
       -apple-system,
       'Segoe UI',
