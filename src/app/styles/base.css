@@ -1,6 +1,6 @@
 /* =====================================================
   Base styles (HTML tag defaults)
-   ===================================================== */
+===================================================== */
 @layer base {
   html {
     font-size: 16px;
@@ -17,7 +17,8 @@
       sans-serif;
 
     background-color: var(--color-bg-1);
-    color: var(--gray-900);
+
+    color: var(--app-gray-900);
   }
 
   h1,
@@ -27,11 +28,12 @@
   h5,
   h6 {
     font-weight: 600;
-    color: var(--gray-900);
+
+    color: var(--app-gray-900);
   }
 
   p {
-    color: var(--gray-600);
+    color: var(--app-gray-600);
   }
 
   :focus-visible {
@@ -42,120 +44,171 @@
 
 /* =====================================================
   Typography utilities
-   ===================================================== */
+===================================================== */
 @layer utilities {
   /* ---------- Display ---------- */
-
-  .display-1 {
-    font-size: var(--typo-display-1-font-size);
-    line-height: var(--typo-display-1-line-height);
-    font-weight: var(--typo-display-1-font-weight);
-    letter-spacing: var(--typo-display-1-letter-spacing);
+  .typo-display-1 {
+    font-size: var(--app-typo-display-1-font-size);
+    line-height: var(--app-typo-display-1-line-height);
+    font-weight: var(--app-typo-display-1-font-weight);
+    letter-spacing: var(--app-typo-display-1-letter-spacing);
   }
 
-  .display-2 {
-    font-size: var(--typo-display-2-font-size);
-    line-height: var(--typo-display-2-line-height);
-    font-weight: var(--typo-display-2-font-weight);
-    letter-spacing: var(--typo-display-2-letter-spacing);
+  .typo-display-2 {
+    font-size: var(--app-typo-display-2-font-size);
+    line-height: var(--app-typo-display-2-line-height);
+    font-weight: var(--app-typo-display-2-font-weight);
+    letter-spacing: var(--app-typo-display-2-letter-spacing);
   }
 
-  .display-3 {
-    font-size: var(--typo-display-3-font-size);
-    line-height: var(--typo-display-3-line-height);
-    font-weight: var(--typo-display-3-font-weight);
-    letter-spacing: var(--typo-display-3-letter-spacing);
+  .typo-display-3 {
+    font-size: var(--app-typo-display-3-font-size);
+    line-height: var(--app-typo-display-3-line-height);
+    font-weight: var(--app-typo-display-3-font-weight);
+    letter-spacing: var(--app-typo-display-3-letter-spacing);
   }
 
   /* ---------- Heading ---------- */
-
-  .heading-1 {
-    font-size: var(--typo-heading-1-font-size);
-    line-height: var(--typo-heading-1-line-height);
-    font-weight: var(--typo-heading-1-font-weight);
-    letter-spacing: var(--typo-heading-1-letter-spacing);
+  .typo-heading-1 {
+    font-size: var(--app-typo-heading-1-font-size);
+    line-height: var(--app-typo-heading-1-line-height);
+    font-weight: var(--app-typo-heading-1-font-weight);
+    letter-spacing: var(--app-typo-heading-1-letter-spacing);
   }
 
-  .heading-2 {
-    font-size: var(--typo-heading-2-font-size);
-    line-height: var(--typo-heading-2-line-height);
-    font-weight: var(--typo-heading-2-font-weight);
-    letter-spacing: var(--typo-heading-2-letter-spacing);
+  .typo-heading-2 {
+    font-size: var(--app-typo-heading-2-font-size);
+    line-height: var(--app-typo-heading-2-line-height);
+    font-weight: var(--app-typo-heading-2-font-weight);
+    letter-spacing: var(--app-typo-heading-2-letter-spacing);
   }
 
-  .heading-3 {
-    font-size: var(--typo-heading-3-font-size);
-    line-height: var(--typo-heading-3-line-height);
-    font-weight: var(--typo-heading-3-font-weight);
-    letter-spacing: var(--typo-heading-3-letter-spacing);
+  .typo-heading-3 {
+    font-size: var(--app-typo-heading-3-font-size);
+    line-height: var(--app-typo-heading-3-line-height);
+    font-weight: var(--app-typo-heading-3-font-weight);
+    letter-spacing: var(--app-typo-heading-3-letter-spacing);
+  }
+
+  .typo-heading-4 {
+    font-size: var(--app-typo-heading-4-font-size);
+    line-height: var(--app-typo-heading-4-line-height);
+    font-weight: var(--app-typo-heading-4-font-weight);
+    letter-spacing: var(--app-typo-heading-4-letter-spacing);
+  }
+
+  .typo-heading-5 {
+    font-size: var(--app-typo-heading-5-font-size);
+    line-height: var(--app-typo-heading-5-line-height);
+    font-weight: var(--app-typo-heading-5-font-weight);
+    letter-spacing: var(--app-typo-heading-5-letter-spacing);
+  }
+
+  .typo-heading-6 {
+    font-size: var(--app-typo-heading-6-font-size);
+    line-height: var(--app-typo-heading-6-line-height);
+    font-weight: var(--app-typo-heading-6-font-weight);
+    letter-spacing: var(--app-typo-heading-6-letter-spacing);
   }
 
   /* ---------- Body ---------- */
-
-  .body-1 {
-    font-size: var(--typo-body-1-font-size);
-    line-height: var(--typo-body-1-line-height);
-    font-weight: var(--typo-body-1-font-weight);
-    letter-spacing: var(--typo-body-1-letter-spacing);
+  .typo-body-1 {
+    font-size: var(--app-typo-body-1-font-size);
+    line-height: var(--app-typo-body-1-line-height);
+    font-weight: var(--app-typo-body-1-font-weight);
+    letter-spacing: var(--app-typo-body-1-letter-spacing);
   }
 
-  .body-2 {
-    font-size: var(--typo-body-2-font-size);
-    line-height: var(--typo-body-2-line-height);
-    font-weight: var(--typo-body-2-font-weight);
-    letter-spacing: var(--typo-body-2-letter-spacing);
+  .typo-body-2 {
+    font-size: var(--app-typo-body-2-font-size);
+    line-height: var(--app-typo-body-2-line-height);
+    font-weight: var(--app-typo-body-2-font-weight);
+    letter-spacing: var(--app-typo-body-2-letter-spacing);
   }
 
-  .body-3 {
-    font-size: var(--typo-body-3-font-size);
-    line-height: var(--typo-body-3-line-height);
-    font-weight: var(--typo-body-3-font-weight);
-    letter-spacing: var(--typo-body-3-letter-spacing);
+  .typo-body-3 {
+    font-size: var(--app-typo-body-3-font-size);
+    line-height: var(--app-typo-body-3-line-height);
+    font-weight: var(--app-typo-body-3-font-weight);
+    letter-spacing: var(--app-typo-body-3-letter-spacing);
   }
 
-  .body-4 {
-    font-size: var(--typo-body-4-font-size);
-    line-height: var(--typo-body-4-line-height);
-    font-weight: var(--typo-body-4-font-weight);
-    letter-spacing: var(--typo-body-4-letter-spacing);
+  .typo-body-4 {
+    font-size: var(--app-typo-body-4-font-size);
+    line-height: var(--app-typo-body-4-line-height);
+    font-weight: var(--app-typo-body-4-font-weight);
+    letter-spacing: var(--app-typo-body-4-letter-spacing);
+  }
+
+  .typo-body-5 {
+    font-size: var(--app-typo-body-5-font-size);
+    line-height: var(--app-typo-body-5-line-height);
+    font-weight: var(--app-typo-body-5-font-weight);
+    letter-spacing: var(--app-typo-body-5-letter-spacing);
+  }
+
+  .typo-body-6 {
+    font-size: var(--app-typo-body-6-font-size);
+    line-height: var(--app-typo-body-6-line-height);
+    font-weight: var(--app-typo-body-6-font-weight);
+    letter-spacing: var(--app-typo-body-6-letter-spacing);
+  }
+
+  .typo-body-7 {
+    font-size: var(--app-typo-body-7-font-size);
+    line-height: var(--app-typo-body-7-line-height);
+    font-weight: var(--app-typo-body-7-font-weight);
+    letter-spacing: var(--app-typo-body-7-letter-spacing);
+  }
+
+  .typo-body-8 {
+    font-size: var(--app-typo-body-8-font-size);
+    line-height: var(--app-typo-body-8-line-height);
+    font-weight: var(--app-typo-body-8-font-weight);
+    letter-spacing: var(--app-typo-body-8-letter-spacing);
   }
 
   /* ---------- Button ---------- */
-
-  .btn-1 {
-    font-size: var(--typo-btn-1-font-size);
-    line-height: var(--typo-btn-1-line-height);
-    font-weight: var(--typo-btn-1-font-weight);
-    letter-spacing: var(--typo-btn-1-letter-spacing);
+  .typo-btn-1 {
+    font-size: var(--app-typo-btn-1-font-size);
+    line-height: var(--app-typo-btn-1-line-height);
+    font-weight: var(--app-typo-btn-1-font-weight);
+    letter-spacing: var(--app-typo-btn-1-letter-spacing);
   }
 
-  .btn-2 {
-    font-size: var(--typo-btn-2-font-size);
-    line-height: var(--typo-btn-2-line-height);
-    font-weight: var(--typo-btn-2-font-weight);
-    letter-spacing: var(--typo-btn-2-letter-spacing);
+  .typo-btn-2 {
+    font-size: var(--app-typo-btn-2-font-size);
+    line-height: var(--app-typo-btn-2-line-height);
+    font-weight: var(--app-typo-btn-2-font-weight);
+    letter-spacing: var(--app-typo-btn-2-letter-spacing);
   }
 
-  .btn-3 {
-    font-size: var(--typo-btn-3-font-size);
-    line-height: var(--typo-btn-3-line-height);
-    font-weight: var(--typo-btn-3-font-weight);
-    letter-spacing: var(--typo-btn-3-letter-spacing);
+  .typo-btn-3 {
+    font-size: var(--app-typo-btn-3-font-size);
+    line-height: var(--app-typo-btn-3-line-height);
+    font-weight: var(--app-typo-btn-3-font-weight);
+    letter-spacing: var(--app-typo-btn-3-letter-spacing);
   }
 
   /* ---------- Etc ---------- */
-
-  .label {
-    font-size: var(--typo-label-font-size);
-    line-height: var(--typo-label-line-height);
-    font-weight: var(--typo-label-font-weight);
-    letter-spacing: var(--typo-label-letter-spacing);
+  .typo-placeholder {
+    font-size: var(--app-typo-placeholder-font-size);
+    line-height: var(--app-typo-placeholder-line-height);
+    font-weight: var(--app-typo-placeholder-font-weight);
+    letter-spacing: var(--app-typo-placeholder-letter-spacing);
   }
 
-  .caption {
-    font-size: var(--typo-caption-font-size);
-    line-height: var(--typo-caption-line-height);
-    font-weight: var(--typo-caption-font-weight);
-    letter-spacing: var(--typo-caption-letter-spacing);
+  .typo-label {
+    font-size: var(--app-typo-label-font-size);
+    line-height: var(--app-typo-label-line-height);
+    font-weight: var(--app-typo-label-font-weight);
+    letter-spacing: var(--app-typo-label-letter-spacing);
+  }
+
+  .typo-caption {
+    font-size: var(--app-typo-caption-font-size);
+    line-height: var(--app-typo-caption-line-height);
+    font-weight: var(--app-typo-caption-font-weight);
+    letter-spacing: var(--app-typo-caption-letter-spacing);
   }
 }
