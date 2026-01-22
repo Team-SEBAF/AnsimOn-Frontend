@@ -1,207 +1,217 @@
+/* ================================
+  Source Tokens - 앱 내부의 원본 변수들
+================================= */
 :root {
   /* ================================
     Typography
    ================================= */
 
   /* display */
-  --typo-display-1-font-size: 48px;
-  --typo-display-1-line-height: 48px;
-  --typo-display-1-font-weight: 700;
-  --typo-display-1-letter-spacing: 0em;
+  --app-typo-display-1-font-size: 48px;
+  --app-typo-display-1-line-height: 48px;
+  --app-typo-display-1-font-weight: 700;
+  --app-typo-display-1-letter-spacing: 0em;
 
-  --typo-display-2-font-size: 36px;
-  --typo-display-2-line-height: 40px;
-  --typo-display-2-font-weight: 700;
-  --typo-display-2-letter-spacing: 0em;
+  --app-typo-display-2-font-size: 36px;
+  --app-typo-display-2-line-height: 40px;
+  --app-typo-display-2-font-weight: 700;
+  --app-typo-display-2-letter-spacing: 0em;
 
-  --typo-display-3-font-size: 24px;
-  --typo-display-3-line-height: 32px;
-  --typo-display-3-font-weight: 700;
-  --typo-display-3-letter-spacing: 0em;
+  --app-typo-display-3-font-size: 24px;
+  --app-typo-display-3-line-height: 32px;
+  --app-typo-display-3-font-weight: 700;
+  --app-typo-display-3-letter-spacing: 0em;
 
   /* heading */
-  --typo-heading-1-font-size: 20px;
-  --typo-heading-1-line-height: 32px;
-  --typo-heading-1-font-weight: 700;
-  --typo-heading-1-letter-spacing: 0em;
+  --app-typo-heading-1-font-size: 20px;
+  --app-typo-heading-1-line-height: 32px;
+  --app-typo-heading-1-font-weight: 700;
+  --app-typo-heading-1-letter-spacing: 0em;
 
-  --typo-heading-2-font-size: 18px;
-  --typo-heading-2-line-height: 28px;
-  --typo-heading-2-font-weight: 600;
-  --typo-heading-2-letter-spacing: 0em;
+  --app-typo-heading-2-font-size: 18px;
+  --app-typo-heading-2-line-height: 28px;
+  --app-typo-heading-2-font-weight: 600;
+  --app-typo-heading-2-letter-spacing: 0em;
 
-  --typo-heading-3-font-size: 16px;
-  --typo-heading-3-line-height: 24px;
-  --typo-heading-3-font-weight: 600;
-  --typo-heading-3-letter-spacing: 0em;
+  --app-typo-heading-3-font-size: 16px;
+  --app-typo-heading-3-line-height: 24px;
+  --app-typo-heading-3-font-weight: 600;
+  --app-typo-heading-3-letter-spacing: 0em;
 
-  --typo-heading-4-font-size: 14px;
-  --typo-heading-4-line-height: 20px;
-  --typo-heading-4-font-weight: 600;
-  --typo-heading-4-letter-spacing: 0em;
+  --app-typo-heading-4-font-size: 14px;
+  --app-typo-heading-4-line-height: 20px;
+  --app-typo-heading-4-font-weight: 600;
+  --app-typo-heading-4-letter-spacing: 0em;
 
-  --typo-heading-5-font-size: 14px;
-  --typo-heading-5-line-height: 20px;
-  --typo-heading-5-font-weight: 500;
-  --typo-heading-5-letter-spacing: 0em;
+  --app-typo-heading-5-font-size: 14px;
+  --app-typo-heading-5-line-height: 20px;
+  --app-typo-heading-5-font-weight: 500;
+  --app-typo-heading-5-letter-spacing: 0em;
 
-  --typo-heading-6-font-size: 12px;
-  --typo-heading-6-line-height: 16px;
-  --typo-heading-6-font-weight: 500;
-  --typo-heading-6-letter-spacing: 0em;
+  --app-typo-heading-6-font-size: 12px;
+  --app-typo-heading-6-line-height: 16px;
+  --app-typo-heading-6-font-weight: 500;
+  --app-typo-heading-6-letter-spacing: 0em;
 
   /* body */
-  --typo-body-1-font-size: 20px;
-  --typo-body-1-line-height: 28px;
-  --typo-body-1-font-weight: 400;
-  --typo-body-1-letter-spacing: 0em;
+  --app-typo-body-1-font-size: 20px;
+  --app-typo-body-1-line-height: 28px;
+  --app-typo-body-1-font-weight: 400;
+  --app-typo-body-1-letter-spacing: 0em;
 
-  --typo-body-2-font-size: 16px;
-  --typo-body-2-line-height: 24px;
-  --typo-body-2-font-weight: 600;
-  --typo-body-2-letter-spacing: 0em;
+  --app-typo-body-2-font-size: 16px;
+  --app-typo-body-2-line-height: 24px;
+  --app-typo-body-2-font-weight: 600;
+  --app-typo-body-2-letter-spacing: 0em;
 
-  --typo-body-3-font-size: 16px;
-  --typo-body-3-line-height: 24px;
-  --typo-body-3-font-weight: 500;
-  --typo-body-3-letter-spacing: 0em;
+  --app-typo-body-3-font-size: 16px;
+  --app-typo-body-3-line-height: 24px;
+  --app-typo-body-3-font-weight: 500;
+  --app-typo-body-3-letter-spacing: 0em;
 
-  --typo-body-4-font-size: 16px;
-  --typo-body-4-line-height: 24px;
-  --typo-body-4-font-weight: 400;
-  --typo-body-4-letter-spacing: 0em;
+  --app-typo-body-4-font-size: 16px;
+  --app-typo-body-4-line-height: 24px;
+  --app-typo-body-4-font-weight: 400;
+  --app-typo-body-4-letter-spacing: 0em;
 
-  --typo-body-5-font-size: 14px;
-  --typo-body-5-line-height: 20px;
-  --typo-body-5-font-weight: 600;
-  --typo-body-5-letter-spacing: 0em;
+  --app-typo-body-5-font-size: 14px;
+  --app-typo-body-5-line-height: 20px;
+  --app-typo-body-5-font-weight: 600;
+  --app-typo-body-5-letter-spacing: 0em;
 
-  --typo-body-6-font-size: 14px;
-  --typo-body-6-line-height: 20px;
-  --typo-body-6-font-weight: 500;
-  --typo-body-6-letter-spacing: 0em;
+  --app-typo-body-6-font-size: 14px;
+  --app-typo-body-6-line-height: 20px;
+  --app-typo-body-6-font-weight: 500;
+  --app-typo-body-6-letter-spacing: 0em;
 
-  --typo-body-7-font-size: 14px;
-  --typo-body-7-line-height: 20px;
-  --typo-body-7-font-weight: 400;
-  --typo-body-7-letter-spacing: 0em;
+  --app-typo-body-7-font-size: 14px;
+  --app-typo-body-7-line-height: 20px;
+  --app-typo-body-7-font-weight: 400;
+  --app-typo-body-7-letter-spacing: 0em;
 
-  --typo-body-8-font-size: 12px;
-  --typo-body-8-line-height: 16px;
-  --typo-body-8-font-weight: 400;
-  --typo-body-8-letter-spacing: 0em;
+  --app-typo-body-8-font-size: 12px;
+  --app-typo-body-8-line-height: 16px;
+  --app-typo-body-8-font-weight: 400;
+  --app-typo-body-8-letter-spacing: 0em;
 
   /* button */
-  --typo-btn-1-font-size: 16px;
-  --typo-btn-1-line-height: 24px;
-  --typo-btn-1-font-weight: 500;
-  --typo-btn-1-letter-spacing: 0em;
+  --app-typo-btn-1-font-size: 16px;
+  --app-typo-btn-1-line-height: 24px;
+  --app-typo-btn-1-font-weight: 500;
+  --app-typo-btn-1-letter-spacing: 0em;
 
-  --typo-btn-2-font-size: 14px;
-  --typo-btn-2-line-height: 20px;
-  --typo-btn-2-font-weight: 500;
-  --typo-btn-2-letter-spacing: 0em;
+  --app-typo-btn-2-font-size: 14px;
+  --app-typo-btn-2-line-height: 20px;
+  --app-typo-btn-2-font-weight: 500;
+  --app-typo-btn-2-letter-spacing: 0em;
 
-  --typo-btn-3-font-size: 12px;
-  --typo-btn-3-line-height: 16px;
-  --typo-btn-3-font-weight: 500;
-  --typo-btn-3-letter-spacing: 0em;
+  --app-typo-btn-3-font-size: 12px;
+  --app-typo-btn-3-line-height: 16px;
+  --app-typo-btn-3-font-weight: 500;
+  --app-typo-btn-3-letter-spacing: 0em;
 
   /* etc */
-  --typo-placeholder-font-size: 14px;
-  --typo-placeholder-line-height: 20px;
-  --typo-placeholder-font-weight: 400;
-  --typo-placeholder-letter-spacing: 0em;
+  --app-typo-placeholder-font-size: 14px;
+  --app-typo-placeholder-line-height: 20px;
+  --app-typo-placeholder-font-weight: 400;
+  --app-typo-placeholder-letter-spacing: 0em;
 
-  --typo-label-font-size: 12px;
-  --typo-label-line-height: 16px;
-  --typo-label-font-weight: 500;
-  --typo-label-letter-spacing: 0em;
+  --app-typo-label-font-size: 12px;
+  --app-typo-label-line-height: 16px;
+  --app-typo-label-font-weight: 500;
+  --app-typo-label-letter-spacing: 0em;
 
-  --typo-caption-font-size: 12px;
-  --typo-caption-line-height: 16px;
-  --typo-caption-font-weight: 400;
-  --typo-caption-letter-spacing: 0em;
+  --app-typo-caption-font-size: 12px;
+  --app-typo-caption-line-height: 16px;
+  --app-typo-caption-font-weight: 400;
+  --app-typo-caption-letter-spacing: 0em;
 
   /* ================================
-    Color 
+    Color
    ================================= */
 
   /* Brand Orange */
-  --brand-orange-50: #fff4e8;
-  --brand-orange-100: #ffe6cc;
-  --brand-orange-200: #ffd2a3;
-  --brand-orange-300: #ffbd7a;
-  --brand-orange-400: #ffa452;
-  --brand-orange-500: #fb8e28;
-  --brand-orange-600: #e67f1f;
-  --brand-orange-700: #c86c19;
-  --brand-orange-800: #9e5514;
-  --brand-orange-900: #6f3c0d;
+  --app-brand-orange-50: #fff4e8;
+  --app-brand-orange-100: #ffe6cc;
+  --app-brand-orange-200: #ffd2a3;
+  --app-brand-orange-300: #ffbd7a;
+  --app-brand-orange-400: #ffa452;
+  --app-brand-orange-500: #fb8e28;
+  --app-brand-orange-600: #e67f1f;
+  --app-brand-orange-700: #c86c19;
+  --app-brand-orange-800: #9e5514;
+  --app-brand-orange-900: #6f3c0d;
 
   /* Gray */
-  --gray-50: #fafaf9;
-  --gray-100: #f5f5f4;
-  --gray-200: #e7e5e4;
-  --gray-300: #d6d3d1;
-  --gray-400: #a6a09b;
-  --gray-500: #79716b;
-  --gray-600: #57534d;
-  --gray-700: #44403b;
-  --gray-800: #292524;
-  --gray-900: #1c1917;
-  --gray-950: #0c0a09;
+  --app-gray-50: #fafaf9;
+  --app-gray-100: #f5f5f4;
+  --app-gray-200: #e7e5e4;
+  --app-gray-300: #d6d3d1;
+  --app-gray-400: #a6a09b;
+  --app-gray-500: #79716b;
+  --app-gray-600: #57534d;
+  --app-gray-700: #44403b;
+  --app-gray-800: #292524;
+  --app-gray-900: #1c1917;
+  --app-gray-950: #0c0a09;
 
   /* Semantic (컴포넌트에서 사용하는 유일한 기준) */
   /* Primary */
-  --color-primary: var(--brand-orange-500);
-  --color-primary-light: var(--brand-orange-100);
-  --color-primary-soft: var(--brand-orange-300);
-  --color-primary-dark: var(--brand-orange-700);
+  --app-color-primary: var(--app-brand-orange-500);
+  --app-color-primary-light: var(--app-brand-orange-100);
+  --app-color-primary-soft: var(--app-brand-orange-300);
+  --app-color-primary-dark: var(--app-brand-orange-700);
 
   /* Button */
-  --color-btn: var(--brand-orange-500);
-  --color-btn-hover: var(--brand-orange-400);
-  --color-btn-pressed: var(--brand-orange-700);
-  --color-btn-disabled: var(--brand-orange-300);
+  --app-color-btn: var(--app-brand-orange-500);
+  --app-color-btn-hover: var(--app-brand-orange-400);
+  --app-color-btn-pressed: var(--app-brand-orange-700);
+  --app-color-btn-disabled: var(--app-brand-orange-300);
 
   /* Background */
-  --color-bg-1: #fafaf9;
-  --color-bg-2: #ffffff;
+  --app-color-bg-1: #fafaf9;
+  --app-color-bg-2: #ffffff;
 
   /* Status */
-  --color-info: #3b82f6;
-  --color-success: #2e9d5b;
-  --color-warning: #f4a300;
-  --color-error: #e75402;
+  --app-color-info: #3b82f6;
+  --app-color-success: #2e9d5b;
+  --app-color-warning: #f4a300;
+  --app-color-error: #e75402;
 
   /* Base */
-  --color-black: #000000;
-  --color-white: #ffffff;
+  --app-color-black: #000000;
+  --app-color-white: #ffffff;
 }
 
-/* Tailwind v4 Theme Bridge
-  - semantic 토큰만 Tailwind utility로 노출
-   - 실제 값 정의는 하지 않음 */
+/* ================================
+  Tailwind v4 Theme Bridge
+  - Tailwind 유틸리티에서 쓰는 토큰 이름(--color-*)만 노출
+  - 실제 값은 위 :root의 --app-*를 참조
+================================= */
 @theme {
-  --color-primary: var(--color-primary);
-  --color-primary-light: var(--color-primary-light);
-  --color-primary-soft: var(--color-primary-soft);
-  --color-primary-dark: var(--color-primary-dark);
+  /* Semantic */
+  --color-primary: var(--app-color-primary);
+  --color-primary-light: var(--app-color-primary-light);
+  --color-primary-soft: var(--app-color-primary-soft);
+  --color-primary-dark: var(--app-color-primary-dark);
 
-  --color-btn: var(--color-btn);
-  --color-btn-hover: var(--color-btn-hover);
-  --color-btn-pressed: var(--color-btn-pressed);
-  --color-btn-disabled: var(--color-btn-disabled);
+  /* Button */
+  --color-btn: var(--app-color-btn);
+  --color-btn-hover: var(--app-color-btn-hover);
+  --color-btn-pressed: var(--app-color-btn-pressed);
+  --color-btn-disabled: var(--app-color-btn-disabled);
 
-  --color-bg-1: var(--color-bg-1);
-  --color-bg-2: var(--color-bg-2);
+  /* Background */
+  --color-bg-1: var(--app-color-bg-1);
+  --color-bg-2: var(--app-color-bg-2);
 
-  --color-info: var(--color-info);
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-error: var(--color-error);
+  /* Status */
+  --color-info: var(--app-color-info);
+  --color-success: var(--app-color-success);
+  --color-warning: var(--app-color-warning);
+  --color-error: var(--app-color-error);
 
-  --color-black: var(--color-black);
-  --color-white: var(--color-white);
+  /* Base */
+  --color-black: var(--app-color-black);
+  --color-white: var(--app-color-white);
 }
