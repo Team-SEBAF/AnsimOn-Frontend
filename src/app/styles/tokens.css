@@ -1,4 +1,132 @@
 :root {
+  /* ================================
+    Typography
+   ================================= */
+
+  /* display */
+  --typo-display-1-font-size: 48px;
+  --typo-display-1-line-height: 48px;
+  --typo-display-1-font-weight: 700;
+  --typo-display-1-letter-spacing: 0em;
+
+  --typo-display-2-font-size: 36px;
+  --typo-display-2-line-height: 40px;
+  --typo-display-2-font-weight: 700;
+  --typo-display-2-letter-spacing: 0em;
+
+  --typo-display-3-font-size: 24px;
+  --typo-display-3-line-height: 32px;
+  --typo-display-3-font-weight: 700;
+  --typo-display-3-letter-spacing: 0em;
+
+  /* heading */
+  --typo-heading-1-font-size: 20px;
+  --typo-heading-1-line-height: 32px;
+  --typo-heading-1-font-weight: 700;
+  --typo-heading-1-letter-spacing: 0em;
+
+  --typo-heading-2-font-size: 18px;
+  --typo-heading-2-line-height: 28px;
+  --typo-heading-2-font-weight: 600;
+  --typo-heading-2-letter-spacing: 0em;
+
+  --typo-heading-3-font-size: 16px;
+  --typo-heading-3-line-height: 24px;
+  --typo-heading-3-font-weight: 600;
+  --typo-heading-3-letter-spacing: 0em;
+
+  --typo-heading-4-font-size: 14px;
+  --typo-heading-4-line-height: 20px;
+  --typo-heading-4-font-weight: 600;
+  --typo-heading-4-letter-spacing: 0em;
+
+  --typo-heading-5-font-size: 14px;
+  --typo-heading-5-line-height: 20px;
+  --typo-heading-5-font-weight: 500;
+  --typo-heading-5-letter-spacing: 0em;
+
+  --typo-heading-6-font-size: 12px;
+  --typo-heading-6-line-height: 16px;
+  --typo-heading-6-font-weight: 500;
+  --typo-heading-6-letter-spacing: 0em;
+
+  /* body */
+  --typo-body-1-font-size: 20px;
+  --typo-body-1-line-height: 28px;
+  --typo-body-1-font-weight: 400;
+  --typo-body-1-letter-spacing: 0em;
+
+  --typo-body-2-font-size: 16px;
+  --typo-body-2-line-height: 24px;
+  --typo-body-2-font-weight: 600;
+  --typo-body-2-letter-spacing: 0em;
+
+  --typo-body-3-font-size: 16px;
+  --typo-body-3-line-height: 24px;
+  --typo-body-3-font-weight: 500;
+  --typo-body-3-letter-spacing: 0em;
+
+  --typo-body-4-font-size: 16px;
+  --typo-body-4-line-height: 24px;
+  --typo-body-4-font-weight: 400;
+  --typo-body-4-letter-spacing: 0em;
+
+  --typo-body-5-font-size: 14px;
+  --typo-body-5-line-height: 20px;
+  --typo-body-5-font-weight: 600;
+  --typo-body-5-letter-spacing: 0em;
+
+  --typo-body-6-font-size: 14px;
+  --typo-body-6-line-height: 20px;
+  --typo-body-6-font-weight: 500;
+  --typo-body-6-letter-spacing: 0em;
+
+  --typo-body-7-font-size: 14px;
+  --typo-body-7-line-height: 20px;
+  --typo-body-7-font-weight: 400;
+  --typo-body-7-letter-spacing: 0em;
+
+  --typo-body-8-font-size: 12px;
+  --typo-body-8-line-height: 16px;
+  --typo-body-8-font-weight: 400;
+  --typo-body-8-letter-spacing: 0em;
+
+  /* button */
+  --typo-btn-1-font-size: 16px;
+  --typo-btn-1-line-height: 24px;
+  --typo-btn-1-font-weight: 500;
+  --typo-btn-1-letter-spacing: 0em;
+
+  --typo-btn-2-font-size: 14px;
+  --typo-btn-2-line-height: 20px;
+  --typo-btn-2-font-weight: 500;
+  --typo-btn-2-letter-spacing: 0em;
+
+  --typo-btn-3-font-size: 12px;
+  --typo-btn-3-line-height: 16px;
+  --typo-btn-3-font-weight: 500;
+  --typo-btn-3-letter-spacing: 0em;
+
+  /* etc */
+  --typo-placeholder-font-size: 14px;
+  --typo-placeholder-line-height: 20px;
+  --typo-placeholder-font-weight: 400;
+  --typo-placeholder-letter-spacing: 0em;
+
+  --typo-label-font-size: 12px;
+  --typo-label-line-height: 16px;
+  --typo-label-font-weight: 500;
+  --typo-label-letter-spacing: 0em;
+
+  --typo-caption-font-size: 12px;
+  --typo-caption-line-height: 16px;
+  --typo-caption-font-weight: 400;
+  --typo-caption-letter-spacing: 0em;
+
+  /* ================================
+    Color 
+   ================================= */
+
   /* Brand Orange */
   --brand-orange-50: #fff4e8;
   --brand-orange-100: #ffe6cc;
