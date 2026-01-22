@@ -1,3 +1,6 @@
+/* =====================================================
+  Base styles (HTML tag defaults)
+   ===================================================== */
 @layer base {
   html {
     font-size: 16px;
@@ -14,7 +17,7 @@
       sans-serif;
 
     background-color: var(--color-bg-1);
-    color: #1c1917;
+    color: var(--gray-900);
   }
 
   h1,
@@ -24,15 +27,135 @@
   h5,
   h6 {
     font-weight: 600;
-    color: #1c1917;
+    color: var(--gray-900);
   }
 
   p {
-    color: #57534d;
+    color: var(--gray-600);
   }
 
   :focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+  }
+}
+
+/* =====================================================
+  Typography utilities
+   ===================================================== */
+@layer utilities {
+  /* ---------- Display ---------- */
+
+  .display-1 {
+    font-size: var(--typo-display-1-font-size);
+    line-height: var(--typo-display-1-line-height);
+    font-weight: var(--typo-display-1-font-weight);
+    letter-spacing: var(--typo-display-1-letter-spacing);
+  }
+
+  .display-2 {
+    font-size: var(--typo-display-2-font-size);
+    line-height: var(--typo-display-2-line-height);
+    font-weight: var(--typo-display-2-font-weight);
+    letter-spacing: var(--typo-display-2-letter-spacing);
+  }
+
+  .display-3 {
+    font-size: var(--typo-display-3-font-size);
+    line-height: var(--typo-display-3-line-height);
+    font-weight: var(--typo-display-3-font-weight);
+    letter-spacing: var(--typo-display-3-letter-spacing);
+  }
+
+  /* ---------- Heading ---------- */
+
+  .heading-1 {
+    font-size: var(--typo-heading-1-font-size);
+    line-height: var(--typo-heading-1-line-height);
+    font-weight: var(--typo-heading-1-font-weight);
+    letter-spacing: var(--typo-heading-1-letter-spacing);
+  }
+
+  .heading-2 {
+    font-size: var(--typo-heading-2-font-size);
+    line-height: var(--typo-heading-2-line-height);
+    font-weight: var(--typo-heading-2-font-weight);
+    letter-spacing: var(--typo-heading-2-letter-spacing);
+  }
+
+  .heading-3 {
+    font-size: var(--typo-heading-3-font-size);
+    line-height: var(--typo-heading-3-line-height);
+    font-weight: var(--typo-heading-3-font-weight);
+    letter-spacing: var(--typo-heading-3-letter-spacing);
+  }
+
+  /* ---------- Body ---------- */
+
+  .body-1 {
+    font-size: var(--typo-body-1-font-size);
+    line-height: var(--typo-body-1-line-height);
+    font-weight: var(--typo-body-1-font-weight);
+    letter-spacing: var(--typo-body-1-letter-spacing);
+  }
+
+  .body-2 {
+    font-size: var(--typo-body-2-font-size);
+    line-height: var(--typo-body-2-line-height);
+    font-weight: var(--typo-body-2-font-weight);
+    letter-spacing: var(--typo-body-2-letter-spacing);
+  }
+
+  .body-3 {
+    font-size: var(--typo-body-3-font-size);
+    line-height: var(--typo-body-3-line-height);
+    font-weight: var(--typo-body-3-font-weight);
+    letter-spacing: var(--typo-body-3-letter-spacing);
+  }
+
+  .body-4 {
+    font-size: var(--typo-body-4-font-size);
+    line-height: var(--typo-body-4-line-height);
+    font-weight: var(--typo-body-4-font-weight);
+    letter-spacing: var(--typo-body-4-letter-spacing);
+  }
+
+  /* ---------- Button ---------- */
+
+  .btn-1 {
+    font-size: var(--typo-btn-1-font-size);
+    line-height: var(--typo-btn-1-line-height);
+    font-weight: var(--typo-btn-1-font-weight);
+    letter-spacing: var(--typo-btn-1-letter-spacing);
+  }
+
+  .btn-2 {
+    font-size: var(--typo-btn-2-font-size);
+    line-height: var(--typo-btn-2-line-height);
+    font-weight: var(--typo-btn-2-font-weight);
+    letter-spacing: var(--typo-btn-2-letter-spacing);
+  }
+
+  .btn-3 {
+    font-size: var(--typo-btn-3-font-size);
+    line-height: var(--typo-btn-3-line-height);
+    font-weight: var(--typo-btn-3-font-weight);
+    letter-spacing: var(--typo-btn-3-letter-spacing);
+  }
+
+  /* ---------- Etc ---------- */
+
+  .label {
+    font-size: var(--typo-label-font-size);
+    line-height: var(--typo-label-line-height);
+    font-weight: var(--typo-label-font-weight);
+    letter-spacing: var(--typo-label-letter-spacing);
+  }
+
+  .caption {
+    font-size: var(--typo-caption-font-size);
+    line-height: var(--typo-caption-line-height);
+    font-weight: var(--typo-caption-font-weight);
+    letter-spacing: var(--typo-caption-letter-spacing);
   }
 }
