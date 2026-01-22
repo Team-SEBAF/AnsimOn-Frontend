@@ -24,51 +24,56 @@
   --gray-900: #1c1917;
   --gray-950: #0c0a09;
 
-  /* Semantic */
+  /* Semantic (컴포넌트에서 사용하는 유일한 기준) */
+  /* Primary */
   --color-primary: var(--brand-orange-500);
   --color-primary-light: var(--brand-orange-100);
   --color-primary-soft: var(--brand-orange-300);
   --color-primary-dark: var(--brand-orange-700);
 
+  /* Button */
   --color-btn: var(--brand-orange-500);
   --color-btn-hover: var(--brand-orange-400);
   --color-btn-pressed: var(--brand-orange-700);
   --color-btn-disabled: var(--brand-orange-300);
 
+  /* Background */
   --color-bg-1: #fafaf9;
   --color-bg-2: #ffffff;
 
+  /* Status */
   --color-info: #3b82f6;
   --color-success: #2e9d5b;
   --color-warning: #f4a300;
   --color-error: #e75402;
 
+  /* Base */
   --color-black: #000000;
   --color-white: #ffffff;
 }
 
-/* Tailwind v4 theme mapping
-  - semantic 토큰만 utility로 노출
-  - primitive(gray / brand-orange)는 노출하지 않음 */
+/* Tailwind v4 Theme Bridge
+  - semantic 토큰만 Tailwind utility로 노출
+   - 실제 값 정의는 하지 않음 */
 @theme {
-  --color-primary: var(--brand-orange-500);
-  --color-primary-light: var(--brand-orange-100);
-  --color-primary-soft: var(--brand-orange-300);
-  --color-primary-dark: var(--brand-orange-700);
+  --color-primary: var(--color-primary);
+  --color-primary-light: var(--color-primary-light);
+  --color-primary-soft: var(--color-primary-soft);
+  --color-primary-dark: var(--color-primary-dark);
 
-  --color-btn: var(--brand-orange-500);
-  --color-btn-hover: var(--brand-orange-400);
-  --color-btn-pressed: var(--brand-orange-700);
-  --color-btn-disabled: var(--brand-orange-300);
+  --color-btn: var(--color-btn);
+  --color-btn-hover: var(--color-btn-hover);
+  --color-btn-pressed: var(--color-btn-pressed);
+  --color-btn-disabled: var(--color-btn-disabled);
 
-  --color-bg-1: #fafaf9;
-  --color-bg-2: #fff;
+  --color-bg-1: var(--color-bg-1);
+  --color-bg-2: var(--color-bg-2);
 
-  --color-info: #3b82f6;
-  --color-success: #2e9d5b;
-  --color-warning: #f4a300;
-  --color-error: #e75402;
+  --color-info: var(--color-info);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-error);
 
-  --color-black: #000;
-  --color-white: #fff;
+  --color-black: var(--color-black);
+  --color-white: var(--color-white);
 }
