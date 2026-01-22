@@ -21,7 +21,7 @@ const accountLinks = [
 
 export default function Home() {
   return (
-    <main className="from-bg-1 bg-gradient-to-b to-white">
+    <main className="from-bg-1 bg-linear-to-b to-white">
       <div className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-10 px-6 py-12">
         {/* Header */}
         <header className="bg-bg-2 rounded-3xl border border-gray-200/70 px-8 py-10 shadow-sm">
@@ -119,25 +119,6 @@ export default function Home() {
                   )}
                 </Link>
               ))}
-            </div>
-          </div>
-        </section>
-        <section>
-          <div className="space-y-4 p-6">
-            {/* 1. Tailwind 기본 유틸리티 테스트 */}
-            <div className="rounded-md bg-red-500 p-4 text-white">
-              Tailwind bg-red-500 (이게 안 보이면 Tailwind 자체가 안 먹는 상태)
-            </div>
-
-            {/* 2. semantic 컬러 (CSS 변수) 테스트 */}
-            <div className="bg-bg-2 text-primary rounded-md p-4">text-primary / bg-bg-2 테스트</div>
-
-            {/* 3. CSS 변수 직접 확인 */}
-            <div style={{ color: 'var(--color-primary)' }}>inline style: var(--color-primary)</div>
-
-            {/* 4. 현재 CSS 변수 값 출력용 힌트 */}
-            <div className="text-sm">
-              <code>--color-primary</code> 값이 실제 색으로 보이면 tokens.css 정상
             </div>
           </div>
         </section>
