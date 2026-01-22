@@ -1,4 +1,62 @@
-@import './tokens.css';
-@import './reset.css';
 @import 'tailwindcss';
+
+@import './reset.css';
+@import './tokens.css';
 @import './base.css';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn/ui 변수 어댑터 */
+:root {
+  --background: var(--color-bg-1);
+  --foreground: var(--gray-900);
+
+  --card: var(--color-bg-2);
+  --card-foreground: var(--gray-900);
+
+  --popover: var(--color-bg-2);
+  --popover-foreground: var(--gray-900);
+
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-white);
+
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--gray-800);
+
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-500);
+
+  --accent: var(--color-primary-soft);
+  --accent-foreground: var(--gray-900);
+
+  --destructive: var(--color-error);
+
+  --border: var(--gray-200);
+  --input: var(--gray-200);
+  --ring: var(--color-primary);
+
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: var(--gray-950);
+  --foreground: var(--gray-50);
+
+  --card: var(--gray-900);
+  --card-foreground: var(--gray-50);
+
+  --popover: var(--gray-900);
+  --popover-foreground: var(--gray-50);
+
+  --secondary: var(--gray-800);
+  --secondary-foreground: var(--gray-50);
+
+  --muted: var(--gray-800);
+  --muted-foreground: var(--gray-400);
+
+  --border: var(--gray-800);
+  --input: var(--gray-800);
+  --ring: var(--color-primary);
+}
