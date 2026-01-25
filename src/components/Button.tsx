@@ -21,7 +21,6 @@ type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 /**
  * Button의 모서리 라운드 형태
- * - md: 살짝 둥근 사각형
  * - lg: 기본 버튼
  * - full: 원형 / pill
  */
@@ -30,31 +29,17 @@ type ButtonRounded = 'lg' | 'full';
 /**
  * Button 컴포넌트 Props
  *
- * + as: 'button' | 'a' 에 따라 렌더링될 HTML 태그
- * + href: as="a" 일 때 이동할 링크
- * + variant: 버튼의 시각적 스타일 유형
- * + color: 버튼의 색상
- * + size: 버튼의 크기
- * + rounded: 버튼의 모서리 라운드 형태
- * + disabled: 버튼의 비활성화 여부
- * + leftIcon / rightIcon: 버튼 좌우에 아이콘을 추가
- * + children: 버튼 텍스트
- * + ariaLabel: 아이콘만 있는 버튼에서 스크린 리더 접근성 제공
- * + className: 추가적인 CSS 클래스
+ * + variant / color / size / rounded: 버튼 스타일 제어
+ * + leftIcon / rightIcon / children: 버튼 콘텐츠
+ * + onClick, disabled, aria-* 등 기본 button 속성은 그대로 전달됨
  */
-interface ButtonProps {
-  as?: 'button' | 'a';
-  href?: string;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   color?: ButtonColor;
   size?: ButtonSize;
   rounded?: ButtonRounded;
-  disabled?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  children?: React.ReactNode;
-  ariaLabel?: string;
-  className?: string;
 }
 
 /* Style maps */
@@ -133,7 +118,7 @@ const colorStyles: Record<ButtonColor, Record<ButtonVariant, string>> = {
 const baseStyles =
   'inline-flex items-center justify-center font-medium ' +
   'transition-colors ' +
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary' +
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
 /* Component */
@@ -142,34 +127,26 @@ const baseStyles =
 /**
  * 공용 Button 컴포넌트
  * - 다양한 시각적 스타일 옵션 제공
- * - as="button" / as="a" 모두 지원
+ * - action 전용 button 컴포넌트
  * - 텍스트 버튼 / 아이콘 버튼 모두 지원
- * - 아이콘 전용 버튼에서 aria-label 필수
+ * - 아이콘 전용 버튼에서 aria-label 사용 권장
  */
 export function Button({
-  as = 'button',
-  href,
   variant = 'default',
   color = 'primary',
   size = 'md',
   rounded = 'lg',
-  disabled = false,
   leftIcon,
   rightIcon,
   children,
-  ariaLabel,
   className,
+  ...props
 }: ButtonProps) {
-  const Component = as;
-
   const isIconOnly = !children && (leftIcon || rightIcon);
 
   return (
-    <Component
-      href={as === 'a' ? href : undefined}
-      disabled={as === 'button' ? disabled : undefined}
-      aria-disabled={disabled}
-      aria-label={ariaLabel}
+    <button
+      {...props}
       className={clsx(
         baseStyles,
         isIconOnly ? iconSizeStyles[size] : sizeStyles[size],
@@ -181,6 +158,6 @@ export function Button({
       {leftIcon && <span aria-hidden>{leftIcon}</span>}
       {children && <span>{children}</span>}
       {rightIcon && <span aria-hidden>{rightIcon}</span>}
-    </Component>
+    </button>
   );
 }

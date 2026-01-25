@@ -68,7 +68,6 @@ export default function ButtonPreviewPage() {
                       variant={variant}
                       size={size}
                       rounded="full"
-                      ariaLabel={`${color} ${variant} icon button`}
                       leftIcon={<span>⚙</span>}
                     />
                   ))}
