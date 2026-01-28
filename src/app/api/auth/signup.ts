@@ -7,12 +7,24 @@ export type SignupEmailPayload = {
   birthdate: string; // YYYY-MM-DD
 };
 
-export type SignupErrorResponse = {
+export type VerifyEmailPayload = {
+  email: string;
   code: string;
-  message: string;
 };
 
-// 필요하면 성공 응답 타입을 구체화
+export type SignupErrorResponse = {
+  code?: string;
+  message?: string;
+};
+
 export async function signupEmail(payload: SignupEmailPayload): Promise<void> {
   await axiosInstance.post('/api/v1/users/signup/email', payload);
+}
+
+export async function verifyEmail(payload: VerifyEmailPayload): Promise<void> {
+  await axiosInstance.post('/api/v1/users/verify-email', payload);
+}
+
+export async function resendVerificationEmail(email: string): Promise<void> {
+  await axiosInstance.post('/api/v1/users/resend-email', { email });
 }
