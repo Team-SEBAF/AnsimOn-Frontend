@@ -24,9 +24,10 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const INPUT_BASE_STYLES =
-  'typo-body-8 placeholder:typo-placeholder border-gray-200 placeholder:text-gray-400 focus:border-gray-400 shadow-none focus-visible:ring-0';
+  'typo-body-8 placeholder:typo-placeholder border-app-gary-200 placeholder:text-app-gary-400 focus:border-app-gary-400 shadow-none focus-visible:ring-0 bg-white text-app-gary-900';
 const INPUT_ERROR_STYLES = 'border-error focus:border-error';
-const INPUT_DISABLED_STYLES = 'cursor-not-allowed bg-gray-300 text-gray-400 border-gray-300';
+const INPUT_DISABLED_STYLES =
+  'cursor-not-allowed bg-app-gary-300 text-app-gary-400 border-app-gary-300';
 
 /**
  * Input 컴포넌트
@@ -42,7 +43,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="space-y-2">
         {/* 라벨 + 필수 표시 */}
         {label && (
-          <label className="typo-label mb-2 block text-gray-700">
+          <label className="typo-label text-app-gary-700 mb-2 block">
             {label}
             {required && <span className="text-primary ml-2">필수</span>}
           </label>
