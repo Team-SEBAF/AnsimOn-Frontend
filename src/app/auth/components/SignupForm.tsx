@@ -1,88 +1,179 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { signupSchema, SignupFormValues } from '@/schemas/auth/signup.schema';
-import { Input } from '@/components/ui/input';
-import { ErrorMessage } from './ErrorMessage';
-import { useRouter } from 'next/navigation';
-
-type SignupErrorResponse = {
-  code: string;
-  message: string;
-};
+import { Eye, EyeOff, Calendar } from 'lucide-react';
+import { Input } from '@/components/Input';
+import { Button } from '@/components/Button';
+import { useSignupAgreements } from '@/hooks/useSignupAgreements';
+import { useSignupForm } from '@/hooks/useSignupForm';
 
 export function SignupForm() {
-  const router = useRouter();
+  const { form, submit, showPassword, togglePassword, showPasswordConfirm, togglePasswordConfirm } =
+    useSignupForm();
 
-  const form = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      email: '',
-      password: '',
-      name: '',
-      birthdate: '',
-      isLegalRepresentative: false,
-    },
-  });
-
-  const onSubmit = async (values: SignupFormValues) => {
-    const res = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    });
-
-    const data: SignupErrorResponse = await res.json();
-
-    if (!res.ok) {
-      if (data.code === 'EMAIL_ALREADY_EXISTS') {
-        form.setError('email', {
-          message: '이미 가입된 이메일입니다',
-        });
-      } else {
-        console.error('회원가입 실패:', data);
-      }
-      sessionStorage.removeItem('signupEmail');
-      return;
-    }
-
-    sessionStorage.setItem('signupEmail', values.email);
-    router.push('/auth/verify');
-  };
+  const { isAllChecked, handleAgreeAll } = useSignupAgreements(form);
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-2">
-      <label htmlFor="email">이메일</label>
-      <Input id="email" {...form.register('email')} placeholder="이메일을 입력하세요" />
-      <ErrorMessage error={form.formState.errors.email} />
-
-      <label htmlFor="password">비밀번호</label>
+    <form onSubmit={form.handleSubmit(submit)} className="space-y-5">
+      {/* 이메일 */}
       <Input
-        id="password"
-        type="password"
+        label="이메일"
+        required
+        type="email"
+        placeholder="이메일을 입력해주세요"
+        error={form.formState.errors.email?.message}
+        {...form.register('email')}
+      />
+
+      {/* 비밀번호 */}
+      <Input
+        label="비밀번호"
+        required
+        type={showPassword ? 'text' : 'password'}
+        placeholder="비밀번호를 입력해주세요"
+        error={form.formState.errors.password?.message}
+        icon={showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+        onIconClick={togglePassword}
         {...form.register('password')}
-        placeholder="비밀번호를 입력하세요"
-      />
-      <ErrorMessage error={form.formState.errors.password} />
-
-      <label htmlFor="name">이름</label>
-      <Input id="name" {...form.register('name')} placeholder="이름을 입력하세요" />
-      <ErrorMessage error={form.formState.errors.name} />
-
-      <label htmlFor="birthdate">생년월일</label>
-      <Input id="birthdate" type="date" {...form.register('birthdate')} />
-      <ErrorMessage error={form.formState.errors.birthdate} />
-
-      <label htmlFor="isLegalRepresentative">법정대리인 여부</label>
-      <input
-        id="isLegalRepresentative"
-        type="checkbox"
-        {...form.register('isLegalRepresentative')}
       />
 
-      <button type="submit">Sign Up</button>
+      {/* 비밀번호 확인 */}
+      <Input
+        label="비밀번호 확인"
+        required
+        type={showPasswordConfirm ? 'text' : 'password'}
+        placeholder="비밀번호를 다시한번 입력해주세요"
+        error={form.formState.errors.passwordConfirm?.message}
+        icon={showPasswordConfirm ? <Eye size={16} /> : <EyeOff size={16} />}
+        onIconClick={togglePasswordConfirm}
+        {...form.register('passwordConfirm')}
+      />
+
+      {/* 이름 */}
+      <Input
+        label="이름"
+        required
+        type="text"
+        placeholder="본인 이름을 입력해주세요"
+        error={form.formState.errors.name?.message}
+        {...form.register('name')}
+      />
+
+      {/* 생년월일 */}
+      <Input
+        label="생년월일"
+        required
+        type="text"
+        inputMode="numeric"
+        placeholder="YYYYMMDD"
+        maxLength={8}
+        error={form.formState.errors.birthdate?.message}
+        icon={<Calendar size={16} />}
+        {...form.register('birthdate', {
+          onChange: (e) => {
+            const onlyNumber = e.target.value.replace(/[^0-9]/g, '');
+            form.setValue('birthdate', onlyNumber);
+          },
+        })}
+      />
+
+      {/* 동의 항목 */}
+      <section className="space-y-3 pt-4" aria-label="약관 동의">
+        {/* 전체 동의 */}
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            type="checkbox"
+            checked={isAllChecked}
+            onChange={(e) => handleAgreeAll(e.target.checked)}
+            className="h-5 w-5 cursor-pointer rounded border-gray-300"
+          />
+          <span className="text-sm font-medium text-gray-900">전체동의</span>
+        </label>
+
+        <div className="h-px bg-gray-200" />
+
+        {/* 필수: 만 14세 이상 */}
+        <label className="flex cursor-pointer items-center gap-2">
+          <input
+            type="checkbox"
+            {...form.register('agreeAge')}
+            className="h-5 w-5 cursor-pointer rounded border-gray-300"
+          />
+          <span className="text-sm text-gray-600">필수: 본인은 만 14세 이상입니다</span>
+        </label>
+
+        {/* 필수: 이용약관 */}
+        <div className="flex items-center justify-between gap-2">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              {...form.register('agreeTerms')}
+              className="h-5 w-5 cursor-pointer rounded border-gray-300"
+            />
+            <span className="text-sm text-gray-600">필수: 이용약관 동의</span>
+          </label>
+
+          <button
+            type="button"
+            className="text-xs text-gray-400 underline hover:text-gray-600"
+            onClick={() => {
+              // TODO: 약관 보기 모달/페이지 연결
+            }}
+          >
+            약관보기
+          </button>
+        </div>
+
+        {/* 필수: 개인정보 */}
+        <div className="flex items-center justify-between gap-2">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              {...form.register('agreePrivacy')}
+              className="h-5 w-5 cursor-pointer rounded border-gray-300"
+            />
+            <span className="text-sm text-gray-600">필수: 개인정보 수집 및 이용 동의</span>
+          </label>
+
+          <button
+            type="button"
+            className="text-xs text-gray-400 underline hover:text-gray-600"
+            onClick={() => {
+              // TODO: 약관 보기 모달/페이지 연결
+            }}
+          >
+            약관보기
+          </button>
+        </div>
+
+        {/* 선택: 마케팅 */}
+        <div className="flex items-center justify-between gap-2">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="checkbox"
+              {...form.register('agreeMarketing')}
+              className="h-5 w-5 cursor-pointer rounded border-gray-300"
+            />
+            <span className="text-sm text-gray-600">마케팅 정보 수신 동의</span>
+          </label>
+
+          <button
+            type="button"
+            className="text-xs text-gray-400 underline hover:text-gray-600"
+            onClick={() => {
+              // TODO: 약관 보기 모달/페이지 연결
+            }}
+          >
+            약관보기
+          </button>
+        </div>
+      </section>
+
+      {/* 제출 버튼 */}
+      <div className="pt-8">
+        <Button type="submit" className="h-14 w-full text-base font-semibold">
+          회원가입 →
+        </Button>
+      </div>
     </form>
   );
 }
