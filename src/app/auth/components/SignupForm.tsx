@@ -6,6 +6,12 @@ import { Button } from '@/components/Button';
 import { useSignupAgreements } from '@/hooks/useSignupAgreements';
 import { useSignupForm } from '@/hooks/useSignupForm';
 
+/* TODO
+ * 약관보기 모달/페이지 연결
+ * 이메일 확인 모달 연결
+ * 체크박스 커스텀 디자인 (shadcn)
+ * 생일 입력 캘린더 연결 (shadcn)
+ */
 export function SignupForm() {
   const { form, submit, showPassword, togglePassword, showPasswordConfirm, togglePasswordConfirm } =
     useSignupForm();
@@ -13,7 +19,7 @@ export function SignupForm() {
   const { isAllChecked, handleAgreeAll } = useSignupAgreements(form);
 
   return (
-    <form onSubmit={form.handleSubmit(submit)} className="space-y-5">
+    <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
       {/* 이메일 */}
       <Input
         label="이메일"
