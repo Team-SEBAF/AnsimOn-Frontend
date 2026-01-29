@@ -46,8 +46,8 @@ switch (command) {
   default:
     console.log(`
 사용법:
-  npm run db:start   - DB 시작 (3~6분 소요)
-  npm run db:status  - DB 상태 확인
-  npm run db:stop    - DB 중지
+  pnpm db:start   - DB 시작 (3~6분 소요)
+  pnpm db:status  - DB 상태 확인
+  pnpm db:stop    - DB 중지
     `);
 }
