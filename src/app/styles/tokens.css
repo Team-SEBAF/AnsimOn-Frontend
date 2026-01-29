@@ -168,6 +168,12 @@
   --app-color-btn-pressed: var(--app-brand-orange-700);
   --app-color-btn-disabled: var(--app-brand-orange-300);
 
+  /* Sub Button (NEW) */
+  --app-color-sub-btn: var(--app-gray-700);
+  --app-color-sub-btn-hover: var(--app-gray-600);
+  --app-color-sub-btn-pressed: var(--app-gray-800);
+  --app-color-sub-btn-disabled: var(--app-gray-400);
+
   /* Background */
   --app-color-bg-1: #fafaf9;
   --app-color-bg-2: #ffffff;
@@ -177,6 +183,10 @@
   --app-color-success: #2e9d5b;
   --app-color-warning: #f4a300;
   --app-color-error: #e75402;
+
+  --app-color-success-hover: #58b17c;
+  --app-color-warning-hover: #f6b533;
+  --app-color-error-hover: #ec7635;
 
   /* Base */
   --app-color-black: #000000;
@@ -201,6 +211,12 @@
   --color-btn-pressed: var(--app-color-btn-pressed);
   --color-btn-disabled: var(--app-color-btn-disabled);
 
+  /* Sub Button */
+  --color-sub-btn: var(--app-color-sub-btn);
+  --color-sub-btn-hover: var(--app-color-sub-btn-hover);
+  --color-sub-btn-pressed: var(--app-color-sub-btn-pressed);
+  --color-sub-btn-disabled: var(--app-color-sub-btn-disabled);
+
   /* Background */
   --color-bg-1: var(--app-color-bg-1);
   --color-bg-2: var(--app-color-bg-2);
@@ -210,6 +226,8 @@
   --color-success: var(--app-color-success);
   --color-warning: var(--app-color-warning);
   --color-error: var(--app-color-error);
+
+  --color-success-hover: var(--app-color-success-hover);
 
   /* Base */
   --color-black: var(--app-color-black);
