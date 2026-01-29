@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:start": "node scripts/db.mjs start",
+    "db:status": "node scripts/db.mjs status",
+    "db:stop": "node scripts/db.mjs stop"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
