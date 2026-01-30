@@ -4,7 +4,11 @@ import Link from 'next/link';
 import { EmailVerifyForm } from '../components/EmailVerifyForm';
 
 export default function VerifyPage() {
-  const email = typeof window !== 'undefined' ? sessionStorage.getItem('signupEmail') : null;
+  // 회원가입 또는 로그인에서 넘어온 이메일 확인
+  const email =
+    typeof window !== 'undefined'
+      ? sessionStorage.getItem('signupEmail') || sessionStorage.getItem('loginEmail')
+      : null;
 
   if (!email) {
     return (

@@ -26,5 +26,5 @@ export async function verifyEmail(payload: VerifyEmailPayload): Promise<void> {
 }
 
 export async function resendVerificationEmail(email: string): Promise<void> {
-  await axiosInstance.post('/api/v1/users/resend-email', { email });
+  await axiosInstance.post('/api/v1/users/resend-email-verification', { email });
 }
