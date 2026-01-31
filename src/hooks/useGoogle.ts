@@ -10,7 +10,7 @@ export function useGoogle() {
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
       response_type: 'code',
       scope: 'openid email profile',
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
       identity_provider: 'Google',
     });
 
@@ -39,7 +39,9 @@ export function useGoogle() {
 
         // 3. 메인 페이지로 이동
         router.push('/my-space');
-      } catch {}
+      } catch {
+        // TODO: 에러 토스트
+      }
     };
 
     run();
