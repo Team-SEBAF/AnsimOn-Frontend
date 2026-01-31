@@ -9,7 +9,7 @@ import { useGoogle } from '@/hooks/useGoogle';
 
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
-  const { loginWithGoogle, loading: googleLoading } = useGoogle();
+  const { loginWithGoogle, googleLoading: googleLoginLoading, logoutWithGoogle } = useGoogle();
 
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
@@ -55,11 +55,11 @@ export function LoginForm() {
           color="secondary"
           className="h-14 w-full border-gray-400 font-semibold text-gray-400"
           onClick={loginWithGoogle}
-          disabled={googleLoading}
+          disabled={googleLoginLoading}
         >
           <div className="flex items-center justify-center gap-2">
             구글 로그인
-            {googleLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+            {googleLoginLoading && <Loader2 className="h-4 w-4 animate-spin" />}
           </div>
         </Button>
       </div>
