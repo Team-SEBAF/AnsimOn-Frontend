@@ -29,3 +29,28 @@ export async function loginEmail(payload: LoginPayload): Promise<LoginResponse> 
   const res = await axiosInstance.post<LoginResponse>('/api/v1/users/login/email', payload);
   return res.data;
 }
+
+// 리프레시 토큰 요청 페이로드
+export type RefreshPayload = {
+  idToken: string;
+  refreshToken: string;
+};
+
+// 리프레시 토큰 응답
+export type RefreshResponse = {
+  access_token: string;
+  id_token: string;
+  expires_in: number;
+  token_type: string;
+};
+
+// 토큰 갱신 API
+export async function refreshTokens(payload: RefreshPayload): Promise<RefreshResponse> {
+  const res = await axiosInstance.post<RefreshResponse>('/api/v1/users/token/refresh', payload);
+  return res.data;
+}
+
+// 로그아웃 API
+export async function logoutApi(): Promise<void> {
+  await axiosInstance.post('/api/v1/users/logout');
+}

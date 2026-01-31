@@ -2,11 +2,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { getGoogleToken } from '@/app/api/auth/google';
-import { authCookies } from '@/utils/auth';
 
 export function useGoogleAuth() {
+  const logout = useAuthStore((state) => state.logout);
+
   // (1) 구글 로그인 함수
-  const loginWithGoogle = async () => {
+  const loginWithGoogle = () => {
     const params = new URLSearchParams({
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
       response_type: 'code',
@@ -20,8 +21,8 @@ export function useGoogleAuth() {
 
   // (2) 구글 로그아웃 함수
   const logoutWithGoogle = () => {
-    // 1. 토큰 삭제
-    authCookies.clearTokens();
+    // 1. 토큰 삭제 + Zustand 상태 초기화
+    logout();
 
     // 2. Cognito 세션 로그아웃
     const params = new URLSearchParams({
@@ -50,10 +51,10 @@ export function useGoogleLoginSideEffect() {
       try {
         // 1. 구글 로그인 코드로 토큰 교환
         setGoogleLoading(true);
-        const { access_token, refresh_token } = await getGoogleToken(code);
+        const { access_token, refresh_token, id_token } = await getGoogleToken(code);
 
         // 2. 토큰 저장
-        login(access_token, refresh_token);
+        login(access_token, refresh_token, id_token);
         setGoogleLoading(false);
 
         // 3. 메인 페이지로 이동
