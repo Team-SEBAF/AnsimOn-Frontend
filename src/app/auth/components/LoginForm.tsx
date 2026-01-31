@@ -1,13 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { useLoginForm } from '@/hooks/useLoginForm';
+import { useGoogle } from '@/hooks/useGoogle';
 
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
+  const { loginWithGoogle, loading: googleLoading } = useGoogle();
 
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
@@ -42,6 +44,23 @@ export function LoginForm() {
       <div className="pt-8">
         <Button type="submit" className="h-14 w-full text-base font-semibold">
           로그인 →
+        </Button>
+      </div>
+
+      {/* 구글 로그인 버튼 */}
+      <div className="pt-4">
+        <Button
+          type="button"
+          variant="outline"
+          color="secondary"
+          className="h-14 w-full border-gray-400 font-semibold text-gray-400"
+          onClick={loginWithGoogle}
+          disabled={googleLoading}
+        >
+          <div className="flex items-center justify-center gap-2">
+            구글 로그인
+            {googleLoading && <Loader2 className="h-4 w-4 animate-spin" />}
+          </div>
         </Button>
       </div>
 
