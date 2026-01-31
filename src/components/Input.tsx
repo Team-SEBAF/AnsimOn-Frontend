@@ -24,7 +24,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 const INPUT_BASE_STYLES =
-  'typo-body-8 placeholder:typo-placeholder border-gray-200 placeholder:text-gray-400 focus:border-gray-400 shadow-none focus-visible:ring-0';
+  'typo-body-8 placeholder:typo-placeholder border-gray-200 placeholder:text-gray-400 focus:border-gray-400 shadow-none focus-visible:ring-0 bg-white text-gray-900';
 const INPUT_ERROR_STYLES = 'border-error focus:border-error';
 const INPUT_DISABLED_STYLES = 'cursor-not-allowed bg-gray-300 text-gray-400 border-gray-300';
 

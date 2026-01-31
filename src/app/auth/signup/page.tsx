@@ -1,14 +1,18 @@
-﻿'use client';
+'use client';
 
 import { SignupForm } from '../components/SignupForm';
 
 export default function SignupPage() {
   return (
-    <main className="flex flex-col items-center justify-center p-4">
-      <h1>Signup Page</h1>
-      <div className="mt-4 w-full max-w-md">
-        <SignupForm />
+    <div className="pb-24">
+      {/* 제목 */}
+      <div className="mb-8">
+        <h1 className="typo-display-2 mb-2 text-black">회원가입</h1>
+        <p className="typo-body-4 text-app-gray-500">새로운 계정을 만들어보세요</p>
       </div>
-    </main>
+
+      {/* 폼 */}
+      <SignupForm />
+    </div>
   );
 }

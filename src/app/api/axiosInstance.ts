@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { authCookies } from '@/utils/auth';
 
 export type ApiError = {
   code?: string;
@@ -11,11 +12,18 @@ export const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-/**
- * 공통 에러 처리:
- * - 백엔드가 내려주는 { code, message } 형태면 그대로 throw
- * - 응답이 없으면(네트워크/타임아웃) 표준 에러로 throw
- */
+// 요청 인터셉터: 토큰 자동 첨부
+axiosInstance.interceptors.request.use((config) => {
+  const token = authCookies.getAccessToken();
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
+// 응답 인터셉터: 공통 에러 처리
 axiosInstance.interceptors.response.use(
   (res) => res,
   (error: AxiosError<ApiError>) => {

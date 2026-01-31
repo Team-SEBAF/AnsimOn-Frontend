@@ -1,23 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input';
 import { VerifyEmailFormValues, verifyEmailSchema } from '@/schemas/auth/verify-email.schema';
-import { ErrorMessage } from './ErrorMessage';
 import { useRouter } from 'next/navigation';
+import { SignupErrorResponse, verifyEmail, resendVerificationEmail } from '@/app/api/auth/signup';
+import { ActionInput } from '@/components/ActionInput';
 
 type EmailVerifyFormProps = {
   email: string;
 };
 
-type VerifyErrorResponse = {
-  code?: string;
-  message?: string;
-};
-
 export function EmailVerifyForm({ email }: EmailVerifyFormProps) {
   const router = useRouter();
+  const [isResending, setIsResending] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const form = useForm<VerifyEmailFormValues>({
     resolver: zodResolver(verifyEmailSchema),
@@ -28,64 +26,68 @@ export function EmailVerifyForm({ email }: EmailVerifyFormProps) {
     },
   });
 
-  const {
-    formState: { isSubmitting },
-  } = form;
-
-  const onSubmit = async (values: VerifyEmailFormValues) => {
+  const handleResend = async () => {
+    setIsResending(true);
     try {
-      const res = await fetch('/api/auth/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      });
+      await resendVerificationEmail(email);
+      // TODO: 성공 토스트 메시지
+    } catch (err) {
+      console.error('이메일 재전송 실패:', err);
+      // TODO: 실패 토스트 메시지
+    } finally {
+      setIsResending(false);
+    }
+  };
 
-      const data: VerifyErrorResponse = await res.json();
+  const handleVerify = async () => {
+    const isValid = await form.trigger('code');
+    if (!isValid) return;
 
-      if (!res.ok) {
-        if (data.code === 'INVALID_CODE') {
-          form.setError('code', {
-            message: '인증 코드가 올바르지 않습니다.',
-          });
-        } else if (data.code === 'EXPIRED_CODE') {
-          form.setError('code', {
-            message: '인증 코드가 만료되었습니다.',
-          });
-          // TODO: 재전송 로직 등
-        } else {
-          console.error('이메일 인증 실패:', data);
-        }
-        return;
-      }
+    setIsVerifying(true);
+    try {
+      const values = form.getValues();
+      await verifyEmail(values);
 
-      // 인증 성공
       sessionStorage.removeItem('signupEmail');
-      console.log('이메일 인증 성공');
-      router.replace('/auth/my-space');
-    } catch (error) {
-      console.error('인증 에러:', error);
+      router.replace('/auth/login');
+    } catch (err) {
+      const data = err as SignupErrorResponse;
+
+      if (data.code === 'INVALID_CODE') {
+        form.setError('code', { message: '인증 코드가 올바르지 않습니다.' });
+      } else if (data.code === 'EXPIRED_CODE') {
+        form.setError('code', { message: '인증 코드가 만료되었습니다. 재전송 요청을 해주세요.' });
+      } else {
+        console.error('이메일 인증 실패:', data);
+      }
+    } finally {
+      setIsVerifying(false);
     }
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-      {/* 이메일 (읽기 전용) */}
-      <label htmlFor="email">Email</label>
-      <Input id="email" value={email} readOnly />
-
-      {/* 인증 코드 입력 */}
-      <label htmlFor="code">Verification Code</label>
-      <Input
-        id="code"
-        {...form.register('code')}
-        placeholder="인증 코드 6자리"
-        inputMode="numeric"
+    <div className="flex flex-col gap-2">
+      {/* 이메일 + 재전송 버튼 */}
+      <ActionInput
+        label="인증번호"
+        value={email}
+        disabled
+        buttonLabel="재전송"
+        onButtonClick={handleResend}
+        buttonLoading={isResending}
       />
-      <ErrorMessage error={form.formState.errors.code} />
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? '인증 중...' : '인증하기'}
-      </button>
-    </form>
+      {/* 인증번호 + 인증 버튼 */}
+      <ActionInput
+        {...form.register('code')}
+        placeholder="인증번호를 입력해주세요"
+        inputMode="numeric"
+        error={form.formState.errors.code?.message}
+        buttonLabel="인증"
+        onButtonClick={handleVerify}
+        buttonLoading={isVerifying}
+        buttonColor="primary"
+      />
+    </div>
   );
 }

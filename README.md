@@ -63,20 +63,20 @@ pnpm dev
 
 ## 주요 명령어
 
-| 명령어 | 설명 |
-|--------|------|
-| `pnpm dev` | 개발 서버 실행 |
-| `pnpm build` | 프로덕션 빌드 |
-| `pnpm lint` | ESLint 검사 |
+| 명령어        | 설명            |
+| ------------- | --------------- |
+| `pnpm dev`    | 개발 서버 실행  |
+| `pnpm build`  | 프로덕션 빌드   |
+| `pnpm lint`   | ESLint 검사     |
 | `pnpm format` | Prettier 포맷팅 |
 
 ### DB 관리 (개발용)
 
-| 명령어 | 설명 |
-|--------|------|
-| `pnpm db:start` | DB 시작 (3~6분 소요) |
-| `pnpm db:status` | DB 상태 확인 |
-| `pnpm db:stop` | DB 중지 |
+| 명령어           | 설명                 |
+| ---------------- | -------------------- |
+| `pnpm db:start`  | DB 시작 (3~6분 소요) |
+| `pnpm db:status` | DB 상태 확인         |
+| `pnpm db:stop`   | DB 중지              |
 
 ---
 
