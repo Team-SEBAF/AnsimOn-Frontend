@@ -5,7 +5,7 @@ interface AuthState {
   isLoggedIn: boolean;
 
   // 액션
-  login: (accessToken: string, refreshToken: string) => void;
+  login: (accessToken: string, refreshToken: string, idToken: string) => void;
   logout: () => void;
   checkAuth: () => void; // 페이지 새로고침 시 쿠키에서 상태 복원
 }
@@ -13,8 +13,8 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
 
-  login: (accessToken, refreshToken) => {
-    authCookies.setTokens(accessToken, refreshToken);
+  login: (accessToken, refreshToken, idToken) => {
+    authCookies.setTokens(accessToken, refreshToken, idToken);
     set({ isLoggedIn: true });
   },
 

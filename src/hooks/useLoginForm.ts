@@ -27,10 +27,10 @@ export function useLoginForm() {
   const submit = async (values: LoginFormValues) => {
     try {
       // 1. 로그인 API 호출 (백엔드는 snake_case 사용)
-      const { access_token, refresh_token } = await loginEmail(values);
+      const { access_token, refresh_token, id_token } = await loginEmail(values);
 
       // 2. 쿠키 저장 + Zustand 상태 업데이트
-      login(access_token, refresh_token);
+      login(access_token, refresh_token, id_token);
 
       // 3. 메인 페이지로 이동
       router.push('/my-space');
