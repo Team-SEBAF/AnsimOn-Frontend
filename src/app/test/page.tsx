@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/Button';
 import { logoutApi } from '@/app/api/auth/login';
+import { axiosInstance } from '@/app/api/axiosInstance';
 
 const items = [
   {
@@ -22,6 +24,28 @@ const items = [
 
 export default function TestHubPage() {
   const { isLoggedIn, logout } = useAuthStore();
+  const [testResult, setTestResult] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 액세스 토큰 만료시키기
+  const expireAccessToken = () => {
+    document.cookie = 'accessToken=expired_invalid_token; path=/';
+    setTestResult('✅ 액세스 토큰을 만료시켰습니다. 이제 API를 호출해보세요.');
+  };
+
+  // users/me API 호출 테스트
+  const testUsersMe = async () => {
+    setIsLoading(true);
+    setTestResult('API 호출 중...');
+    try {
+      const res = await axiosInstance.get('/api/v1/users/me');
+      setTestResult(`✅ 성공: ${JSON.stringify(res.data, null, 2)}`);
+    } catch (error) {
+      setTestResult(`❌ 실패: ${JSON.stringify(error, null, 2)}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -65,6 +89,29 @@ export default function TestHubPage() {
               </Link>
             )}
           </div>
+
+          {/* 토큰 갱신 테스트 */}
+          {isLoggedIn && (
+            <div className="mt-6 rounded-xl border border-gray-200 bg-white p-4">
+              <h3 className="text-sm font-semibold text-gray-900">🔧 토큰 갱신 테스트</h3>
+              <p className="mt-1 text-xs text-gray-500">
+                1. 토큰 만료 버튼 클릭 → 2. API 호출 버튼 클릭 → 3. 콘솔에서 갱신 로그 확인
+              </p>
+              <div className="mt-3 flex gap-2">
+                <Button variant="outline" size="sm" onClick={expireAccessToken}>
+                  1. 토큰 만료시키기
+                </Button>
+                <Button variant="default" size="sm" onClick={testUsersMe} disabled={isLoading}>
+                  {isLoading ? '호출 중...' : '2. users/me 호출'}
+                </Button>
+              </div>
+              {testResult && (
+                <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-gray-100 p-3 text-xs text-gray-700">
+                  {testResult}
+                </pre>
+              )}
+            </div>
+          )}
 
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
