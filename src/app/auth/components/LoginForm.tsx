@@ -5,6 +5,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { useLoginForm } from '@/hooks/useLoginForm';
+import { GoogleLoginButton } from './googleLoginButton';
+import { Suspense } from 'react';
 
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
@@ -43,6 +45,13 @@ export function LoginForm() {
         <Button type="submit" className="h-14 w-full text-base font-semibold">
           로그인 →
         </Button>
+      </div>
+
+      {/* 구글 로그인 버튼 — useSearchParams 사용으로 Suspense 필요 */}
+      <div className="pt-4">
+        <Suspense fallback={<div className="h-14 w-full animate-pulse rounded-lg bg-gray-100" />}>
+          <GoogleLoginButton />
+        </Suspense>
       </div>
 
       {/* 회원가입 링크 */}
