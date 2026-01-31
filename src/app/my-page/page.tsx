@@ -1,10 +1,10 @@
 ﻿'use client';
 
 import { Button } from '@/components/Button';
-import { useGoogle } from '@/hooks/useGoogle';
+import { useGoogleAuth } from '@/hooks/useGoogle';
 
 export default function MyPage() {
-  const { logoutWithGoogle } = useGoogle();
+  const { logoutWithGoogle } = useGoogleAuth();
 
   return (
     <main>

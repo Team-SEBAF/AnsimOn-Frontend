@@ -1,9 +1,10 @@
 import { Button } from '@/components/Button';
-import { useGoogle } from '@/hooks/useGoogle';
+import { useGoogleAuth, useGoogleLoginSideEffect } from '@/hooks/useGoogle';
 import { Loader2 } from 'lucide-react';
 
 export function GoogleLoginButton() {
-  const { loginWithGoogle, googleLoading } = useGoogle();
+  const { loginWithGoogle } = useGoogleAuth();
+  const { googleLoading } = useGoogleLoginSideEffect();
 
   return (
     <Button

@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { getGoogleToken } from '@/app/api/auth/google';
 import { authCookies } from '@/utils/auth';
 
-export function useGoogle() {
+export function useGoogleAuth() {
   // (1) 구글 로그인 함수
   const loginWithGoogle = async () => {
     const params = new URLSearchParams({
@@ -18,7 +18,25 @@ export function useGoogle() {
     window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`;
   };
 
-  // (2) 구글 로그인 콜백 후 토큰 저장 Side Effect
+  // (2) 구글 로그아웃 함수
+  const logoutWithGoogle = () => {
+    // 1. 토큰 삭제
+    authCookies.clearTokens();
+
+    // 2. Cognito 세션 로그아웃
+    const params = new URLSearchParams({
+      client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
+      logout_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
+    });
+
+    window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/logout?${params.toString()}`;
+  };
+
+  return { loginWithGoogle, logoutWithGoogle };
+}
+
+// (3)구글 로그인 콜백 후 토큰 저장 Side Effect
+export function useGoogleLoginSideEffect() {
   const router = useRouter();
   const params = useSearchParams();
   const login = useAuthStore((state) => state.login);
@@ -48,19 +66,5 @@ export function useGoogle() {
     run();
   }, [params, router]);
 
-  // (3) 구글 로그아웃 함수
-  const logoutWithGoogle = () => {
-    // 1. 토큰 삭제
-    authCookies.clearTokens();
-
-    // 2. Cognito 세션 로그아웃
-    const params = new URLSearchParams({
-      client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
-      logout_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
-    });
-
-    window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/logout?${params.toString()}`;
-  };
-
-  return { loginWithGoogle, googleLoading, logoutWithGoogle };
+  return { googleLoading };
 }
