@@ -62,7 +62,5 @@ export function useGoogle() {
     window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/logout?${params.toString()}`;
   };
 
-  // (4) 리프레시 토큰 갱신 함수
-
   return { loginWithGoogle, googleLoading, logoutWithGoogle };
 }

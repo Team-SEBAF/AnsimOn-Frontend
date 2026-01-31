@@ -9,7 +9,7 @@ import { useGoogle } from '@/hooks/useGoogle';
 
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
-  const { loginWithGoogle, googleLoading: googleLoginLoading, logoutWithGoogle } = useGoogle();
+  const { loginWithGoogle, googleLoading: googleLoginLoading } = useGoogle();
 
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
