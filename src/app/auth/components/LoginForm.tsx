@@ -1,15 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { useLoginForm } from '@/hooks/useLoginForm';
-import { useGoogle } from '@/hooks/useGoogle';
+import { GoogleLoginButton } from './googleLoginButton';
+import { Suspense } from 'react';
 
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
-  const { loginWithGoogle, googleLoading: googleLoginLoading } = useGoogle();
 
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
@@ -47,21 +47,11 @@ export function LoginForm() {
         </Button>
       </div>
 
-      {/* 구글 로그인 버튼 */}
+      {/* 구글 로그인 버튼 — useSearchParams 사용으로 Suspense 필요 */}
       <div className="pt-4">
-        <Button
-          type="button"
-          variant="outline"
-          color="secondary"
-          className="h-14 w-full border-gray-400 font-semibold text-gray-400"
-          onClick={loginWithGoogle}
-          disabled={googleLoginLoading}
-        >
-          <div className="flex items-center justify-center gap-2">
-            구글 로그인
-            {googleLoginLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-          </div>
-        </Button>
+        <Suspense fallback={<div className="h-14 w-full animate-pulse rounded-lg bg-gray-100" />}>
+          <GoogleLoginButton />
+        </Suspense>
       </div>
 
       {/* 회원가입 링크 */}
