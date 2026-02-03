@@ -3,15 +3,23 @@
 import { Eye, EyeOff, Calendar } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useSignupAgreements } from '@/hooks/useSignupAgreements';
 import { useSignupForm } from '@/hooks/useSignupForm';
 
 /* TODO
  * 약관보기 모달/페이지 연결
  * 이메일 확인 모달 연결
- * 체크박스 커스텀 디자인 (shadcn)
  * 생일 입력 캘린더 연결 (shadcn)
  */
+
+const AGREEMENT_ITEMS = [
+  { id: 'agreeAge', label: '필수: 본인은 만 14세 이상입니다', showLink: false },
+  { id: 'agreeTerms', label: '필수: 이용약관 동의', showLink: true },
+  { id: 'agreePrivacy', label: '필수: 개인정보 수집 및 이용 동의', showLink: true },
+  { id: 'agreeMarketing', label: '마케팅 정보 수신 동의', showLink: true },
+] as const;
+
 export function SignupForm() {
   const { form, submit, showPassword, togglePassword, showPasswordConfirm, togglePasswordConfirm } =
     useSignupForm();
@@ -86,92 +94,41 @@ export function SignupForm() {
       <section className="space-y-3 pt-4" aria-label="약관 동의">
         {/* 전체 동의 */}
         <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
+          <Checkbox
+            id="agreeAll"
             checked={isAllChecked}
-            onChange={(e) => handleAgreeAll(e.target.checked)}
-            className="h-5 w-5 cursor-pointer rounded border-gray-300"
+            onCheckedChange={(checked) => handleAgreeAll(checked === true)}
           />
           <span className="text-sm font-medium text-gray-900">전체동의</span>
         </label>
 
         <div className="h-px bg-gray-200" />
 
-        {/* 필수: 만 14세 이상 */}
-        <label className="flex cursor-pointer items-center gap-2">
-          <input
-            type="checkbox"
-            {...form.register('agreeAge')}
-            className="h-5 w-5 cursor-pointer rounded border-gray-300"
-          />
-          <span className="text-sm text-gray-600">필수: 본인은 만 14세 이상입니다</span>
-        </label>
+        {AGREEMENT_ITEMS.map((item) => (
+          <div key={item.id} className="flex items-center justify-between gap-2">
+            <label className="flex cursor-pointer items-center gap-2">
+              <Checkbox
+                variant="ghost"
+                id={item.id}
+                checked={form.watch(item.id)}
+                onCheckedChange={(checked) => form.setValue(item.id, checked === true)}
+              />
+              <span className="text-sm text-gray-600">{item.label}</span>
+            </label>
 
-        {/* 필수: 이용약관 */}
-        <div className="flex items-center justify-between gap-2">
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              {...form.register('agreeTerms')}
-              className="h-5 w-5 cursor-pointer rounded border-gray-300"
-            />
-            <span className="text-sm text-gray-600">필수: 이용약관 동의</span>
-          </label>
-
-          <button
-            type="button"
-            className="text-xs text-gray-400 underline hover:text-gray-600"
-            onClick={() => {
-              // TODO: 약관 보기 모달/페이지 연결
-            }}
-          >
-            약관보기
-          </button>
-        </div>
-
-        {/* 필수: 개인정보 */}
-        <div className="flex items-center justify-between gap-2">
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              {...form.register('agreePrivacy')}
-              className="h-5 w-5 cursor-pointer rounded border-gray-300"
-            />
-            <span className="text-sm text-gray-600">필수: 개인정보 수집 및 이용 동의</span>
-          </label>
-
-          <button
-            type="button"
-            className="text-xs text-gray-400 underline hover:text-gray-600"
-            onClick={() => {
-              // TODO: 약관 보기 모달/페이지 연결
-            }}
-          >
-            약관보기
-          </button>
-        </div>
-
-        {/* 선택: 마케팅 */}
-        <div className="flex items-center justify-between gap-2">
-          <label className="flex cursor-pointer items-center gap-2">
-            <input
-              type="checkbox"
-              {...form.register('agreeMarketing')}
-              className="h-5 w-5 cursor-pointer rounded border-gray-300"
-            />
-            <span className="text-sm text-gray-600">마케팅 정보 수신 동의</span>
-          </label>
-
-          <button
-            type="button"
-            className="text-xs text-gray-400 underline hover:text-gray-600"
-            onClick={() => {
-              // TODO: 약관 보기 모달/페이지 연결
-            }}
-          >
-            약관보기
-          </button>
-        </div>
+            {item.showLink && (
+              <button
+                type="button"
+                className="text-xs text-gray-400 underline hover:text-gray-600"
+                onClick={() => {
+                  // TODO: 약관 보기 모달/페이지 연결
+                }}
+              >
+                약관보기
+              </button>
+            )}
+          </div>
+        ))}
       </section>
 
       {/* 제출 버튼 */}
