@@ -1,16 +1,20 @@
 'use client';
 
-import { Eye, EyeOff, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import { Eye, EyeOff, Calendar as CalendarIcon } from 'lucide-react';
+import { format } from 'date-fns';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { useSignupAgreements } from '@/hooks/useSignupAgreements';
 import { useSignupForm } from '@/hooks/useSignupForm';
+import { parseBirthdate, formatBirthdateInput } from '@/utils/date';
 
 /* TODO
  * 약관보기 모달/페이지 연결
  * 이메일 확인 모달 연결
- * 생일 입력 캘린더 연결 (shadcn)
  */
 
 const AGREEMENT_ITEMS = [
@@ -23,8 +27,20 @@ const AGREEMENT_ITEMS = [
 export function SignupForm() {
   const { form, submit, showPassword, togglePassword, showPasswordConfirm, togglePasswordConfirm } =
     useSignupForm();
-
   const { isAllChecked, handleAgreeAll } = useSignupAgreements(form);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      form.setValue('birthdate', format(date, 'yyyy-MM-dd'));
+      setCalendarOpen(false);
+    }
+  };
+
+  const handleBirthdateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatBirthdateInput(e.target.value);
+    form.setValue('birthdate', formatted);
+  };
 
   return (
     <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
@@ -73,22 +89,38 @@ export function SignupForm() {
       />
 
       {/* 생년월일 */}
-      <Input
-        label="생년월일"
-        required
-        type="text"
-        inputMode="numeric"
-        placeholder="YYYYMMDD"
-        maxLength={8}
-        error={form.formState.errors.birthdate?.message}
-        icon={<Calendar size={16} />}
-        {...form.register('birthdate', {
-          onChange: (e) => {
-            const onlyNumber = e.target.value.replace(/[^0-9]/g, '');
-            form.setValue('birthdate', onlyNumber);
-          },
-        })}
-      />
+      <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+        <PopoverAnchor asChild>
+          <div>
+            <Input
+              label="생년월일"
+              required
+              inputMode="numeric"
+              placeholder="YYYY-MM-DD"
+              maxLength={10}
+              value={form.watch('birthdate')}
+              onChange={handleBirthdateChange}
+              error={form.formState.errors.birthdate?.message}
+              icon={<CalendarIcon size={16} />}
+              onIconClick={() => setCalendarOpen(true)}
+            />
+          </div>
+        </PopoverAnchor>
+        <PopoverContent
+          className="w-auto overflow-hidden bg-white p-0"
+          align="start"
+          sideOffset={8}
+        >
+          <Calendar
+            mode="single"
+            selected={parseBirthdate(form.watch('birthdate'))}
+            onSelect={handleDateSelect}
+            defaultMonth={new Date()}
+            startMonth={new Date(1900, 0)}
+            endMonth={new Date(new Date().getFullYear(), 11)}
+          />
+        </PopoverContent>
+      </Popover>
 
       {/* 동의 항목 */}
       <section className="space-y-3 pt-4" aria-label="약관 동의">
