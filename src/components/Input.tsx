@@ -12,6 +12,7 @@ import { cn } from '@/lib/utils';
  * @property onIconClick - 아이콘 클릭 핸들러 (제공시 아이콘이 클릭 가능해짐)
  * @property placeholder - placeholder 텍스트
  * @property disabled - 비활성화 여부
+ * @property numericOnly - 숫자만 입력 가능 여부
  */
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -21,6 +22,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   onIconClick?: () => void;
   placeholder?: string;
   disabled?: boolean;
+  numericOnly?: boolean;
 }
 
 const INPUT_BASE_STYLES =
@@ -35,9 +37,28 @@ const INPUT_DISABLED_STYLES = 'cursor-not-allowed bg-gray-300 text-gray-400 bord
  */
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { label, required, error, icon, onIconClick, placeholder, disabled, className, ...props },
+    {
+      label,
+      required,
+      error,
+      icon,
+      onIconClick,
+      placeholder,
+      disabled,
+      numericOnly,
+      className,
+      onChange,
+      ...props
+    },
     ref,
   ) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (numericOnly) {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+      }
+      onChange?.(e);
+    };
+
     return (
       <div className="space-y-2">
         {/* 라벨 + 필수 표시 */}
@@ -54,6 +75,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             placeholder={placeholder}
             disabled={disabled}
+            onChange={handleChange}
             className={cn(
               INPUT_BASE_STYLES,
               icon && 'pr-10',
