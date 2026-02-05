@@ -28,7 +28,7 @@ export interface ActionInputProps extends InputProps {
 /**
  * ActionInput 컴포넌트
  *
- * Input과 Button을 조합한 컴포넌트 (이메일 인증, 쿠폰 적용 등)
+ * Input과 Button을 조합한 컴포넌트 (이메일 인증 등)
  */
 export const ActionInput = React.forwardRef<HTMLInputElement, ActionInputProps>(
   (
@@ -44,9 +44,9 @@ export const ActionInput = React.forwardRef<HTMLInputElement, ActionInputProps>(
     ref,
   ) => {
     return (
-      <div className="flex items-end gap-2">
+      <div className="flex items-start gap-2">
         <div className="flex-1">
-          <Input ref={ref} {...inputProps} className={cn('h-12', inputProps.className)} />
+          <Input ref={ref} {...inputProps} />
         </div>
         <Button
           type="button"
@@ -55,7 +55,7 @@ export const ActionInput = React.forwardRef<HTMLInputElement, ActionInputProps>(
           color={buttonColor}
           onClick={onButtonClick}
           disabled={buttonDisabled || buttonLoading}
-          className="h-12 w-22.5 shrink-0"
+          className={cn('h-12 w-22.5 shrink-0', inputProps.label && 'mt-6')}
         >
           {buttonLoading ? '처리중...' : buttonLabel}
         </Button>
