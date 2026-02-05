@@ -7,13 +7,18 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-// 앱 전체에서 쿠키 - Zustand 상태 동기화
+/**
+ * 앱 시작 시 인증 상태를 초기화하는 Provider
+ *
+ * 쿠키에서 토큰을 확인하여 Zustand store의 isLoggedIn 상태를 설정
+ * RootLayout에서 감싸서 앱 전체에서 인증 상태를 사용할 수 있게 함
+ */
 export function AuthProvider({ children }: AuthProviderProps) {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
+  const initAuth = useAuthStore((state) => state.initAuth);
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    initAuth();
+  }, [initAuth]);
 
   return <>{children}</>;
 }
