@@ -8,56 +8,72 @@ import { useLoginForm } from '@/hooks/useLoginForm';
 import { GoogleLoginButton } from './googleLoginButton';
 import { Suspense } from 'react';
 
+/**
+ * 로그인 폼 컴포넌트
+ *
+ * 이메일과 비밀번호 입력 필드, 제출 버튼, 구글 로그인 버튼, 회원가입 링크로 구성된 폼.
+ * useLoginForm 훅을 사용하여 폼 상태 및 제출 로직을 관리.
+ *
+ * @flow
+ * 1. 사용자 입력 → Zod 스키마 검증
+ * 2. 폼 제출 → 로그인 API 호출 → 인증 토큰 저장 및 리다이렉트
+ *
+ * @todo 에러 메시지 UI 협의 후 개선 (alert 형태로 수정)
+ */
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
 
   return (
-    <form onSubmit={form.handleSubmit(submit)} className="space-y-2">
-      {/* 이메일 */}
-      <Input
-        label="이메일"
-        required
-        type="email"
-        placeholder="이메일을 입력해주세요"
-        error={form.formState.errors.email?.message}
-        {...form.register('email')}
-      />
+    <form onSubmit={form.handleSubmit(submit)} className="space-y-6">
+      <div className="space-y-3">
+        {/* 이메일 */}
+        <Input
+          label="이메일"
+          required
+          hideRequiredLabel
+          type="email"
+          placeholder="이메일을 입력해주세요"
+          error={form.formState.errors.email?.message}
+          {...form.register('email')}
+        />
 
-      {/* 비밀번호 */}
-      <Input
-        label="비밀번호"
-        required
-        type={showPassword ? 'text' : 'password'}
-        placeholder="비밀번호를 입력해주세요"
-        error={form.formState.errors.password?.message}
-        icon={showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
-        onIconClick={togglePassword}
-        {...form.register('password')}
-      />
+        {/* 비밀번호 */}
+        <Input
+          label="비밀번호"
+          required
+          hideRequiredLabel
+          type={showPassword ? 'text' : 'password'}
+          placeholder="비밀번호를 입력해주세요"
+          error={form.formState.errors.password?.message}
+          icon={showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+          onIconClick={togglePassword}
+          {...form.register('password')}
+        />
 
-      {/* 전체 에러 메시지 (root 에러) */}
-      {form.formState.errors.root && (
-        <p className="text-sm text-red-500">{form.formState.errors.root.message}</p>
-      )}
-
-      {/* 제출 버튼 */}
-      <div className="pt-8">
-        <Button type="submit" className="h-14 w-full text-base font-semibold">
-          로그인 →
-        </Button>
+        {/* 전체 에러 메시지 (root 에러) */}
+        {form.formState.errors.root && (
+          <p className="text-error text-[12px] leading-4.5 font-medium">
+            {form.formState.errors.root.message}
+          </p>
+        )}
       </div>
 
-      {/* 구글 로그인 버튼 — useSearchParams 사용으로 Suspense 필요 */}
-      <div className="pt-4">
-        <Suspense fallback={<div className="h-14 w-full animate-pulse rounded-lg bg-gray-100" />}>
+      <div className="space-y-3">
+        {/* 제출 버튼 */}
+        <Button type="submit" size="xl" className="typo-btn-1 w-full">
+          로그인
+        </Button>
+
+        {/* 구글 로그인 버튼 — useSearchParams 사용으로 Suspense 필요 */}
+        <Suspense fallback={<div className="h-10 w-full animate-pulse rounded-full bg-gray-100" />}>
           <GoogleLoginButton />
         </Suspense>
       </div>
 
       {/* 회원가입 링크 */}
-      <div className="pt-4 text-center">
-        <span className="text-sm text-gray-500">아직 계정이 없으신가요? </span>
-        <Link href="/auth/signup" className="text-primary text-sm font-medium underline">
+      <div className="text-center">
+        <span className="typo-body-7 text-(--app-gray-500)">아직 계정이 없으신가요? </span>
+        <Link href="/auth/signup" className="typo-body-7 text-primary font-medium underline">
           회원가입
         </Link>
       </div>

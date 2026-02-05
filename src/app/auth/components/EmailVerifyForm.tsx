@@ -12,6 +12,7 @@ type EmailVerifyFormProps = {
   email: string;
 };
 
+/** 이메일 인증 폼 컴포넌트 */
 export function EmailVerifyForm({ email }: EmailVerifyFormProps) {
   const router = useRouter();
   const [isResending, setIsResending] = useState(false);
@@ -54,9 +55,9 @@ export function EmailVerifyForm({ email }: EmailVerifyFormProps) {
       const data = err as SignupErrorResponse;
 
       if (data.code === 'INVALID_CODE') {
-        form.setError('code', { message: '인증 코드가 올바르지 않습니다.' });
+        form.setError('code', { message: '인증 번호가 올바르지 않습니다.' });
       } else if (data.code === 'EXPIRED_CODE') {
-        form.setError('code', { message: '인증 코드가 만료되었습니다. 재전송 요청을 해주세요.' });
+        form.setError('code', { message: '인증 번호가 만료되었습니다. 재전송 요청을 해주세요.' });
       } else {
         console.error('이메일 인증 실패:', data);
       }
