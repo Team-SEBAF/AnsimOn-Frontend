@@ -1,3 +1,4 @@
+import { AuthLogo } from '@/components/AuthLogo';
 import * as React from 'react';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -8,8 +9,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* 헤더 / 로고 */}
         <header className="mb-12 flex items-center gap-2">
           {/* 로고 이미지 교체 예정 */}
-          <div className="h-8 w-8 rounded-md bg-[#F6945B]" />
-          <span className="text-lg font-bold text-gray-900">안심온</span>
+          <AuthLogo />
         </header>
 
         {/* 페이지별 콘텐츠 */}
