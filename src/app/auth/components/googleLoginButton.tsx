@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button';
 import { useGoogleAuth, useGoogleLoginSideEffect } from '@/hooks/useGoogle';
-import { Loader2 } from 'lucide-react';
+import GoogleIcon from '@/assets/icons/google.svg';
 
 export function GoogleLoginButton() {
   const { loginWithGoogle } = useGoogleAuth();
@@ -9,16 +9,15 @@ export function GoogleLoginButton() {
   return (
     <Button
       type="button"
-      variant="outline"
-      color="secondary"
-      className="h-14 w-full border-gray-400 font-semibold text-gray-400"
+      className="typo-btn-2 bg-bg-1! h-10 w-full text-[#1f1f1f]!"
       onClick={loginWithGoogle}
-      disabled={googleLoading}
+      loading={googleLoading}
+      rounded="full"
     >
-      <div className="flex items-center justify-center gap-2">
-        구글 로그인
-        {googleLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-      </div>
+      <span className="flex items-center gap-2.5">
+        <GoogleIcon className="h-4.5 w-4.5" aria-hidden="true" />
+        Sign in with Google
+      </span>
     </Button>
   );
 }

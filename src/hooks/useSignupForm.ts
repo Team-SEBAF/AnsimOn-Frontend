@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormValues } from '@/schemas/auth/signup.schema';
-import { normalizeBirthdate } from '@/utils/date';
 import { signupEmail, SignupEmailPayload, SignupErrorResponse } from '@/app/api/auth/signup';
 
 export function useSignupForm() {
@@ -34,7 +33,7 @@ export function useSignupForm() {
       email: values.email,
       password: values.password,
       name: values.name,
-      birthdate: normalizeBirthdate(values.birthdate),
+      birthdate: values.birthdate,
     };
 
     try {

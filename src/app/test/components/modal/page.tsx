@@ -1,13 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { useModal } from '@/hooks/useModal';
-import { Modal } from '@/components/Modal';
+import { Modal } from '@/components/modals/Modal';
+import { EmailConfirmModal, LoginRequiredModal } from '@/components/modals';
 import { Button } from '@/components/Button';
 
 export default function ModalTestPage() {
   const basicModal = useModal();
   const confirmModal = useModal();
   const formModal = useModal();
+
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-neutral-50 p-8">
@@ -30,6 +35,20 @@ export default function ModalTestPage() {
             <Button onClick={formModal.open}>열기</Button>
           </div>
 
+          <hr className="my-4" />
+
+          <div>
+            <h2 className="mb-2 text-lg font-semibold">이메일 확인 모달</h2>
+            <p className="mb-2 text-sm text-neutral-500">회원가입 시 이메일 확인용</p>
+            <Button onClick={() => setEmailModalOpen(true)}>열기</Button>
+          </div>
+
+          <div>
+            <h2 className="mb-2 text-lg font-semibold">로그인 필요 모달</h2>
+            <p className="mb-2 text-sm text-neutral-500">로그인 필요 시 리다이렉트용</p>
+            <Button onClick={() => setLoginModalOpen(true)}>열기</Button>
+          </div>
+
           <div className="mt-6 rounded bg-neutral-100 p-4">
             <p className="text-sm text-neutral-600">
               <strong>사용법:</strong>
@@ -48,7 +67,7 @@ export default function ModalTestPage() {
       </div>
 
       {/* 기본 모달 */}
-      <Modal.Root {...basicModal.props} a11yTitle="기본 모달">
+      <Modal.Root {...basicModal.props}>
         <Modal.Header title="기본 모달" subTitle="간단한 안내 메시지" />
         <Modal.Body>
           <p className="text-sm text-neutral-600">이것은 기본 모달입니다.</p>
@@ -59,7 +78,7 @@ export default function ModalTestPage() {
       </Modal.Root>
 
       {/* 확인 모달 */}
-      <Modal.Root {...confirmModal.props} a11yTitle="확인 모달">
+      <Modal.Root {...confirmModal.props}>
         <Modal.Header title="정말 삭제하시겠습니까?" subTitle="이 작업은 되돌릴 수 없습니다" />
         <Modal.Body>
           <p className="text-sm text-neutral-600">삭제하면 모든 데이터가 영구적으로 제거됩니다.</p>
@@ -75,7 +94,7 @@ export default function ModalTestPage() {
       </Modal.Root>
 
       {/* 폼 모달 */}
-      <Modal.Root {...formModal.props} a11yTitle="폼 모달">
+      <Modal.Root {...formModal.props}>
         <Modal.Header title="프로필 수정" subTitle="정보를 입력해주세요" />
         <Modal.Body>
           <div className="space-y-4">
@@ -104,6 +123,27 @@ export default function ModalTestPage() {
           </Button>
         </Modal.Footer>
       </Modal.Root>
+
+      {/* 이메일 확인 모달 */}
+      <EmailConfirmModal
+        open={emailModalOpen}
+        email="test@example.com"
+        onConfirm={() => {
+          alert('인증번호 보내기 클릭');
+          setEmailModalOpen(false);
+        }}
+        onOpenChange={setEmailModalOpen}
+      />
+
+      {/* 로그인 필요 모달 */}
+      <LoginRequiredModal
+        open={loginModalOpen}
+        onConfirm={() => {
+          alert('로그인하기 클릭');
+          setLoginModalOpen(false);
+        }}
+        onOpenChange={setLoginModalOpen}
+      />
     </div>
   );
 }

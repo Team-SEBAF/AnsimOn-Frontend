@@ -8,6 +8,54 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* react-day-picker minimal layout (shadcn compatible) */
+/* 기존 react-day-picker 스타일 커스텀텀 */
+
+.rdp-root {
+  --rdp-cell-size: 1.75rem; /* 셀 크기 */
+}
+
+.rdp-month {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* 전체 높이 */
+}
+
+.rdp-weekdays,
+.rdp-week {
+  display: flex;
+}
+
+.rdp-weekday,
+.rdp-day {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rdp-cell-size);
+  height: var(--rdp-cell-size);
+}
+
+.rdp-weekday {
+  color: var(--app-gray-500);
+  font-size: 0.875rem;
+}
+
+.rdp-day_button {
+  width: 100%;
+  height: 100%;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+}
+
+.rdp-day_button:hover {
+  background-color: var(--app-gray-300);
+}
+
+.rdp-selected .rdp-day_button {
+  background-color: var(--app-gray-500);
+}
+
 /* shadcn/ui 변수 어댑터 */
 :root {
   --background: var(--color-bg-1);

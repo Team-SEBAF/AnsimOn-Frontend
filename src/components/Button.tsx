@@ -1,5 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
+import { Spinner } from './Spinner';
 
 /**
  * Button의 시각적 스타일 유형
@@ -30,7 +32,8 @@ type ButtonRounded = 'lg' | 'full';
  * Button 컴포넌트 Props
  *
  * + variant / color / size / rounded: 버튼 스타일 제어
- * + leftIcon / rightIcon / children: 버튼 콘텐츠
+ * + loading: 로딩 상태 (스피너 표시, 버튼 비활성화)
+ * + asChild: true면 자식 요소를 버튼으로 렌더링 (Link 등과 함께 사용)
  * + onClick, disabled, aria-* 등 기본 button 속성은 그대로 전달됨
  */
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,11 +41,10 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ButtonColor;
   size?: ButtonSize;
   rounded?: ButtonRounded;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  loading?: boolean;
+  asChild?: boolean;
 }
 
-/* Style maps */
 /* Style maps */
 
 /**
@@ -54,18 +56,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   md: 'h-8 px-3 gap-1.5 text-btn-2',
   lg: 'h-10 px-4 gap-2 text-btn-2',
   xl: 'h-12 px-6 gap-2 text-btn-1',
-};
-
-/**
- * 아이콘 전용 버튼 사이즈
- * - padding 없음
- * - width === height
- */
-const iconSizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-6 w-6',
-  md: 'h-8 w-8',
-  lg: 'h-10 w-10',
-  xl: 'h-12 w-12',
 };
 
 /**
@@ -116,48 +106,57 @@ const colorStyles: Record<ButtonColor, Record<ButtonVariant, string>> = {
  * 모든 버튼에 공통으로 적용되는 기본 스타일
  */
 const baseStyles =
-  'inline-flex items-center justify-center font-medium ' +
+  'relative inline-flex items-center justify-center font-medium ' +
   'transition-colors ' +
   'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
 
 /* Component */
-/* Component */
 
 /**
  * 공용 Button 컴포넌트
  * - 다양한 시각적 스타일 옵션 제공
- * - action 전용 button 컴포넌트
- * - 텍스트 버튼 / 아이콘 버튼 모두 지원
- * - 아이콘 전용 버튼에서 aria-label 사용 권장
+ * - loading: 로딩 상태에서 스피너 표시
+ * - asChild: Link 등 다른 요소를 버튼 스타일로 렌더링
  */
 export function Button({
   variant = 'default',
   color = 'primary',
   size = 'md',
   rounded = 'lg',
-  leftIcon,
-  rightIcon,
+  loading = false,
+  disabled,
   children,
   className,
+  asChild = false,
   ...props
 }: ButtonProps) {
-  const isIconOnly = !children && (leftIcon || rightIcon);
+  const buttonClassName = clsx(
+    baseStyles,
+    sizeStyles[size],
+    roundedStyles[rounded],
+    colorStyles[color][variant],
+    className,
+  );
+
+  if (asChild) {
+    return (
+      <Slot {...props} className={buttonClassName}>
+        {children}
+      </Slot>
+    );
+  }
 
   return (
-    <button
-      {...props}
-      className={clsx(
-        baseStyles,
-        isIconOnly ? iconSizeStyles[size] : sizeStyles[size],
-        roundedStyles[rounded],
-        colorStyles[color][variant],
-        className,
+    <button {...props} disabled={disabled || loading} className={buttonClassName}>
+      <span className={loading ? 'invisible' : ''} aria-hidden={loading}>
+        {children}
+      </span>
+      {loading && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Spinner size={size === 'sm' ? 'sm' : size === 'xl' ? 'lg' : 'md'} />
+        </span>
       )}
-    >
-      {leftIcon && <span aria-hidden>{leftIcon}</span>}
-      {children && <span>{children}</span>}
-      {rightIcon && <span aria-hidden>{rightIcon}</span>}
     </button>
   );
 }
