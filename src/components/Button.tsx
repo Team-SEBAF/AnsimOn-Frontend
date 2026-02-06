@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { Slot } from '@radix-ui/react-slot';
+import { Spinner } from './Spinner';
 
 /**
  * Button의 시각적 스타일 유형
@@ -31,6 +32,7 @@ type ButtonRounded = 'lg' | 'full';
  * Button 컴포넌트 Props
  *
  * + variant / color / size / rounded: 버튼 스타일 제어
+ * + loading: 로딩 상태 (스피너 표시, 버튼 비활성화)
  * + asChild: true면 자식 요소를 버튼으로 렌더링 (Link 등과 함께 사용)
  * + onClick, disabled, aria-* 등 기본 button 속성은 그대로 전달됨
  */
@@ -39,6 +41,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ButtonColor;
   size?: ButtonSize;
   rounded?: ButtonRounded;
+  loading?: boolean;
   asChild?: boolean;
 }
 
@@ -113,6 +116,7 @@ const baseStyles =
 /**
  * 공용 Button 컴포넌트
  * - 다양한 시각적 스타일 옵션 제공
+ * - loading: 로딩 상태에서 스피너 표시
  * - asChild: Link 등 다른 요소를 버튼 스타일로 렌더링
  */
 export function Button({
@@ -120,6 +124,8 @@ export function Button({
   color = 'primary',
   size = 'md',
   rounded = 'lg',
+  loading = false,
+  disabled,
   children,
   className,
   asChild = false,
@@ -142,8 +148,8 @@ export function Button({
   }
 
   return (
-    <button {...props} className={buttonClassName}>
-      {children}
+    <button {...props} disabled={disabled || loading} className={buttonClassName}>
+      {loading ? <Spinner size={size === 'sm' ? 'sm' : size === 'xl' ? 'lg' : 'md'} /> : children}
     </button>
   );
 }

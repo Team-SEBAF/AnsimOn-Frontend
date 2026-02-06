@@ -140,6 +140,44 @@ export default function ButtonPreviewPage() {
           </Button>
         </div>
       </section>
+
+      {/* ================= Loading ================= */}
+      <section className="space-y-8">
+        <h2 className="text-xl font-semibold text-white">Loading</h2>
+
+        <div className="space-y-4">
+          <div className="text-sm text-gray-400">Sizes</div>
+          <div className="flex items-center gap-4">
+            {sizes.map((size) => (
+              <Button key={size} size={size} loading>
+                로딩 {size}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="text-sm text-gray-400">Variants</div>
+          <div className="flex items-center gap-4">
+            {variants.map((variant) => (
+              <Button key={variant} variant={variant} loading>
+                {variant}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="text-sm text-gray-400">Colors</div>
+          <div className="flex items-center gap-4">
+            {colors.map((color) => (
+              <Button key={color} color={color} loading>
+                {color}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
