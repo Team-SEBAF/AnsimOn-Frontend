@@ -106,7 +106,7 @@ const colorStyles: Record<ButtonColor, Record<ButtonVariant, string>> = {
  * 모든 버튼에 공통으로 적용되는 기본 스타일
  */
 const baseStyles =
-  'inline-flex items-center justify-center font-medium ' +
+  'relative inline-flex items-center justify-center font-medium ' +
   'transition-colors ' +
   'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ' +
   'disabled:pointer-events-none disabled:opacity-50';
@@ -149,7 +149,14 @@ export function Button({
 
   return (
     <button {...props} disabled={disabled || loading} className={buttonClassName}>
-      {loading ? <Spinner size={size === 'sm' ? 'sm' : size === 'xl' ? 'lg' : 'md'} /> : children}
+      <span className={loading ? 'invisible' : ''} aria-hidden={loading}>
+        {children}
+      </span>
+      {loading && (
+        <span className="absolute inset-0 flex items-center justify-center">
+          <Spinner size={size === 'sm' ? 'sm' : size === 'xl' ? 'lg' : 'md'} />
+        </span>
+      )}
     </button>
   );
 }
