@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import React from 'react';
+import { Slot } from '@radix-ui/react-slot';
 
 /**
  * Button의 시각적 스타일 유형
@@ -30,7 +31,7 @@ type ButtonRounded = 'lg' | 'full';
  * Button 컴포넌트 Props
  *
  * + variant / color / size / rounded: 버튼 스타일 제어
- * + leftIcon / rightIcon / children: 버튼 콘텐츠
+ * + asChild: true면 자식 요소를 버튼으로 렌더링 (Link 등과 함께 사용)
  * + onClick, disabled, aria-* 등 기본 button 속성은 그대로 전달됨
  */
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -38,11 +39,9 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color?: ButtonColor;
   size?: ButtonSize;
   rounded?: ButtonRounded;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
+  asChild?: boolean;
 }
 
-/* Style maps */
 /* Style maps */
 
 /**
@@ -54,18 +53,6 @@ const sizeStyles: Record<ButtonSize, string> = {
   md: 'h-8 px-3 gap-1.5 text-btn-2',
   lg: 'h-10 px-4 gap-2 text-btn-2',
   xl: 'h-12 px-6 gap-2 text-btn-1',
-};
-
-/**
- * 아이콘 전용 버튼 사이즈
- * - padding 없음
- * - width === height
- */
-const iconSizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-6 w-6',
-  md: 'h-8 w-8',
-  lg: 'h-10 w-10',
-  xl: 'h-12 w-12',
 };
 
 /**
@@ -122,42 +109,41 @@ const baseStyles =
   'disabled:pointer-events-none disabled:opacity-50';
 
 /* Component */
-/* Component */
 
 /**
  * 공용 Button 컴포넌트
  * - 다양한 시각적 스타일 옵션 제공
- * - action 전용 button 컴포넌트
- * - 텍스트 버튼 / 아이콘 버튼 모두 지원
- * - 아이콘 전용 버튼에서 aria-label 사용 권장
+ * - asChild: Link 등 다른 요소를 버튼 스타일로 렌더링
  */
 export function Button({
   variant = 'default',
   color = 'primary',
   size = 'md',
   rounded = 'lg',
-  leftIcon,
-  rightIcon,
   children,
   className,
+  asChild = false,
   ...props
 }: ButtonProps) {
-  const isIconOnly = !children && (leftIcon || rightIcon);
+  const buttonClassName = clsx(
+    baseStyles,
+    sizeStyles[size],
+    roundedStyles[rounded],
+    colorStyles[color][variant],
+    className,
+  );
+
+  if (asChild) {
+    return (
+      <Slot {...props} className={buttonClassName}>
+        {children}
+      </Slot>
+    );
+  }
 
   return (
-    <button
-      {...props}
-      className={clsx(
-        baseStyles,
-        isIconOnly ? iconSizeStyles[size] : sizeStyles[size],
-        roundedStyles[rounded],
-        colorStyles[color][variant],
-        className,
-      )}
-    >
-      {leftIcon && <span aria-hidden>{leftIcon}</span>}
-      {children && <span>{children}</span>}
-      {rightIcon && <span aria-hidden>{rightIcon}</span>}
+    <button {...props} className={buttonClassName}>
+      {children}
     </button>
   );
 }
