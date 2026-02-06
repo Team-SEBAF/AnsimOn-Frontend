@@ -18,7 +18,10 @@ import { Suspense } from 'react';
  * 1. 사용자 입력 → Zod 스키마 검증
  * 2. 폼 제출 → 로그인 API 호출 → 인증 토큰 저장 및 리다이렉트
  *
- * @todo 에러 메시지 UI 협의 후 개선 (alert 형태로 수정)
+ * @todo
+ * 에러 메시지 UI 협의 후 개선 (alert 형태로 수정)
+ * 하단 링크 페이지 경로 수정
+ *
  */
 export function LoginForm() {
   const { form, submit, showPassword, togglePassword } = useLoginForm();
@@ -70,10 +73,17 @@ export function LoginForm() {
         </Suspense>
       </div>
 
-      {/* 회원가입 링크 */}
-      <div className="text-center">
-        <span className="typo-body-7 text-(--app-gray-500)">아직 계정이 없으신가요? </span>
-        <Link href="/auth/signup" className="typo-body-7 text-primary font-medium underline">
+      {/* 하단 링크 */}
+      <div className="flex items-center justify-center gap-4">
+        <Link href="/" className="typo-btn-2 text-(--app-gray-500) hover:underline">
+          아이디 찾기
+        </Link>
+        <span className="h-3.5 w-px bg-(--app-gray-200)" />
+        <Link href="/" className="typo-btn-2 text-(--app-gray-500) hover:underline">
+          비밀번호 찾기
+        </Link>
+        <span className="h-3.5 w-px bg-(--app-gray-200)" />
+        <Link href="/auth/signup" className="typo-btn-2 text-(--app-gray-500) hover:underline">
           회원가입
         </Link>
       </div>

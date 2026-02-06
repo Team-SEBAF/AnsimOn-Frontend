@@ -14,8 +14,10 @@ export function GoogleLoginButton() {
       loading={googleLoading}
       rounded="full"
     >
-      <GoogleIcon className="h-4.5 w-4.5" aria-hidden="true" />
-      Sign in with Google
+      <span className="flex items-center gap-2.5">
+        <GoogleIcon className="h-4.5 w-4.5" aria-hidden="true" />
+        Sign in with Google
+      </span>
     </Button>
   );
 }
