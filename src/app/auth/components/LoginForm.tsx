@@ -6,8 +6,6 @@ import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
 import { useLoginForm } from '@/hooks/useLoginForm';
 import { GoogleLoginButton } from './googleLoginButton';
-import { Suspense } from 'react';
-
 /**
  * 로그인 폼 컴포넌트
  *
@@ -67,10 +65,8 @@ export function LoginForm() {
           로그인
         </Button>
 
-        {/* 구글 로그인 버튼 — useSearchParams 사용으로 Suspense 필요 */}
-        <Suspense fallback={<div className="h-10 w-full animate-pulse rounded-full bg-gray-100" />}>
-          <GoogleLoginButton />
-        </Suspense>
+        {/* 구글 로그인 버튼 */}
+        <GoogleLoginButton />
       </div>
 
       {/* 하단 링크 */}

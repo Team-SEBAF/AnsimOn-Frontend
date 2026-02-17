@@ -1,5 +1,4 @@
-'use client';
-
+import { Suspense } from 'react';
 import { LoginForm } from '../components/LoginForm';
 
 /** 로그인 페이지 */
@@ -18,8 +17,10 @@ export default function LoginPage() {
         </p>
       </div>
 
-      {/* 폼 */}
-      <LoginForm />
+      {/* 폼 — useSearchParams 사용으로 Suspense 필요 */}
+      <Suspense>
+        <LoginForm />
+      </Suspense>
     </div>
   );
 }

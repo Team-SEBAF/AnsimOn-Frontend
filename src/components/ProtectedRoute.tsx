@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/stores/authStore';
 import { LoginRequiredModal } from '@/components/modals';
 
@@ -21,6 +21,7 @@ import { LoginRequiredModal } from '@/components/modals';
  */
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { isLoggedIn, isAuthInitialized } = useAuthStore();
 
   /** 모달 닫기: 뒤로가기 시도, 불가능하면 홈으로 */
@@ -41,7 +42,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return (
       <LoginRequiredModal
         open={true}
-        onConfirm={() => router.push('/auth/login')}
+        onConfirm={() => router.push(`/auth/login?redirect=${encodeURIComponent(pathname)}`)}
         onOpenChange={handleClose}
       />
     );
