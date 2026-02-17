@@ -34,6 +34,12 @@ import { GnbLogo } from './GnbLogo';
 
 const NAV_ITEMS = [
   {
+    label: '고소장 작성',
+    href: '/my-space/case/collect',
+    icon: caseDefault,
+    activeIcon: caseActive,
+  },
+  {
     label: '스토킹 판단',
     href: '/my-space/stalking',
     icon: stalkingDefault,
@@ -44,12 +50,6 @@ const NAV_ITEMS = [
     href: '/my-space/evidence',
     icon: evidenceDefault,
     activeIcon: evidenceActive,
-  },
-  {
-    label: '고소장 작성',
-    href: '/my-space/case/collect',
-    icon: caseDefault,
-    activeIcon: caseActive,
   },
 ];
 
@@ -63,7 +63,7 @@ export function MySpaceSidebar() {
       collapsible="icon"
       className="bg-bg-1 w-50 border-none px-3 py-6 **:data-[sidebar=sidebar]:justify-between md:sticky! md:inset-y-auto! md:top-0! md:h-[calc(100vh-2rem)]!"
     >
-      <SidebarHeader className="flex-row items-center justify-between p-0 pr-2">
+      <SidebarHeader className="flex-row items-center justify-between gap-0 p-0 pr-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:pr-0">
         <div className="overflow-hidden opacity-100 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
           <GnbLogo />
         </div>
@@ -126,32 +126,31 @@ export function MySpaceSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          {/* TODO: 도움말 센터 페이지 시안 확정 후 링크 연결 */}
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
-              <Link href="/help" className="flex items-center gap-2">
-                <SidebarIcon2 className="size-4 shrink-0" />
-                <span className="inline-flex items-center gap-0.5">
-                  도움말 센터
-                  <ExternalLinkIcon className="size-4 shrink-0" />
-                </span>
-              </Link>
+            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
+              <SidebarIcon2 className="size-4 shrink-0" />
+              <span className="inline-flex items-center gap-0.5">
+                도움말 센터
+                <ExternalLinkIcon className="size-4 shrink-0" />
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
+          {/* TODO: 이용약관 및 정책 페이지 시안 확정 후 링크 연결 */}
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
-              <Link href="/terms" className="flex items-center gap-2">
-                <SidebarIcon3 className="size-4 shrink-0" />
-                <span className="inline-flex items-center gap-0.5">
-                  이용약관 및 정책
-                  <ExternalLinkIcon className="size-4 shrink-0" />
-                </span>
-              </Link>
+            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
+              <SidebarIcon3 className="size-4 shrink-0" />
+              <span className="inline-flex items-center gap-0.5">
+                이용약관 및 정책
+                <ExternalLinkIcon className="size-4 shrink-0" />
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
 
         <SidebarSeparator className="mx-0 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0" />
 
+        {/* TODO: 유저 메뉴 추후 연결 */}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -159,9 +158,9 @@ export function MySpaceSidebar() {
               tooltip={isLoggedIn ? (user?.name ?? '프로필') : 'Guest'}
               className="h-auto p-0"
             >
-              <div className="flex items-center gap-2 px-1 py-2">
+              <div className="flex items-center gap-2 px-1 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
                 <ProfileIcon className="size-5 shrink-0" />
-                <span className="typo-body-3 text-(--app-gray-600) transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
+                <span className="typo-body-3 text-(--app-gray-600) transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
                   {isLoggedIn ? `${user?.name ?? '...'}님` : 'Guest'}
                 </span>
               </div>
