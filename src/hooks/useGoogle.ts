@@ -65,8 +65,8 @@ export function useGoogleLoginSideEffect() {
         setGoogleLoading(false);
 
         // 3. OAuth state에서 redirect 경로 읽고 이동
-        const redirect = params.get('state') || '/my-space';
-        router.push(redirect);
+        const redirect = params.get('state') || '/my-space/case/collect';
+        router.replace(redirect);
       } catch {
         // TODO: 에러 토스트
       }
