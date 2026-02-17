@@ -175,7 +175,7 @@ export function MySpaceSidebar() {
                 color="primary"
                 className="typo-btn-2 flex-1 whitespace-nowrap"
               >
-                <Link href="/auth/login">로그인</Link>
+                <Link href={`/auth/login?redirect=${encodeURIComponent(pathname)}`}>로그인</Link>
               </Button>
               <Button
                 asChild
@@ -183,7 +183,7 @@ export function MySpaceSidebar() {
                 color="secondary"
                 className="typo-btn-2 flex-1 whitespace-nowrap"
               >
-                <Link href="/auth/signup">회원가입</Link>
+                <Link href={`/auth/signup?redirect=${encodeURIComponent(pathname)}`}>회원가입</Link>
               </Button>
             </li>
           )}

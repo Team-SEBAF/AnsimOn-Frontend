@@ -50,7 +50,8 @@ axiosInstance.interceptors.response.use(
       if (originalRequest.url?.includes('/token/refresh')) {
         authCookies.clearTokens();
         if (typeof window !== 'undefined') {
-          window.location.href = '/auth/login';
+          const redirect = encodeURIComponent(window.location.pathname);
+          window.location.href = `/auth/login?redirect=${redirect}`;
         }
         return Promise.reject(error);
       }
@@ -97,7 +98,8 @@ axiosInstance.interceptors.response.use(
         // 갱신 실패 → 로그아웃 처리
         authCookies.clearTokens();
         if (typeof window !== 'undefined') {
-          window.location.href = '/auth/login';
+          const redirect = encodeURIComponent(window.location.pathname);
+          window.location.href = `/auth/login?redirect=${redirect}`;
         }
         return Promise.reject(error);
       } finally {

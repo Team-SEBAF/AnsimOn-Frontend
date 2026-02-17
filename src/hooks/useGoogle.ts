@@ -8,6 +8,9 @@ export function useGoogleAuth() {
 
   // (1) 구글 로그인 함수
   const loginWithGoogle = () => {
+    // 현재 URL의 ?redirect= 값을 OAuth state에 담아서 콜백까지 전달
+    const redirect = new URLSearchParams(window.location.search).get('redirect');
+
     const params = new URLSearchParams({
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
       response_type: 'code',
@@ -15,6 +18,10 @@ export function useGoogleAuth() {
       redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
       identity_provider: 'Google',
     });
+
+    if (redirect) {
+      params.set('state', redirect);
+    }
 
     window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`;
   };
@@ -57,8 +64,9 @@ export function useGoogleLoginSideEffect() {
         login(access_token, refresh_token, id_token);
         setGoogleLoading(false);
 
-        // 3. 메인 페이지로 이동
-        router.push('/my-space');
+        // 3. OAuth state에서 redirect 경로 읽고 이동
+        const redirect = params.get('state') || '/my-space';
+        router.push(redirect);
       } catch {
         // TODO: 에러 토스트
       }

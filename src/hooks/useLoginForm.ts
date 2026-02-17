@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,6 +10,7 @@ import { useAuthStore } from '@/stores/authStore';
 
 export function useLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const login = useAuthStore((state) => state.login);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -32,8 +33,9 @@ export function useLoginForm() {
       // 2. 쿠키 저장 + Zustand 상태 업데이트
       login(access_token, refresh_token, id_token);
 
-      // 3. 메인 페이지로 이동
-      router.push('/my-space');
+      // 3. redirect 파라미터가 있으면 해당 경로로, 없으면 /my-space로 이동
+      const redirect = searchParams.get('redirect') || '/my-space';
+      router.push(redirect);
     } catch (err) {
       const data = err as LoginErrorResponse;
 
