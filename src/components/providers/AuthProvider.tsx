@@ -15,10 +15,19 @@ interface AuthProviderProps {
  */
 export function AuthProvider({ children }: AuthProviderProps) {
   const initAuth = useAuthStore((state) => state.initAuth);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const fetchUser = useAuthStore((state) => state.fetchUser);
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      console.log('[AuthProvider] isLoggedIn=true → fetchUser 호출');
+      fetchUser();
+    }
+  }, [isLoggedIn, fetchUser]);
 
   return <>{children}</>;
 }

@@ -56,6 +56,7 @@ const NAV_ITEMS = [
 export function MySpaceSidebar() {
   const pathname = usePathname();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const user = useAuthStore((s) => s.user);
 
   return (
     <Sidebar
@@ -155,13 +156,13 @@ export function MySpaceSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              tooltip={isLoggedIn ? '프로필' : 'Guest'}
+              tooltip={isLoggedIn ? (user?.name ?? '프로필') : 'Guest'}
               className="h-auto p-0"
             >
               <div className="flex items-center gap-2 px-1 py-2">
                 <ProfileIcon className="size-5 shrink-0" />
                 <span className="typo-body-3 text-(--app-gray-600) transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
-                  {isLoggedIn ? '유저 이름' : 'Guest'}
+                  {isLoggedIn ? `${user?.name ?? '...'}님` : 'Guest'}
                 </span>
               </div>
             </SidebarMenuButton>
