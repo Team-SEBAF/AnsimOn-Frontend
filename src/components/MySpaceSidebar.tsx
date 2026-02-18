@@ -35,7 +35,7 @@ import { GnbLogo } from './GnbLogo';
 const NAV_ITEMS = [
   {
     label: '고소장 작성',
-    href: '/my-space/case/collect',
+    href: '/my-space/case',
     icon: caseDefault,
     activeIcon: caseActive,
   },
@@ -75,10 +75,7 @@ export function MySpaceSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {NAV_ITEMS.map((item) => {
-                const isActive =
-                  item.href === '/my-space/case/collect'
-                    ? pathname.startsWith('/my-space/case')
-                    : pathname === item.href;
+                const isActive = pathname === item.href;
 
                 return (
                   <SidebarMenuItem key={item.href}>
