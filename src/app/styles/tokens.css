@@ -217,6 +217,19 @@
   --color-sub-btn-pressed: var(--app-color-sub-btn-pressed);
   --color-sub-btn-disabled: var(--app-color-sub-btn-disabled);
 
+  /* Gray */
+  --color-gray-50: var(--app-gray-50);
+  --color-gray-100: var(--app-gray-100);
+  --color-gray-200: var(--app-gray-200);
+  --color-gray-300: var(--app-gray-300);
+  --color-gray-400: var(--app-gray-400);
+  --color-gray-500: var(--app-gray-500);
+  --color-gray-600: var(--app-gray-600);
+  --color-gray-700: var(--app-gray-700);
+  --color-gray-800: var(--app-gray-800);
+  --color-gray-900: var(--app-gray-900);
+  --color-gray-950: var(--app-gray-950);
+
   /* Background */
   --color-bg-1: var(--app-color-bg-1);
   --color-bg-2: var(--app-color-bg-2);
