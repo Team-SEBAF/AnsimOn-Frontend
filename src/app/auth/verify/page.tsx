@@ -32,13 +32,11 @@ export default function VerifyPage() {
     <div className="pb-24">
       <div className="mb-8">
         <h1 className="typo-display-2 mb-2 text-black">이메일 인증</h1>
-        <p className="typo-body-4 text-(--app-gray-500)">
-          인증번호를 입력하고 인증을 완료해주세요.
-        </p>
+        <p className="typo-body-4 text-gray-500">인증번호를 입력하고 인증을 완료해주세요.</p>
       </div>
 
       {isLoading ? (
-        <div className="flex flex-col items-center gap-4 pt-4 text-(--app-gray-400)">
+        <div className="flex flex-col items-center gap-4 pt-4 text-gray-400">
           <Loader2 size={40} className="animate-spin" />
           <span className="typo-body-7">이메일 정보를 확인하고 있어요...</span>
         </div>

@@ -31,10 +31,9 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
 }
 
 const INPUT_BASE_STYLES =
-  'w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-none typo-body-7 placeholder:typo-placeholder border-(--app-gray-200) placeholder:text-(--app-gray-400) focus:border-(--app-gray-400) bg-white text-(--app-gray-900)';
+  'w-full rounded-md border px-3 py-1 transition-colors focus-visible:outline-none typo-body-7 placeholder:typo-placeholder border-gray-200 placeholder:text-gray-400 focus:border-gray-400 bg-white text-gray-900';
 const INPUT_ERROR_STYLES = 'border-error border-[1.5px] focus:border-error';
-const INPUT_DISABLED_STYLES =
-  'cursor-not-allowed bg-(--app-gray-300) text-(--app-gray-500) border-(--app-gray-300)';
+const INPUT_DISABLED_STYLES = 'cursor-not-allowed bg-gray-300 text-gray-500 border-gray-300';
 const INPUT_SIZE_STYLES: Record<InputSize, string> = {
   sm: 'h-8', // 32px
   md: 'h-10', // 40px
@@ -75,7 +74,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div>
         {/* 라벨 + 필수 표시 */}
         {label && (
-          <label className="typo-label mb-2 block text-(--app-gray-700)">
+          <label className="typo-label mb-2 block text-gray-700">
             {label}
             {required && !hideRequiredLabel && <span className="text-primary ml-2">필수</span>}
           </label>

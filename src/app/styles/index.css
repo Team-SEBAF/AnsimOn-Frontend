@@ -37,7 +37,7 @@
 }
 
 .rdp-weekday {
-  color: var(--app-gray-500);
+  color: var(--color-gray-500);
   font-size: 0.875rem;
 }
 
@@ -49,11 +49,11 @@
 }
 
 .rdp-day_button:hover {
-  background-color: var(--app-gray-300);
+  background-color: var(--color-gray-300);
 }
 
 .rdp-selected .rdp-day_button {
-  background-color: var(--app-gray-500);
+  background-color: var(--color-gray-500);
 }
 
 /* shadcn/ui 변수 어댑터 */

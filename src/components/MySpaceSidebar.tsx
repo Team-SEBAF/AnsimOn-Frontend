@@ -67,7 +67,7 @@ export function MySpaceSidebar() {
         <div className="overflow-hidden opacity-100 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
           <GnbLogo />
         </div>
-        <SidebarTrigger className="h-4 w-4 text-(--app-gray-400)" />
+        <SidebarTrigger className="h-4 w-4 text-gray-400" />
       </SidebarHeader>
 
       <SidebarContent className="justify-center p-0">
@@ -83,7 +83,7 @@ export function MySpaceSidebar() {
                       asChild
                       isActive={isActive}
                       tooltip={item.label}
-                      className="typo-heading-5 h-12 p-0 text-(--app-gray-300) group-data-[collapsible=icon]:size-12! data-[active=true]:font-semibold data-[active=true]:text-(--app-gray-800)"
+                      className="typo-heading-5 h-12 p-0 text-gray-300 group-data-[collapsible=icon]:size-12! data-[active=true]:font-semibold data-[active=true]:text-gray-800"
                     >
                       <Link href={item.href}>
                         <span className="relative size-12 shrink-0">
@@ -116,7 +116,7 @@ export function MySpaceSidebar() {
       <SidebarFooter className="gap-3 p-0">
         <SidebarMenu className="max-h-40 gap-3 overflow-hidden opacity-100 transition-[opacity,max-height] delay-150 duration-300 group-data-[collapsible=icon]:max-h-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
           <SidebarMenuItem className="h-auto">
-            <SidebarMenuButton asChild className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
+            <SidebarMenuButton asChild className="typo-heading-6 h-auto p-0 text-gray-400">
               <Link href="/support" className="flex items-center gap-2">
                 <SidebarIcon1 className="size-4 shrink-0" />
                 고객 센터
@@ -125,7 +125,7 @@ export function MySpaceSidebar() {
           </SidebarMenuItem>
           {/* TODO: 도움말 센터 페이지 시안 확정 후 링크 연결 */}
           <SidebarMenuItem>
-            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
+            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-gray-400">
               <SidebarIcon2 className="size-4 shrink-0" />
               <span className="inline-flex items-center gap-0.5">
                 도움말 센터
@@ -135,7 +135,7 @@ export function MySpaceSidebar() {
           </SidebarMenuItem>
           {/* TODO: 이용약관 및 정책 페이지 시안 확정 후 링크 연결 */}
           <SidebarMenuItem>
-            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-(--app-gray-400)">
+            <SidebarMenuButton className="typo-heading-6 h-auto p-0 text-gray-400">
               <SidebarIcon3 className="size-4 shrink-0" />
               <span className="inline-flex items-center gap-0.5">
                 이용약관 및 정책
@@ -157,7 +157,7 @@ export function MySpaceSidebar() {
             >
               <div className="flex items-center gap-2 px-1 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
                 <ProfileIcon className="size-5 shrink-0" />
-                <span className="typo-body-3 text-(--app-gray-600) transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
+                <span className="typo-body-3 text-gray-600 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
                   {isLoggedIn ? `${user?.name ?? '...'}님` : 'Guest'}
                 </span>
               </div>

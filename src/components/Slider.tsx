@@ -94,7 +94,7 @@ export default function Slider() {
             onClick={() => instanceRef.current?.moveToIdx(idx)}
             aria-label={`${idx + 1}번 슬라이드로 이동`}
             className={`h-3 w-3 rounded-full transition ${
-              currentSlide === idx ? 'bg-primary' : 'bg-(--app-gray-200)'
+              currentSlide === idx ? 'bg-primary' : 'bg-gray-200'
             }`}
           />
         ))}

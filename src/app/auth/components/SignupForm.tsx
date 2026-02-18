@@ -173,7 +173,7 @@ export function SignupForm() {
               checked={isAllChecked}
               onCheckedChange={(checked) => handleAgreeAll(checked === true)}
             />
-            <span className="typo-heading-3 text-(--app-gray-800)">전체동의</span>
+            <span className="typo-heading-3 text-gray-800">전체동의</span>
           </label>
 
           {AGREEMENT_ITEMS.map((item) => (
@@ -186,13 +186,13 @@ export function SignupForm() {
                   onCheckedChange={(checked) => form.setValue(item.id, checked === true)}
                 />
                 {item.required && <span className="typo-label text-primary">필수</span>}
-                <span className="typo-body-7 text-(--app-gray-800)">{item.label}</span>
+                <span className="typo-body-7 text-gray-800">{item.label}</span>
               </label>
 
               {item.showLink && (
                 <button
                   type="button"
-                  className="typo-label text-(--app-gray-400) underline hover:text-(--app-gray-500)"
+                  className="typo-label text-gray-400 underline hover:text-gray-500"
                   onClick={() => {
                     // TODO: 약관 보기 모달/페이지 연결
                   }}
