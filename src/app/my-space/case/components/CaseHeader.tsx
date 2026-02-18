@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import EditOutlineIcon from '@/assets/icons/EditOutlineIcon.svg';
@@ -56,15 +56,25 @@ export function CaseHeader({
 
   /** 편집 확정 */
   const confirmEdit = () => {
-    const trimmed = draft.trim();
-    if (trimmed) onTitleChange(trimmed);
+    const trimmedTitle = draft.trim();
+    if (trimmedTitle) {
+      onTitleChange(trimmedTitle);
+    } else {
+      setDraft(title); // 빈 제목은 허용하지 않고 원래 제목으로 복구
+    }
+    setIsEditing(false);
+  };
+
+  /** 편집 취소 */
+  const cancelEdit = () => {
+    setDraft(title);
     setIsEditing(false);
   };
 
   /** Enter로 확정, Escape로 취소 */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') confirmEdit();
-    if (e.key === 'Escape') setIsEditing(false);
+    if (e.key === 'Escape') cancelEdit();
   };
 
   return (
@@ -81,9 +91,14 @@ export function CaseHeader({
             size="sm"
           />
         ) : (
-          <button type="button" onClick={startEditing} className="flex items-center gap-2">
+          <button
+            type="button"
+            aria-label="사건 제목 편집"
+            onClick={startEditing}
+            className="flex items-center gap-2"
+          >
             <h1 className="typo-heading-2">{title || '사건 제목'}</h1>
-            <EditOutlineIcon className="size-5 text-(--app-gray-400)" />
+            <EditOutlineIcon className="aria-hidden size-5 text-(--app-gray-400)" />
           </button>
         )}
         <span className="typo-body-8 text-(--app-gray-400)">최종 수정일: {updatedAt}</span>
@@ -92,10 +107,10 @@ export function CaseHeader({
         <Button color="secondary" size="lg" onClick={onSave} loading={isSaving}>
           저장
         </Button>
-        <Button color="secondary" size="lg" onClick={onPrev} disabled={!hasPrev}>
+        <Button color="secondary" size="lg" onClick={onPrev} disabled={!hasPrev || isSaving}>
           이전
         </Button>
-        <Button color="primary" size="lg" onClick={onNext} disabled={!hasNext}>
+        <Button color="primary" size="lg" onClick={onNext} disabled={!hasNext || isSaving}>
           다음 단계로
         </Button>
       </div>
