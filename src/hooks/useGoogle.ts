@@ -14,7 +14,7 @@ export function useGoogleAuth() {
     const params = new URLSearchParams({
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
       response_type: 'code',
-      scope: 'openid email profile',
+      scope: 'openid email profile aws.cognito.signin.user.admin',
       redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
       identity_provider: 'Google',
     });
