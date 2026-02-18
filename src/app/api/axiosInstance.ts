@@ -1,10 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { authCookies } from '@/utils/auth';
-
-export type ApiError = {
-  code?: string;
-  message?: string;
-};
+import type { ApiError } from '@/types/api';
 
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,

@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormValues } from '@/schemas/auth/signup.schema';
-import { signupEmail, SignupEmailPayload, SignupErrorResponse } from '@/app/api/auth/signup';
+import { signupEmail, SignupEmailPayload } from '@/app/api/auth/signup';
+import type { ApiError } from '@/types/api';
 
 export function useSignupForm() {
   const router = useRouter();
@@ -41,12 +42,14 @@ export function useSignupForm() {
       sessionStorage.setItem('signupEmail', values.email);
       router.push('/auth/verify');
     } catch (err) {
-      const data = err as SignupErrorResponse;
+      const data = err as ApiError;
 
       if (data?.code === 'EMAIL_ALREADY_EXISTS') {
-        form.setError('email', { message: '이미 가입된 이메일입니다' });
+        form.setError('email', { message: data.message });
+      } else if (data?.code === 'INVALID_PASSWORD') {
+        form.setError('password', { message: data.message });
       } else {
-        console.error('회원가입 실패:', data);
+        form.setError('root', { message: data?.message ?? '회원가입에 실패했습니다' });
       }
 
       sessionStorage.removeItem('signupEmail');
