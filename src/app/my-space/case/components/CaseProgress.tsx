@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 interface CaseProgressProps {
   currentStep: 1 | 2 | 3 | 4;
 }
@@ -22,7 +24,7 @@ export function CaseProgress({ currentStep }: CaseProgressProps) {
         const isActive = currentStep === item.step;
 
         return (
-          <>
+          <Fragment key={item.step}>
             {/* 스텝 사이 dash 연결선 (첫 번째 제외) */}
             {index > 0 && (
               <div
@@ -35,7 +37,7 @@ export function CaseProgress({ currentStep }: CaseProgressProps) {
             )}
 
             {/* 스텝 아이템 */}
-            <div key={item.step} className="flex w-30 flex-col items-center">
+            <div className="flex w-30 flex-col items-center">
               <span
                 className={`typo-heading-6 transition-colors duration-300 ${isActive ? 'text-primary' : 'text-(--app-gray-200)'}`}
               >
@@ -47,7 +49,7 @@ export function CaseProgress({ currentStep }: CaseProgressProps) {
                 {item.label}
               </span>
             </div>
-          </>
+          </Fragment>
         );
       })}
     </div>
