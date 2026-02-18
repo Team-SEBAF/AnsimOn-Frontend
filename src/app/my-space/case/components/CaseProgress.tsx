@@ -31,7 +31,7 @@ export function CaseProgress({ currentStep }: CaseProgressProps) {
                 className="h-px flex-1"
                 style={{
                   backgroundImage:
-                    'repeating-linear-gradient(to right, var(--app-gray-200) 0, var(--app-gray-200) 4px, transparent 4px, transparent 8px)',
+                    'repeating-linear-gradient(to right, var(--color-gray-200) 0, var(--color-gray-200) 4px, transparent 4px, transparent 8px)',
                 }}
               />
             )}
@@ -39,12 +39,12 @@ export function CaseProgress({ currentStep }: CaseProgressProps) {
             {/* 스텝 아이템 */}
             <div className="flex w-30 flex-col items-center">
               <span
-                className={`typo-heading-6 transition-colors duration-300 ${isActive ? 'text-primary' : 'text-(--app-gray-200)'}`}
+                className={`typo-heading-6 transition-colors duration-300 ${isActive ? 'text-primary' : 'text-gray-200'}`}
               >
                 STEP 0{item.step}
               </span>
               <span
-                className={`typo-heading-2 transition-colors duration-300 ${isActive ? 'text-(--app-gray-800)' : 'text-(--app-gray-300)'}`}
+                className={`typo-heading-2 transition-colors duration-300 ${isActive ? 'text-gray-800' : 'text-gray-300'}`}
               >
                 {item.label}
               </span>

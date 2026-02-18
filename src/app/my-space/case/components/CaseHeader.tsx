@@ -78,7 +78,7 @@ export function CaseHeader({
   };
 
   return (
-    <div className="flex w-full justify-between border-b border-(--app-gray-100) p-6">
+    <div className="flex w-full justify-between border-b border-gray-100 p-6">
       <div className="flex flex-col gap-1">
         {/* 제목 표시 / 편집 */}
         {isEditing ? (
@@ -98,10 +98,10 @@ export function CaseHeader({
             className="flex items-center gap-2"
           >
             <h1 className="typo-heading-2">{title || '사건 제목'}</h1>
-            <EditOutlineIcon className="aria-hidden size-5 text-(--app-gray-400)" />
+            <EditOutlineIcon className="aria-hidden size-5 text-gray-400" />
           </button>
         )}
-        <span className="typo-body-8 text-(--app-gray-400)">최종 수정일: {updatedAt}</span>
+        <span className="typo-body-8 text-gray-400">최종 수정일: {updatedAt}</span>
       </div>
       <div className="flex items-center gap-2">
         <Button color="secondary" size="lg" onClick={onSave} loading={isSaving}>

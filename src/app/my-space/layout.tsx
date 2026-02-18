@@ -7,9 +7,7 @@ export default function MySpaceLayout({ children }: { children: ReactNode }) {
     <SidebarProvider>
       <div className="bg-bg1 flex min-h-screen w-full pt-4 pl-6">
         <MySpaceSidebar />
-        <main className="bg-bg-2 flex-1 rounded-tl-3xl border border-(--app-gray-100)">
-          {children}
-        </main>
+        <main className="bg-bg-2 flex-1 rounded-tl-3xl border border-gray-100">{children}</main>
       </div>
     </SidebarProvider>
   );

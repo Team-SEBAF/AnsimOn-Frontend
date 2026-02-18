@@ -12,9 +12,7 @@ export default function LoginPage() {
           <br />
           For you <span className="text-primary">AnsimON</span>
         </h1>
-        <p className="typo-body-4 text-(--app-gray-400)">
-          No personal credit checks or founder guarantee.
-        </p>
+        <p className="typo-body-4 text-gray-400">No personal credit checks or founder guarantee.</p>
       </div>
 
       {/* 폼 — useSearchParams 사용으로 Suspense 필요 */}

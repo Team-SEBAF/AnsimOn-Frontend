@@ -71,15 +71,15 @@ export function LoginForm() {
 
       {/* 하단 링크 */}
       <div className="flex items-center justify-center gap-4">
-        <Link href="/" className="typo-btn-2 text-(--app-gray-500) hover:underline">
+        <Link href="/" className="typo-btn-2 text-gray-500 hover:underline">
           아이디 찾기
         </Link>
-        <span className="h-3.5 w-px bg-(--app-gray-200)" />
-        <Link href="/" className="typo-btn-2 text-(--app-gray-500) hover:underline">
+        <span className="h-3.5 w-px bg-gray-200" />
+        <Link href="/" className="typo-btn-2 text-gray-500 hover:underline">
           비밀번호 찾기
         </Link>
-        <span className="h-3.5 w-px bg-(--app-gray-200)" />
-        <Link href="/auth/signup" className="typo-btn-2 text-(--app-gray-500) hover:underline">
+        <span className="h-3.5 w-px bg-gray-200" />
+        <Link href="/auth/signup" className="typo-btn-2 text-gray-500 hover:underline">
           회원가입
         </Link>
       </div>
