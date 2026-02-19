@@ -5,7 +5,8 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormValues } from '@/schemas/auth/login.schema';
-import { loginEmail, LoginErrorResponse } from '@/app/api/auth/login';
+import { loginEmail } from '@/app/api/auth/login';
+import type { ApiError } from '@/types/api';
 import { useAuthStore } from '@/stores/authStore';
 
 export function useLoginForm() {
@@ -37,22 +38,18 @@ export function useLoginForm() {
       const redirect = searchParams.get('redirect') || '/my-space/case/collect';
       router.replace(redirect);
     } catch (err) {
-      const data = err as LoginErrorResponse;
+      const data = err as ApiError;
 
-      // 에러 코드에 따른 처리
       if (data?.code === 'USER_NOT_FOUND') {
-        form.setError('email', { message: '존재하지 않는 이메일입니다' });
+        form.setError('email', { message: data.message });
       } else if (data?.code === 'INVALID_CREDENTIALS') {
-        // 이메일 인증 페이지에서 사용할 수 있도록 세션에 저장
         sessionStorage.setItem('loginEmail', values.email);
-        form.setError('password', { message: '이메일 또는 비밀번호가 올바르지 않습니다' });
+        form.setError('password', { message: data.message });
       } else if (data?.code === 'USER_NOT_CONFIRMED') {
-        // TODO: 이메일 인증 페이지로 리다이렉트 모달 추가
         sessionStorage.setItem('loginEmail', values.email);
-        form.setError('root', { message: '이메일 인증이 완료되지 않았습니다' });
+        form.setError('root', { message: data.message });
       } else {
-        // 기타 에러
-        form.setError('root', { message: data?.message || '로그인에 실패했습니다' });
+        form.setError('root', { message: data?.message ?? '로그인에 실패했습니다' });
       }
     }
   };

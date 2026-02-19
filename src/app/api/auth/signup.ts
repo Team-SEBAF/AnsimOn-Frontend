@@ -12,11 +12,6 @@ export type VerifyEmailPayload = {
   code: string;
 };
 
-export type SignupErrorResponse = {
-  code?: string;
-  message?: string;
-};
-
 export async function signupEmail(payload: SignupEmailPayload): Promise<void> {
   await axiosInstance.post('/api/v1/users/signup/email', payload);
 }

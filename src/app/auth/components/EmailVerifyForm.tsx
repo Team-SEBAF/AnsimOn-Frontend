@@ -1,11 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { VerifyEmailFormValues, verifyEmailSchema } from '@/schemas/auth/verify-email.schema';
-import { useRouter } from 'next/navigation';
-import { SignupErrorResponse, verifyEmail, resendVerificationEmail } from '@/app/api/auth/signup';
+import { useEmailVerifyForm } from '@/hooks/useEmailVerifyForm';
 import { ActionInput } from '@/components/ActionInput';
 
 type EmailVerifyFormProps = {
@@ -14,57 +9,7 @@ type EmailVerifyFormProps = {
 
 /** 이메일 인증 폼 컴포넌트 */
 export function EmailVerifyForm({ email }: EmailVerifyFormProps) {
-  const router = useRouter();
-  const [isResending, setIsResending] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
-
-  const form = useForm<VerifyEmailFormValues>({
-    resolver: zodResolver(verifyEmailSchema),
-    mode: 'onBlur',
-    defaultValues: {
-      email,
-      code: '',
-    },
-  });
-
-  const handleResend = async () => {
-    setIsResending(true);
-    try {
-      await resendVerificationEmail(email);
-      // TODO: 성공 토스트 메시지
-    } catch (err) {
-      console.error('이메일 재전송 실패:', err);
-      // TODO: 실패 토스트 메시지
-    } finally {
-      setIsResending(false);
-    }
-  };
-
-  const handleVerify = async () => {
-    const isValid = await form.trigger('code');
-    if (!isValid) return;
-
-    setIsVerifying(true);
-    try {
-      const values = form.getValues();
-      await verifyEmail(values);
-
-      sessionStorage.removeItem('signupEmail');
-      router.replace('/auth/login');
-    } catch (err) {
-      const data = err as SignupErrorResponse;
-
-      if (data.code === 'INVALID_CODE') {
-        form.setError('code', { message: '인증 번호가 올바르지 않습니다.' });
-      } else if (data.code === 'EXPIRED_CODE') {
-        form.setError('code', { message: '인증 번호가 만료되었습니다. 재전송 요청을 해주세요.' });
-      } else {
-        console.error('이메일 인증 실패:', data);
-      }
-    } finally {
-      setIsVerifying(false);
-    }
-  };
+  const { form, handleResend, handleVerify, isResending, isVerifying } = useEmailVerifyForm(email);
 
   return (
     <div className="flex flex-col gap-2">
