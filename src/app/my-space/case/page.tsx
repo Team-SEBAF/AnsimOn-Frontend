@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useAuthStore } from '@/stores/authStore';
+import { useComplaint, useUpdateComplaint } from '@/hooks/useComplaint';
+import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
 import {
   CaseHeader,
   CaseProgress,
@@ -9,8 +11,6 @@ import {
   StepDocument,
   StepComplete,
 } from './components';
-
-type Step = 1 | 2 | 3 | 4;
 
 const MIN_STEP: Step = 1;
 const MAX_STEP: Step = 4;
@@ -29,30 +29,51 @@ const clampStep = (n: number): Step => {
  * - 이전/다음 버튼 → step 변경 → 헤더·프로그레스·컨텐츠 동기화
  */
 export default function CasePage() {
-  // TODO: React Query로 전환
-  // - useQuery로 GET /api/v1/complaints/my-complaint 조회 (title, step, updatedAt)
-  // - useMutation으로 PATCH /api/v1/complaints/my-complaint (title, step 저장)
-  // - useState 제거 후 서버 데이터로 대체
-  const [title, setTitle] = useState('사건 제목');
-  const [step, setStep] = useState<Step>(1);
+  const user = useAuthStore((s) => s.user);
+  const { data: complaint, isLoading } = useComplaint(user?.complaint_id);
+  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user?.complaint_id);
 
-  /** 다음 스텝으로 이동 (최대 4) */
-  const goNext = () => setStep((prev) => clampStep(prev + 1));
-  /** 이전 스텝으로 이동 (최소 1) */
-  const goPrev = () => setStep((prev) => clampStep(prev - 1));
+  // 서버 데이터 → 프론트 step 변환
+  const step: Step = complaint ? STEP_MAP[complaint.step] : 1;
+  const title = complaint?.name ?? '사건 제목';
+
+  /** 다음 스텝으로 이동 + 서버 저장 */
+  const goNext = () => {
+    const nextStep = clampStep(step + 1);
+    save({ step: STEP_REVERSE_MAP[nextStep] });
+  };
+
+  /** 이전 스텝으로 이동 + 서버 저장 */
+  const goPrev = () => {
+    const prevStep = clampStep(step - 1);
+    save({ step: STEP_REVERSE_MAP[prevStep] });
+  };
+
+  /** 제목 변경 + 서버 저장 */
+  const handleTitleChange = (newTitle: string) => {
+    save({ name: newTitle });
+  };
+
+  /** 저장 버튼 클릭 */
+  const handleSave = () => {
+    save({ name: title, step: STEP_REVERSE_MAP[step] });
+  };
+
+  if (isLoading) return <div className="p-6">로딩 중...</div>;
 
   return (
     <div>
       {/* 상단 헤더: 제목 편집 + 저장 + 이전/다음 버튼 */}
       <CaseHeader
         title={title}
-        onTitleChange={setTitle}
-        onSave={() => {}}
+        onTitleChange={handleTitleChange}
+        onSave={handleSave}
+        isSaving={isSaving}
         onPrev={goPrev}
         onNext={goNext}
         hasPrev={step > MIN_STEP}
         hasNext={step < MAX_STEP}
-        updatedAt="2021.02.22"
+        updatedAt={complaint?.updated_at ?? ''}
       />
       <div className="p-6">
         {/* 4단계 프로그레스 바 */}
