@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuthStore } from '@/stores/authStore';
-import { useComplaint, useUpdateComplaint } from '@/hooks/useComplaint';
+import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
 import {
   CaseHeader,

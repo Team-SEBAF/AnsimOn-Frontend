@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifyEmailFormValues, verifyEmailSchema } from '@/schemas/auth/verify-email.schema';
-import { verifyEmail, resendVerificationEmail } from '@/app/api/auth/signup';
+import { verifyEmail, resendVerificationEmail } from '@/api/auth/signup';
 import type { ApiError } from '@/types/api';
 
 export function useEmailVerifyForm(email: string) {

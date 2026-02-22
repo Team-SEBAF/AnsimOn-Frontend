@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getComplaint, updateComplaint } from '@/app/api/complaint';
+import { getComplaint, updateComplaint } from '@/api/complaint';
 import type { UpdateComplaintPayload } from '@/types/complaint';
 
 // 고소장 조회 훅

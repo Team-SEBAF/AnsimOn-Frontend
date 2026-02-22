@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { useLoginForm } from '@/hooks/useLoginForm';
+import { useLoginForm } from '../hooks/useLoginForm';
 import { GoogleLoginButton } from './googleLoginButton';
 /**
  * 로그인 폼 컴포넌트
