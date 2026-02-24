@@ -55,6 +55,6 @@ export const authCookies = {
     Cookies.remove(ID_TOKEN_KEY, { path: '/' });
   },
 
-  // 로그인 여부
-  isLoggedIn: () => !!Cookies.get(ACCESS_TOKEN_KEY),
+  // 로그인 여부 (refresh_token 기준 - 3일간 세션 유지)
+  isLoggedIn: () => !!Cookies.get(REFRESH_TOKEN_KEY),
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEmailVerifyForm } from '@/hooks/useEmailVerifyForm';
+import { useEmailVerifyForm } from '../hooks/useEmailVerifyForm';
 import { ActionInput } from '@/components/ActionInput';
 
 type EmailVerifyFormProps = {

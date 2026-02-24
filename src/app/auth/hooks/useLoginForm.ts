@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormValues } from '@/schemas/auth/login.schema';
-import { loginEmail } from '@/app/api/auth/login';
+import { loginEmail } from '@/api/auth/login';
 import type { ApiError } from '@/types/api';
 import { useAuthStore } from '@/stores/authStore';
 

@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/Button';
-import { logoutApi } from '@/app/api/auth/login';
-import { axiosInstance } from '@/app/api/axiosInstance';
+import { logoutApi } from '@/api/auth/login';
+import { axiosInstance } from '@/api/axiosInstance';
 
 const items = [
   {

@@ -1,5 +1,5 @@
 import { authCookies } from '@/utils/auth';
-import { axiosInstance } from '@/app/api/axiosInstance';
+import { axiosInstance } from '@/api/axiosInstance';
 import { create } from 'zustand';
 
 export interface User {

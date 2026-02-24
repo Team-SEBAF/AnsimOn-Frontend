@@ -10,8 +10,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { EmailConfirmModal } from '@/components/modals';
-import { useSignupAgreements } from '@/hooks/useSignupAgreements';
-import { useSignupForm } from '@/hooks/useSignupForm';
+import { useSignupAgreements } from '../hooks/useSignupAgreements';
+import { useSignupForm } from '../hooks/useSignupForm';
 import { parseBirthdate, formatBirthdateInput } from '@/utils/date';
 
 /**

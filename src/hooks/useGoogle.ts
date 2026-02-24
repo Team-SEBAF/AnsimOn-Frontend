@@ -1,7 +1,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
-import { getGoogleToken } from '@/app/api/auth/google';
+import { getGoogleToken } from '@/api/auth/google';
 
 export function useGoogleAuth() {
   const logout = useAuthStore((state) => state.logout);

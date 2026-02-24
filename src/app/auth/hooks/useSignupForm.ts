@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signupSchema, type SignupFormValues } from '@/schemas/auth/signup.schema';
-import { signupEmail, SignupEmailPayload } from '@/app/api/auth/signup';
+import { signupEmail, SignupEmailPayload } from '@/api/auth/signup';
 import type { ApiError } from '@/types/api';
 
 export function useSignupForm() {
