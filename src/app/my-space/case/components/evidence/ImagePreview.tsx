@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
 import imageFallback from '@/assets/image-fallback.png';
 
@@ -47,16 +47,23 @@ export function ImagePreview({
   duration,
   alt,
 }: ImagePreviewProps) {
-  const blobSrc = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  /** File → blob URL 변환. file이 바뀌면 이전 URL을 해제(revokeObjectURL)하고 새로 생성 */
+  const [blobSrc, setBlobSrc] = useState<string | null>(null);
 
   useEffect(() => {
-    return () => {
-      if (blobSrc) URL.revokeObjectURL(blobSrc);
-    };
-  }, [blobSrc]);
+    if (!file) {
+      setBlobSrc(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setBlobSrc(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
+  /** blob URL(로컬) → 서버 URL → 빈 문자열 순으로 폴백 */
   const imgSrc = blobSrc ?? serverSrc ?? '';
   const imgAlt = file?.name ?? alt ?? '';
+  /** 이미지 로드 실패 시 fallback 이미지 표시용 */
   const [hasError, setHasError] = useState(false);
 
   return (
