@@ -1,15 +1,17 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
 import imageFallback from '@/assets/image-fallback.png';
 
-type PreviewSize = 'sm' | 'md' | 'lg';
+type PreviewSize = 'sm' | 'md' | 'lg' | 'fill';
 
 const sizeStyles: Record<PreviewSize, string> = {
   sm: 'h-25 w-25',
   md: 'h-30 w-30',
   lg: 'h-38 w-38',
+  fill: 'aspect-square w-full',
 };
 
 interface ImagePreviewProps {
@@ -70,14 +72,15 @@ export function ImagePreview({
     <div
       className={`group relative shrink-0 overflow-hidden rounded-lg border border-white bg-gray-100 ${sizeStyles[size]}`}
     >
-      {/* TODO: S3 도메인 추가 후 next/image로 전환 */}
-      <img
-        src={hasError ? imageFallback.src : imgSrc}
+      <Image
+        src={hasError ? imageFallback : imgSrc}
         alt={imgAlt}
-        className="h-full w-full object-cover"
+        fill
+        className="object-cover"
         onError={() => {
           if (!hasError) setHasError(true);
         }}
+        unoptimized={!!blobSrc}
       />
 
       {/* hover 시 삭제 버튼 */}
