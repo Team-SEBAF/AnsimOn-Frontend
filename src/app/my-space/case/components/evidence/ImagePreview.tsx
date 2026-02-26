@@ -62,8 +62,8 @@ export function ImagePreview({
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  /** blob URL(로컬) → 서버 URL → 빈 문자열 순으로 폴백 */
-  const imgSrc = blobSrc ?? serverSrc ?? '';
+  /** blob URL(로컬) → 서버 URL → fallback 순으로 폴백 */
+  const imgSrc = blobSrc ?? serverSrc ?? imageFallback;
   const imgAlt = file?.name ?? alt ?? '';
   /** 이미지 로드 실패 시 fallback 이미지 표시용 */
   const [hasError, setHasError] = useState(false);
