@@ -75,7 +75,7 @@ export default function CasePage() {
         hasNext={step < MAX_STEP}
         updatedAt={complaint?.updated_at ?? ''}
       />
-      <div className="p-6">
+      <div className="space-y-6 p-6">
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
