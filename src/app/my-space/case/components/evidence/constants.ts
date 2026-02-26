@@ -11,6 +11,7 @@ export const EVIDENCE_CONFIG: Record<
   {
     maxFiles: number;
     maxSize: number;
+    maxDuration?: number; // 초 단위, 영상·음성 타입만 사용
     accept: string;
     mimeTypes?: string[];
     previewType: 'image' | 'file';
@@ -32,6 +33,7 @@ export const EVIDENCE_CONFIG: Record<
   VOICE: {
     maxFiles: 5,
     maxSize: 20 * 1024 * 1024, // 20MB
+    maxDuration: 300, // 5분
     accept: '.m4a,.mp3,.wav',
     mimeTypes: ['audio/mp4', 'audio/mpeg', 'audio/wav'],
     previewType: 'file',
@@ -42,6 +44,7 @@ export const EVIDENCE_CONFIG: Record<
   TRACKING: {
     maxFiles: 3,
     maxSize: 500 * 1024 * 1024, // 500MB
+    maxDuration: 300, // 5분
     accept: '.mp4,.mov',
     mimeTypes: ['video/mp4', 'video/quicktime'],
     previewType: 'image',

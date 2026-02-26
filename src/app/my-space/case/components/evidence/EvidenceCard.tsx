@@ -36,12 +36,10 @@ export function EvidenceCard({ type, className }: EvidenceCardProps) {
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /** 파일 추가 — 개수·타입·크기 제한 적용 후 state에 추가 */
-  const handleFilesAdd = (newFiles: File[]) => {
-    setFiles((prev) => {
-      const valid = filterValidFiles(newFiles, config, prev.length);
-      return valid.length > 0 ? [...prev, ...valid] : prev;
-    });
+  /** 파일 추가 — 타입·크기·영상길이 검증 후 state에 추가 */
+  const handleFilesAdd = async (newFiles: File[]) => {
+    const valid = await filterValidFiles(newFiles, config, files.length);
+    if (valid.length > 0) setFiles((prev) => [...prev, ...valid]);
   };
 
   /** 파일 삭제 */
