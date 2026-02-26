@@ -8,6 +8,7 @@ import { Button } from '@/components/Button';
 import { EvidenceContent } from './EvidenceContent';
 import type { EvidenceType } from './constants';
 import { EVIDENCE_CONFIG } from './constants';
+import { filterValidFiles } from './validate';
 
 interface EvidenceCardProps {
   /** 증거 타입 (MESSAGE, VOICE 등) */
@@ -35,15 +36,11 @@ export function EvidenceCard({ type, className }: EvidenceCardProps) {
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /** 파일 추가 — 개수·크기 제한 적용 후 state에 추가 */
+  /** 파일 추가 — 개수·타입·크기 제한 적용 후 state에 추가 */
   const handleFilesAdd = (newFiles: File[]) => {
     setFiles((prev) => {
-      const remaining = config.maxFiles - prev.length;
-      if (remaining <= 0) return prev;
-
-      const validFiles = newFiles.slice(0, remaining).filter((file) => file.size <= config.maxSize);
-
-      return [...prev, ...validFiles];
+      const valid = filterValidFiles(newFiles, config, prev.length);
+      return valid.length > 0 ? [...prev, ...valid] : prev;
     });
   };
 
