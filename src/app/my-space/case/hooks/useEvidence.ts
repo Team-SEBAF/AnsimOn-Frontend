@@ -9,22 +9,22 @@ import {
   registerTrackings,
   registerReportRecords,
   registerIncidentLogFiles,
-  // 타입별 preview
-  getMessagePreviews,
-  getVoicePreviews,
-  getTrackingPreviews,
-  getReportRecordPreviews,
-  getIncidentLogPreviews,
+  // 타입별 detail
+  getMessageDetails,
+  getVoiceDetails,
+  getTrackingDetails,
+  getReportRecordDetails,
+  getIncidentLogDetails,
 } from '@/api/evidence';
 import type {
   EvidenceType,
   EvidencePreviewItem,
   PresignedUrlItemRequest,
-  MessagePreviewListResponse,
-  VoicePreviewListResponse,
-  TrackingPreviewListResponse,
-  ReportRecordPreviewListResponse,
-  IncidentLogPreviewListResponse,
+  MessageDetailListResponse,
+  VoiceDetailListResponse,
+  TrackingDetailListResponse,
+  ReportRecordDetailListResponse,
+  IncidentLogDetailListResponse,
 } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
 import { getMediaDuration } from '../components/evidence/validate';
@@ -37,62 +37,67 @@ const evidenceKeys = {
   allPreviews: (complaintId: string) => ['evidence', 'previews', complaintId] as const,
 };
 
-// ─── 타입별 preview → 통일 PreviewItem 변환 ────────────
+// ─── 타입별 detail → 통일 PreviewItem 변환 ─────────────
 
 const fetchAndNormalize: Record<
   EvidenceType,
   (complaintId: string) => Promise<{ items: EvidencePreviewItem[]; totalCount: number }>
 > = {
   MESSAGE: async (complaintId) => {
-    const res: MessagePreviewListResponse = await getMessagePreviews(complaintId);
+    const res: MessageDetailListResponse = await getMessageDetails(complaintId);
     return {
-      items: res.previews.map((p) => ({
-        id: p.message_id,
-        thumbnailUrl: p.thumbnail_url,
+      items: res.details.map((d) => ({
+        id: d.message_id,
+        filename: d.filename,
+        thumbnailUrl: d.thumbnail_url,
+        sizeBytes: d.size_bytes,
       })),
       totalCount: res.total_count,
     };
   },
   VOICE: async (complaintId) => {
-    const res: VoicePreviewListResponse = await getVoicePreviews(complaintId);
+    const res: VoiceDetailListResponse = await getVoiceDetails(complaintId);
     return {
-      items: res.previews.map((p) => ({
-        id: p.voice_id,
-        filename: p.filename,
-        durationSeconds: p.duration_seconds,
+      items: res.details.map((d) => ({
+        id: d.voice_id,
+        filename: d.filename,
+        sizeBytes: d.size_bytes,
+        durationSeconds: d.duration_seconds,
       })),
       totalCount: res.total_count,
     };
   },
   TRACKING: async (complaintId) => {
-    const res: TrackingPreviewListResponse = await getTrackingPreviews(complaintId);
+    const res: TrackingDetailListResponse = await getTrackingDetails(complaintId);
     return {
-      items: res.previews.map((p) => ({
-        id: p.tracking_id,
-        thumbnailUrl: p.thumbnail_url,
-        durationSeconds: p.duration_seconds,
+      items: res.details.map((d) => ({
+        id: d.tracking_id,
+        filename: d.filename,
+        thumbnailUrl: d.thumbnail_url,
+        sizeBytes: d.size_bytes,
+        durationSeconds: d.duration_seconds,
       })),
       totalCount: res.total_count,
     };
   },
   REPORT_RECORD: async (complaintId) => {
-    const res: ReportRecordPreviewListResponse = await getReportRecordPreviews(complaintId);
+    const res: ReportRecordDetailListResponse = await getReportRecordDetails(complaintId);
     return {
-      items: res.previews.map((p) => ({
-        id: p.report_record_id,
-        filename: p.filename,
-        sizeBytes: p.size_bytes,
+      items: res.details.map((d) => ({
+        id: d.report_record_id,
+        filename: d.filename,
+        sizeBytes: d.size_bytes,
       })),
       totalCount: res.total_count,
     };
   },
   INCIDENT_LOG: async (complaintId) => {
-    const res: IncidentLogPreviewListResponse = await getIncidentLogPreviews(complaintId);
+    const res: IncidentLogDetailListResponse = await getIncidentLogDetails(complaintId);
     return {
-      items: res.previews.map((p) => ({
-        id: p.incident_log_id,
-        filename: p.filename,
-        sizeBytes: p.size_bytes ?? undefined,
+      items: res.details.map((d) => ({
+        id: d.incident_log_id,
+        filename: d.filename,
+        sizeBytes: d.size_bytes ?? undefined,
       })),
       totalCount: res.total_count,
     };

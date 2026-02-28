@@ -92,12 +92,12 @@ export function EvidenceContent({
       {/* 프리뷰 표시 */}
       {hasItems && (
         <div className={previewType === 'image' ? 'grid grid-cols-4 gap-2' : 'flex flex-col gap-2'}>
-          {items.map((item) =>
+          {items.map((item, index) =>
             previewType === 'image' ? (
               <ImagePreview
                 key={item.id}
                 src={item.thumbnailUrl}
-                alt={item.filename}
+                alt={item.filename ?? `이미지 ${index + 1}`}
                 size="fill"
                 showFileName
                 onRemove={() => onRemove(item.id)}
