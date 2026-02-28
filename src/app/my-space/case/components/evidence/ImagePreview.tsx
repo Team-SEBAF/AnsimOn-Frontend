@@ -76,6 +76,7 @@ export function ImagePreview({
         src={hasError ? imageFallback : imgSrc}
         alt={imgAlt}
         fill
+        sizes="(max-width: 768px) 25vw, 152px"
         className="object-cover"
         onError={() => {
           if (!hasError) setHasError(true);

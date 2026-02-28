@@ -7,7 +7,8 @@ export function useComplaint(complaintId: string | undefined) {
   return useQuery({
     queryKey: ['complaint', complaintId],
     queryFn: () => getComplaint(complaintId!),
-    enabled: !!complaintId, // complaintId 없으면 요청 안 함
+    enabled: !!complaintId,
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
   });
 }
 
