@@ -16,8 +16,18 @@ import {
   getReportRecordPreviews,
   getIncidentLogPreviews,
 } from '@/api/evidence';
-import type { EvidenceType, PresignedUrlItemRequest } from '@/types/evidence';
+import type {
+  EvidenceType,
+  EvidencePreviewItem,
+  PresignedUrlItemRequest,
+  MessagePreviewListResponse,
+  VoicePreviewListResponse,
+  TrackingPreviewListResponse,
+  ReportRecordPreviewListResponse,
+  IncidentLogPreviewListResponse,
+} from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
+import { getMediaDuration } from '../components/evidence/validate';
 
 // ─── query key ──────────────────────────────────────────
 
@@ -27,17 +37,66 @@ const evidenceKeys = {
   allPreviews: (complaintId: string) => ['evidence', 'previews', complaintId] as const,
 };
 
-// ─── 타입별 preview 조회 함수 매핑 ─────────────────────
+// ─── 타입별 preview → 통일 PreviewItem 변환 ────────────
 
-const previewFetchers: Record<
+const fetchAndNormalize: Record<
   EvidenceType,
-  (complaintId: string, limit?: number) => Promise<{ total_count: number }>
+  (complaintId: string) => Promise<{ items: EvidencePreviewItem[]; totalCount: number }>
 > = {
-  MESSAGE: getMessagePreviews,
-  VOICE: getVoicePreviews,
-  TRACKING: getTrackingPreviews,
-  REPORT_RECORD: getReportRecordPreviews,
-  INCIDENT_LOG: getIncidentLogPreviews,
+  MESSAGE: async (complaintId) => {
+    const res: MessagePreviewListResponse = await getMessagePreviews(complaintId);
+    return {
+      items: res.previews.map((p) => ({
+        id: p.message_id,
+        thumbnailUrl: p.thumbnail_url,
+      })),
+      totalCount: res.total_count,
+    };
+  },
+  VOICE: async (complaintId) => {
+    const res: VoicePreviewListResponse = await getVoicePreviews(complaintId);
+    return {
+      items: res.previews.map((p) => ({
+        id: p.voice_id,
+        filename: p.filename,
+        durationSeconds: p.duration_seconds,
+      })),
+      totalCount: res.total_count,
+    };
+  },
+  TRACKING: async (complaintId) => {
+    const res: TrackingPreviewListResponse = await getTrackingPreviews(complaintId);
+    return {
+      items: res.previews.map((p) => ({
+        id: p.tracking_id,
+        thumbnailUrl: p.thumbnail_url,
+        durationSeconds: p.duration_seconds,
+      })),
+      totalCount: res.total_count,
+    };
+  },
+  REPORT_RECORD: async (complaintId) => {
+    const res: ReportRecordPreviewListResponse = await getReportRecordPreviews(complaintId);
+    return {
+      items: res.previews.map((p) => ({
+        id: p.report_record_id,
+        filename: p.filename,
+        sizeBytes: p.size_bytes,
+      })),
+      totalCount: res.total_count,
+    };
+  },
+  INCIDENT_LOG: async (complaintId) => {
+    const res: IncidentLogPreviewListResponse = await getIncidentLogPreviews(complaintId);
+    return {
+      items: res.previews.map((p) => ({
+        id: p.incident_log_id,
+        filename: p.filename,
+        sizeBytes: p.size_bytes ?? undefined,
+      })),
+      totalCount: res.total_count,
+    };
+  },
 };
 
 // ─── 타입별 register 함수 매핑 ──────────────────────────
@@ -76,8 +135,9 @@ const registerByType = async (
 export function useEvidencePreviews(complaintId: string | undefined, type: EvidenceType) {
   return useQuery({
     queryKey: evidenceKeys.previews(complaintId!, type),
-    queryFn: () => previewFetchers[type](complaintId!),
+    queryFn: () => fetchAndNormalize[type](complaintId!),
     enabled: !!complaintId,
+    staleTime: 1000 * 60 * 5, // 5분간 캐시 유지 (불필요한 refetch 방지)
   });
 }
 
@@ -90,12 +150,18 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
   return useMutation({
     mutationFn: async (files: File[]) => {
       // 1) presigned URL 발급
+      // VOICE/TRACKING은 실제 재생 길이를 구해서 전달
+      let durations: number[] = [];
+      if (config.maxDuration) {
+        durations = await Promise.all(files.map((f) => getMediaDuration(f)));
+      }
+
       const presignedItems: PresignedUrlItemRequest[] = files.map((file, i) => ({
         index: i,
         filename: file.name,
         contentType: file.type,
         sizeBytes: file.size,
-        ...(config.maxDuration ? { durationSeconds: 0 } : {}), // TODO: 실제 duration 전달
+        ...(config.maxDuration ? { durationSeconds: Math.round(durations[i]) } : {}),
       }));
 
       const { items: presignedUrls } = await getPresignedUrls(complaintId!, {

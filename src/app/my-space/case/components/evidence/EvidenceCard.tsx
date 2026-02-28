@@ -1,18 +1,21 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import CommitOutlineIcon from '@/assets/icons/CommitOutlineIcon.svg';
 import HelpCircleOutlineIcon from '@/assets/icons/HelpCircleOutlineIcon.svg';
 import { Button } from '@/components/Button';
 import { EvidenceContent } from './EvidenceContent';
-import type { EvidenceType } from './constants';
+import type { EvidenceType } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from './constants';
 import { filterValidFiles } from './validate';
+import { useEvidencePreviews, useUploadEvidence, useDeleteEvidence } from '../../hooks/useEvidence';
 
 interface EvidenceCardProps {
   /** 증거 타입 (MESSAGE, VOICE 등) */
   type: EvidenceType;
+  /** 고소장 ID (React Query 훅에 전달) */
+  complaintId: string | undefined;
   /** 외부에서 전달하는 추가 스타일 */
   className?: string;
 }
@@ -23,36 +26,36 @@ interface EvidenceCardProps {
  * - Header: 아이콘 + 타이틀 + 설명
  * - Contents: EvidenceContent (드래그앤드롭/클릭/프리뷰)
  * - Footer: 개수 뱃지 + 업로드 버튼
- *
- * 파일 선택 input을 하나만 소유하며,
- * 빈 상태 클릭(EvidenceContent)과 푸터 버튼 모두 같은 input을 트리거합니다.
  */
-export function EvidenceCard({ type, className }: EvidenceCardProps) {
+export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps) {
   const config = EVIDENCE_CONFIG[type];
-  // TODO: API 연결 시 로컬 state → React Query(useEvidence 훅)로 교체
-  // - files: useQuery로 서버 증거 목록 조회
-  // - handleFilesAdd: useMutation(presigned URL → S3 PUT → register)
-  // - handleFileRemove: useMutation(DELETE /evidences/:id)
-  const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  /** 파일 추가 — 타입·크기·영상길이 검증 후 state에 추가 */
+  // React Query 훅
+  const { data } = useEvidencePreviews(complaintId, type);
+  const upload = useUploadEvidence(complaintId, type);
+  const remove = useDeleteEvidence(complaintId, type);
+
+  const items = data?.items ?? [];
+  const totalCount = data?.totalCount ?? 0;
+
+  /** 파일 추가 — 프론트 검증 후 업로드 mutation 호출 */
   const handleFilesAdd = async (newFiles: File[]) => {
-    const valid = await filterValidFiles(newFiles, config, files.length);
-    if (valid.length > 0) setFiles((prev) => [...prev, ...valid]);
+    const valid = await filterValidFiles(newFiles, config, totalCount);
+    if (valid.length > 0) upload.mutate(valid);
   };
 
-  /** 파일 삭제 */
-  const handleFileRemove = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+  /** 증거 삭제 */
+  const handleRemove = (id: string) => {
+    remove.mutate([id]);
   };
 
-  /** hidden input 트리거 — 빈 상태 클릭, 푸터 버튼 모두 이 함수를 사용 */
+  /** hidden input 트리거 */
   const openFilePicker = () => inputRef.current?.click();
 
   return (
     <div
-      className={`flex min-h-40 flex-col gap-6 rounded-2xl border border-gray-200 px-7 py-6 shadow-[0px_20px_50px_-5px_#4040400D] ${files.length === 0 ? 'flex-1' : ''} ${className ?? ''}`}
+      className={`flex min-h-40 flex-col gap-6 rounded-2xl border border-gray-200 px-7 py-6 shadow-[0px_20px_50px_-5px_#4040400D] ${items.length === 0 ? 'flex-1' : ''} ${className ?? ''}`}
     >
       {/* Header */}
       <div className="flex items-center gap-3">
@@ -71,16 +74,17 @@ export function EvidenceCard({ type, className }: EvidenceCardProps) {
       {/* Contents */}
       <EvidenceContent
         previewType={config.previewType}
-        files={files}
+        items={items}
         onFilesAdd={handleFilesAdd}
-        onFileRemove={handleFileRemove}
+        onRemove={handleRemove}
         onClickUpload={openFilePicker}
+        isUploading={upload.isPending}
       />
 
       {/* Footer */}
       <div className="typo-btn-2text-gray-700 flex items-center justify-between">
         <span className="rounded-full bg-gray-100 px-3 py-1">
-          {files.length}/{config.maxFiles}개
+          {totalCount}/{config.maxFiles}개
         </span>
         <Button color="secondary" size="lg" onClick={openFilePicker}>
           <span className="flex items-center gap-2">
@@ -90,7 +94,7 @@ export function EvidenceCard({ type, className }: EvidenceCardProps) {
         </Button>
       </div>
 
-      {/* 파일 선택 input — 카드 내 input. 빈 상태 클릭 + 푸터 버튼 모두 이 input을 트리거 */}
+      {/* 파일 선택 input */}
       <input
         ref={inputRef}
         type="file"

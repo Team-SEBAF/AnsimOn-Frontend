@@ -373,6 +373,17 @@ export type IncidentLogFileOriginal = {
   updated_at: string;
 };
 
+// ─── 통일 프리뷰 아이템 (EvidenceContent용) ────────────
+
+/** 타입별 서버 프리뷰 데이터를 통일한 형태 */
+export type EvidencePreviewItem = {
+  id: string;
+  filename?: string;
+  thumbnailUrl?: string;
+  sizeBytes?: number;
+  durationSeconds?: number;
+};
+
 // ─── 에러 응답 ──────────────────────────────────────────
 
 export type EvidencePresignedValidationError = {

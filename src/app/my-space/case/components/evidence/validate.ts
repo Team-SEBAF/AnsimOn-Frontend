@@ -12,7 +12,7 @@ const isValidType = (file: File, config: EvidenceConfig): boolean => {
 };
 
 /** 영상/음성 파일의 재생 길이(초)를 반환. 메타데이터만 로드하므로 전체 파일을 읽지 않음 */
-const getMediaDuration = (file: File): Promise<number> => {
+export const getMediaDuration = (file: File): Promise<number> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
     video.preload = 'metadata';
