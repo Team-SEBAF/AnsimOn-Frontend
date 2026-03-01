@@ -77,7 +77,7 @@ export function EvidenceContent({
           }`}
         >
           {isUploading ? (
-            <Spinner size="lg" label="파일 업로드 중" />
+            <Spinner size="lg" className="text-gray-400" label="파일 업로드 중" />
           ) : (
             <div className="flex flex-col items-center">
               <p className="typo-heading-4 text-gray-400">증거업로드</p>

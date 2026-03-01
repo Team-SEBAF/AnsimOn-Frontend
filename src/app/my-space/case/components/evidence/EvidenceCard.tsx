@@ -55,7 +55,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
 
   return (
     <div
-      className={`flex min-h-40 flex-col gap-6 rounded-2xl border border-gray-200 px-7 py-6 shadow-[0px_20px_50px_-5px_#4040400D] ${items.length === 0 ? 'flex-1' : ''} ${className ?? ''}`}
+      className={`flex min-h-40 flex-col gap-6 rounded-2xl border border-gray-200 px-7 py-6 shadow-[0px_20px_50px_-5px_#4040400D] transition-all duration-300 ${items.length === 0 ? 'flex-1' : ''} ${className ?? ''}`}
     >
       {/* Header */}
       <div className="flex items-center gap-3">
