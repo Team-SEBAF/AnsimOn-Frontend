@@ -103,17 +103,10 @@ export function ImagePreview({
         </div>
       )}
 
-      {/* 파일 개수 뱃지 */}
-      {showFileCount && (
+      {/* 우하단 뱃지 (파일 개수 또는 영상 길이) */}
+      {(showFileCount || duration) && (
         <span className="typo-body-8 absolute right-2 bottom-2 rounded-xs bg-gray-900/40 px-1.5 py-px text-white transition group-hover:opacity-0">
-          {showFileCount}
-        </span>
-      )}
-
-      {/* 영상 길이 */}
-      {duration && (
-        <span className="typo-body-8 absolute right-2 bottom-2 rounded-xs bg-gray-900/40 px-1.5 py-px text-white transition group-hover:opacity-0">
-          {duration}
+          {showFileCount ?? duration}
         </span>
       )}
     </div>

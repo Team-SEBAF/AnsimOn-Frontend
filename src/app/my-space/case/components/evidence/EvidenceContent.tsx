@@ -5,6 +5,7 @@ import { Spinner } from '@/components/Spinner';
 import { ImagePreview } from './ImagePreview';
 import { FilePreview } from './FilePreview';
 import type { EvidencePreviewItem } from '@/types/evidence';
+import { formatDuration } from '@/utils/format';
 
 /** 프리뷰 표시 방식 */
 type PreviewType = 'image' | 'file';
@@ -100,6 +101,7 @@ export function EvidenceContent({
                 alt={item.filename ?? `이미지 ${index + 1}`}
                 size="fill"
                 showFileName
+                duration={item.durationSeconds ? formatDuration(item.durationSeconds) : undefined}
                 onRemove={() => onRemove(item.id)}
               />
             ) : (

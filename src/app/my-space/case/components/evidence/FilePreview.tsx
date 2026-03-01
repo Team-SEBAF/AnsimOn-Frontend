@@ -1,5 +1,6 @@
 import FileIcon from '@/assets/icons/FileIcon.svg';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
+import { formatFileSize } from '@/utils/format';
 
 interface FilePreviewProps {
   /** 파일명 */
@@ -17,8 +18,7 @@ interface FilePreviewProps {
  * - 이미지가 아닌 파일(PDF, 문서 등)용
  */
 export function FilePreview({ name, size, onRemove }: FilePreviewProps) {
-  const formattedSize =
-    size < 1024 * 1024 ? `${(size / 1024).toFixed(1)}KB` : `${(size / (1024 * 1024)).toFixed(1)}MB`;
+  const formattedSize = formatFileSize(size);
 
   return (
     <div className="bg-bg-2 flex w-full items-center gap-2 rounded-sm border border-gray-200 px-2 py-3">
