@@ -38,9 +38,11 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
 
   const items = data?.items ?? [];
   const totalCount = data?.totalCount ?? 0;
+  const isFull = totalCount >= config.maxFiles;
 
   /** 파일 추가 — 프론트 검증 후 업로드 mutation 호출 */
   const handleFilesAdd = async (newFiles: File[]) => {
+    if (isFull) return; // 개수 초과 시 업로드 차단
     const valid = await filterValidFiles(newFiles, config, totalCount);
     if (valid.length > 0) upload.mutate(valid);
   };
@@ -86,7 +88,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         <span className="rounded-full bg-gray-100 px-3 py-1">
           {totalCount}/{config.maxFiles}개
         </span>
-        <Button color="secondary" size="lg" onClick={openFilePicker}>
+        <Button color="secondary" size="lg" onClick={openFilePicker} disabled={isFull}>
           <span className="flex items-center gap-2">
             <CommitOutlineIcon className="h-6 w-6" />
             증거 업로드
