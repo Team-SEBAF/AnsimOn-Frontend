@@ -1,15 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
 import Image from 'next/image';
 import CommitOutlineIcon from '@/assets/icons/CommitOutlineIcon.svg';
 import HelpCircleOutlineIcon from '@/assets/icons/HelpCircleOutlineIcon.svg';
 import { Button } from '@/components/Button';
+import { Modal } from '@/components/modals/Modal';
 import { EvidenceContent } from './EvidenceContent';
 import type { EvidenceType } from '@/types/evidence';
-import { EVIDENCE_CONFIG } from './constants';
-import { filterValidFiles } from './validate';
-import { useEvidencePreviews, useUploadEvidence, useDeleteEvidence } from '../../hooks/useEvidence';
+import { useEvidenceCard } from '../../hooks/useEvidenceCard';
 
 interface EvidenceCardProps {
   /** 증거 타입 (MESSAGE, VOICE 등) */
@@ -28,32 +26,21 @@ interface EvidenceCardProps {
  * - Footer: 개수 뱃지 + 업로드 버튼
  */
 export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps) {
-  const config = EVIDENCE_CONFIG[type];
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // React Query 훅
-  const { data } = useEvidencePreviews(complaintId, type);
-  const upload = useUploadEvidence(complaintId, type);
-  const remove = useDeleteEvidence(complaintId, type);
-
-  const items = data?.items ?? [];
-  const totalCount = data?.totalCount ?? 0;
-  const isFull = totalCount >= config.maxFiles;
-
-  /** 파일 추가 — 프론트 검증 후 업로드 mutation 호출 */
-  const handleFilesAdd = async (newFiles: File[]) => {
-    if (isFull) return; // 개수 초과 시 업로드 차단
-    const valid = await filterValidFiles(newFiles, config, totalCount);
-    if (valid.length > 0) upload.mutate(valid);
-  };
-
-  /** 증거 삭제 */
-  const handleRemove = (id: string) => {
-    remove.mutate([id]);
-  };
-
-  /** hidden input 트리거 */
-  const openFilePicker = () => inputRef.current?.click();
+  const {
+    inputRef,
+    config,
+    items,
+    totalCount,
+    isFull,
+    isUploading,
+    deleteModalOpen,
+    setDeleteModalOpen,
+    handleFilesAdd,
+    handleRemove,
+    confirmDelete,
+    cancelDelete,
+    openFilePicker,
+  } = useEvidenceCard(complaintId, type);
 
   return (
     <div
@@ -80,7 +67,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         onFilesAdd={handleFilesAdd}
         onRemove={handleRemove}
         onClickUpload={openFilePicker}
-        isUploading={upload.isPending}
+        isUploading={isUploading}
       />
 
       {/* Footer */}
@@ -108,6 +95,28 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         }}
         className="hidden"
       />
+
+      {/* 삭제 확인 모달 */}
+      <Modal.Root open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <Modal.Header
+          title="증거 삭제"
+          subTitle={
+            <>
+              삭제된 증거는 다시 되돌릴 수 없어요.
+              <br />
+              정말 삭제하시겠어요?
+            </>
+          }
+        />
+        <Modal.Footer direction="row" full>
+          <Button color="secondary" size="xl" onClick={cancelDelete}>
+            취소하기
+          </Button>
+          <Button color="danger" size="xl" onClick={confirmDelete}>
+            삭제하기
+          </Button>
+        </Modal.Footer>
+      </Modal.Root>
     </div>
   );
 }
