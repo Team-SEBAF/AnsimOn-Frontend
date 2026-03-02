@@ -29,7 +29,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     if (window.history.length > 1) {
       router.back();
     } else {
-      router.replace('/');
+      router.replace('/my-space/stalking');
     }
   };
 

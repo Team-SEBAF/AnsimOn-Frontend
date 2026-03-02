@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   // 인증 경로 + 토큰 있음 → 메인으로
   const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
   if (isAuthRoute && token) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/my-space/stalking', request.url));
   }
 
   return NextResponse.next();
