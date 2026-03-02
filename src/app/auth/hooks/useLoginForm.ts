@@ -35,7 +35,7 @@ export function useLoginForm() {
       login(access_token, refresh_token, id_token);
 
       // 3. redirect 파라미터가 있으면 해당 경로로, 없으면 /my-space로 이동
-      const redirect = searchParams.get('redirect') || '/my-space/case/collect';
+      const redirect = searchParams.get('redirect') || '/my-space/case';
       router.replace(redirect);
     } catch (err) {
       const data = err as ApiError;
