@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Spinner } from '@/components/Spinner';
 import { ImagePreview } from './ImagePreview';
 import { FilePreview } from './FilePreview';
+import type { EvidencePreviewItem } from '@/types/evidence';
+import { formatDuration } from '@/utils/format';
 
 /** 프리뷰 표시 방식 */
 type PreviewType = 'image' | 'file';
@@ -11,12 +13,12 @@ type PreviewType = 'image' | 'file';
 interface EvidenceContentProps {
   /** 프리뷰 표시 방식 (image: 썸네일, file: 파일명+크기) */
   previewType?: PreviewType;
-  /** 현재 선택된 파일 목록 */
-  files: File[];
+  /** 서버에서 가져온 프리뷰 아이템 목록 */
+  items: EvidencePreviewItem[];
   /** 파일 추가 시 콜백 (드래그앤드롭) */
   onFilesAdd: (files: File[]) => void;
-  /** 파일 삭제 시 콜백 */
-  onFileRemove: (index: number) => void;
+  /** 증거 삭제 시 콜백 */
+  onRemove: (id: string) => void;
   /** 빈 상태 클릭 시 파일 선택 창을 여는 콜백 (EvidenceCard의 hidden input 트리거) */
   onClickUpload: () => void;
   /** 업로드 중 상태 */
@@ -29,17 +31,12 @@ interface EvidenceContentProps {
  * - 빈 상태: 드래그앤드롭 / 클릭으로 업로드 유도
  * - 로딩 상태: 스피너 표시
  * - 파일 있음: previewType에 따라 ImagePreview 또는 FilePreview 표시
- *
- * 파일 제한(accept, maxFiles, maxSize 등)은 증거 타입별로 다르므로
- * 상위 컴포넌트(EvidenceCard)에서 EVIDENCE_CONFIG 상수를 통해 주입받습니다.
- * 파일 선택 input도 EvidenceCard에서 관리하며, 빈 상태 클릭 시 onClickUpload로 트리거합니다.
- * @see {@link ../constants.ts} EVIDENCE_CONFIG
  */
 export function EvidenceContent({
   previewType = 'file',
-  files,
+  items,
   onFilesAdd,
-  onFileRemove,
+  onRemove,
   onClickUpload,
   isUploading = false,
 }: EvidenceContentProps) {
@@ -65,12 +62,12 @@ export function EvidenceContent({
     setIsDragOver(false);
   };
 
-  const hasFiles = files.length > 0;
+  const hasItems = items.length > 0;
 
   return (
-    <div className={hasFiles ? '' : 'flex-1'}>
+    <div className={hasItems ? '' : 'flex-1'}>
       {/* 빈 상태 — 드래그앤드롭/클릭 영역 */}
-      {!hasFiles && (
+      {!hasItems && (
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
@@ -81,7 +78,7 @@ export function EvidenceContent({
           }`}
         >
           {isUploading ? (
-            <Spinner size="lg" label="파일 업로드 중" />
+            <Spinner size="lg" className="text-gray-400" label="파일 업로드 중" />
           ) : (
             <div className="flex flex-col items-center">
               <p className="typo-heading-4 text-gray-400">증거업로드</p>
@@ -93,25 +90,26 @@ export function EvidenceContent({
         </div>
       )}
 
-      {/* 파일 있음 — 프리뷰 표시 */}
-      {hasFiles && (
+      {/* 프리뷰 표시 */}
+      {hasItems && (
         <div className={previewType === 'image' ? 'grid grid-cols-4 gap-2' : 'flex flex-col gap-2'}>
-          {files.map((file, index) =>
+          {items.map((item, index) =>
             previewType === 'image' ? (
-              // TODO: API 연결 후 file prop 대신 src(서버 URL)로 전환
               <ImagePreview
-                key={`${file.name}-${index}`}
-                file={file}
+                key={item.id}
+                src={item.thumbnailUrl}
+                alt={item.filename ?? `이미지 ${index + 1}`}
                 size="fill"
                 showFileName
-                onRemove={() => onFileRemove(index)}
+                duration={item.durationSeconds ? formatDuration(item.durationSeconds) : undefined}
+                onRemove={() => onRemove(item.id)}
               />
             ) : (
               <FilePreview
-                key={`${file.name}-${index}`}
-                name={file.name}
-                size={file.size}
-                onRemove={() => onFileRemove(index)}
+                key={item.id}
+                name={item.filename ?? '파일'}
+                size={item.sizeBytes ?? 0}
+                onRemove={() => onRemove(item.id)}
               />
             ),
           )}
