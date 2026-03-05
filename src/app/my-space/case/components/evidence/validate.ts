@@ -28,22 +28,31 @@ export const getMediaDuration = (file: File): Promise<number> => {
   });
 };
 
+export type FilterResult = {
+  valid: File[];
+  rejected: File[];
+};
+
 /** 새 파일 목록에서 유효한 파일만 필터링 (타입 → 크기 → 영상 길이 → 개수 순으로 검증) */
 export const filterValidFiles = async (
   newFiles: File[],
   config: EvidenceConfig,
   currentCount: number,
-): Promise<File[]> => {
+): Promise<FilterResult> => {
   const remaining = config.maxFiles - currentCount;
-  if (remaining <= 0) return [];
+  if (remaining <= 0) return { valid: [], rejected: newFiles };
 
   // 타입 + 크기 검증 (동기)
   const typeAndSizeValid = newFiles.filter(
     (file) => isValidType(file, config) && file.size <= config.maxSize,
   );
+  const typeAndSizeRejected = newFiles.filter(
+    (file) => !isValidType(file, config) || file.size > config.maxSize,
+  );
 
   // 영상 길이 검증 (비동기, maxDuration이 있는 타입만)
   let result = typeAndSizeValid;
+  let durationRejected: File[] = [];
   if (config.maxDuration) {
     const checks = await Promise.all(
       typeAndSizeValid.map(async (file) => {
@@ -51,12 +60,20 @@ export const filterValidFiles = async (
           const duration = await getMediaDuration(file);
           return duration <= config.maxDuration!;
         } catch {
-          return false; // 메타데이터 로드 실패 시 제외
+          return false;
         }
       }),
     );
     result = typeAndSizeValid.filter((_, i) => checks[i]);
+    durationRejected = typeAndSizeValid.filter((_, i) => !checks[i]);
   }
 
-  return result.slice(0, remaining); // 유효한 파일 중 남은 개수만큼만
+  // 개수 초과 처리
+  const valid = result.slice(0, remaining);
+  const countRejected = result.slice(remaining);
+
+  return {
+    valid,
+    rejected: [...typeAndSizeRejected, ...durationRejected, ...countRejected],
+  };
 };
