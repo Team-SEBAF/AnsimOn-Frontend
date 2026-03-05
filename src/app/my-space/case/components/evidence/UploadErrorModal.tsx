@@ -26,9 +26,9 @@ export function UploadErrorModal({ open, onClose, files }: UploadErrorModalProps
           </>
         }
       />
-      <Modal.Body className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
+      <Modal.Body className="flex min-h-0 flex-1 flex-col gap-2">
         <p className="typo-body-8 text-gray-500">업로드 실패 리스트</p>
-        <ul className="flex flex-col gap-2">
+        <ul className="flex max-h-42.75 flex-col gap-2 overflow-y-auto">
           {files.map((file, i) => (
             <FilePreview key={i} name={file.name} size={file.size} />
           ))}

@@ -5,6 +5,7 @@ import CommitOutlineIcon from '@/assets/icons/CommitOutlineIcon.svg';
 import HelpCircleOutlineIcon from '@/assets/icons/HelpCircleOutlineIcon.svg';
 import { Button } from '@/components/Button';
 import { Modal } from '@/components/modals/Modal';
+import { UploadErrorModal } from './UploadErrorModal';
 import { EvidenceContent } from './EvidenceContent';
 import type { EvidenceType } from '@/types/evidence';
 import { useEvidenceCard } from '../../hooks/useEvidenceCard';
@@ -35,6 +36,8 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
     isUploading,
     deleteModalOpen,
     setDeleteModalOpen,
+    uploadErrorFiles,
+    setUploadErrorFiles,
     handleFilesAdd,
     handleRemove,
     confirmDelete,
@@ -94,6 +97,13 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
           e.target.value = '';
         }}
         className="hidden"
+      />
+
+      {/* 업로드 실패 모달 */}
+      <UploadErrorModal
+        open={uploadErrorFiles.length > 0}
+        onClose={() => setUploadErrorFiles([])}
+        files={uploadErrorFiles}
       />
 
       {/* 삭제 확인 모달 */}

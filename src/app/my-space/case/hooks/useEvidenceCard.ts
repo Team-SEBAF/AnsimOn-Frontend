@@ -19,6 +19,9 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
+  // 업로드 실패 모달 상태
+  const [uploadErrorFiles, setUploadErrorFiles] = useState<File[]>([]);
+
   // React Query 훅
   const { data } = useEvidencePreviews(complaintId, type);
   const upload = useUploadEvidence(complaintId, type);
@@ -30,8 +33,9 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
 
   /** 파일 추가 — 프론트 검증 후 업로드 mutation 호출 */
   const handleFilesAdd = async (newFiles: File[]) => {
-    if (isFull) return; // 개수 초과 시 업로드 차단
-    const valid = await filterValidFiles(newFiles, config, totalCount);
+    if (isFull) return;
+    const { valid, rejected } = await filterValidFiles(newFiles, config, totalCount);
+    if (rejected.length > 0) setUploadErrorFiles(rejected);
     if (valid.length > 0) upload.mutate(valid);
   };
 
@@ -73,6 +77,8 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
     // 모달 상태
     deleteModalOpen,
     setDeleteModalOpen,
+    uploadErrorFiles,
+    setUploadErrorFiles,
 
     // 핸들러
     handleFilesAdd,
