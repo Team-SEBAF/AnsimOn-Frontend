@@ -43,11 +43,14 @@ export const filterValidFiles = async (
   if (remaining <= 0) return { valid: [], rejected: newFiles };
 
   // 타입 + 크기 검증 (동기)
-  const typeAndSizeValid = newFiles.filter(
-    (file) => isValidType(file, config) && file.size <= config.maxSize,
-  );
-  const typeAndSizeRejected = newFiles.filter(
-    (file) => !isValidType(file, config) || file.size > config.maxSize,
+  const [typeAndSizeValid, typeAndSizeRejected] = newFiles.reduce<[File[], File[]]>(
+    ([valid, rejected], file) => {
+      if (isValidType(file, config) && file.size <= config.maxSize) {
+        return [[...valid, file], rejected];
+      }
+      return [valid, [...rejected, file]];
+    },
+    [[], []],
   );
 
   // 영상 길이 검증 (비동기, maxDuration이 있는 타입만)
@@ -64,8 +67,13 @@ export const filterValidFiles = async (
         }
       }),
     );
-    result = typeAndSizeValid.filter((_, i) => checks[i]);
-    durationRejected = typeAndSizeValid.filter((_, i) => !checks[i]);
+    [result, durationRejected] = typeAndSizeValid.reduce<[File[], File[]]>(
+      ([valid, rejected], file, i) => {
+        if (checks[i]) return [[...valid, file], rejected];
+        return [valid, [...rejected, file]];
+      },
+      [[], []],
+    );
   }
 
   // 개수 초과 처리
