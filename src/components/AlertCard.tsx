@@ -22,11 +22,11 @@ export function AlertCard({ variant, title, description, onClose }: AlertCardPro
   const icon = variant === 'error' ? AlertCircleIcon : CheckCircleIcon;
 
   return (
-    <div className="flex w-96 items-start gap-3 rounded-xl border border-gray-100 bg-white px-4 py-4 shadow-lg">
-      <Image src={icon} alt="" width={20} height={20} className="mt-0.5 shrink-0" />
+    <div className="flex w-full items-start gap-3 rounded-lg bg-white p-4">
+      <Image src={icon} alt="" width={24} height={24} className="shrink-0" />
       <div className="flex-1 space-y-0.5">
-        <p className="typo-heading-6 text-gray-900">{title}</p>
-        {description && <p className="typo-body-8 text-gray-500">{description}</p>}
+        <p className="typo-heading-4 text-gray-900">{title}</p>
+        {description && <p className="typo-body-7 text-gray-500">{description}</p>}
       </div>
       {onClose && (
         <button
@@ -35,7 +35,7 @@ export function AlertCard({ variant, title, description, onClose }: AlertCardPro
           className="shrink-0 opacity-70 transition-opacity hover:opacity-100"
           aria-label="닫기"
         >
-          <X className="h-5 w-5 text-gray-500" />
+          <X aria-hidden className="h-5 w-5 text-gray-500" />
         </button>
       )}
     </div>
