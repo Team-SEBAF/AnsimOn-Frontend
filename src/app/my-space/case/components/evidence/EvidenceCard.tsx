@@ -1,11 +1,14 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
-import CommitOutlineIcon from '@/assets/icons/CommitOutlineIcon.svg';
 import HelpCircleOutlineIcon from '@/assets/icons/HelpCircleOutlineIcon.svg';
+import QuoteOutlineIcon from '@/assets/icons/QuoteOutlineIcon.svg';
+import UploadIcon from '@/assets/icons/UploadIcon.svg';
 import { Button } from '@/components/Button';
 import { Modal } from '@/components/modals/Modal';
 import { UploadErrorModal } from './UploadErrorModal';
+import { IncidentLogFormModal } from './IncidentLogFormModal';
 import { EvidenceContent } from './EvidenceContent';
 import type { EvidenceType } from '@/types/evidence';
 import { useEvidenceCard } from '../../hooks/useEvidenceCard';
@@ -27,6 +30,7 @@ interface EvidenceCardProps {
  * - Footer: 개수 뱃지 + 업로드 버튼
  */
 export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps) {
+  const [formModalOpen, setFormModalOpen] = useState(false);
   const {
     inputRef,
     config,
@@ -74,16 +78,26 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
       />
 
       {/* Footer */}
-      <div className="typo-btn-2text-gray-700 flex items-center justify-between">
-        <span className="rounded-full bg-gray-100 px-3 py-1">
+      <div className="flex items-center justify-between">
+        <span className="typo-btn-2 rounded-full bg-gray-100 px-3 py-1 text-gray-700">
           {totalCount}/{config.maxFiles}개
         </span>
-        <Button color="secondary" size="lg" onClick={openFilePicker} disabled={isFull}>
-          <span className="flex items-center gap-2">
-            <CommitOutlineIcon className="h-6 w-6" />
-            증거 업로드
-          </span>
-        </Button>
+        <div className="flex items-center gap-2">
+          {type === 'INCIDENT_LOG' && (
+            <Button color="contrast" size="lg" onClick={() => setFormModalOpen(true)}>
+              <span className="flex items-center gap-2">
+                <QuoteOutlineIcon className="h-6 w-6" />
+                직접 작성
+              </span>
+            </Button>
+          )}
+          <Button color="secondary" size="lg" onClick={openFilePicker} disabled={isFull}>
+            <span className="flex items-center gap-2">
+              <UploadIcon className="h-4 w-4" />
+              증거 업로드
+            </span>
+          </Button>
+        </div>
       </div>
 
       {/* 파일 선택 input */}
@@ -98,6 +112,15 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         }}
         className="hidden"
       />
+
+      {/* 사건일지 직접 작성 모달 */}
+      {type === 'INCIDENT_LOG' && (
+        <IncidentLogFormModal
+          open={formModalOpen}
+          onClose={() => setFormModalOpen(false)}
+          complaintId={complaintId}
+        />
+      )}
 
       {/* 업로드 실패 모달 */}
       <UploadErrorModal
