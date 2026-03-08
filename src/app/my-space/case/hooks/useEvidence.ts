@@ -9,6 +9,7 @@ import {
   registerTrackings,
   registerReportRecords,
   registerIncidentLogFiles,
+  uploadIncidentLogFormData,
   // 타입별 detail
   getMessageDetails,
   getVoiceDetails,
@@ -20,6 +21,7 @@ import type {
   EvidenceType,
   EvidencePreviewItem,
   PresignedUrlItemRequest,
+  IncidentLogFormDataUploadRequest,
   MessageDetailListResponse,
   VoiceDetailListResponse,
   TrackingDetailListResponse,
@@ -225,6 +227,31 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: evidenceKeys.previews(complaintId!, type),
+      });
+    },
+  });
+}
+
+// ─── 사건일지 폼 데이터 업로드 훅 ──────────────────────
+
+/**
+ * 사건일지 직접 작성(폼 데이터) 업로드 훅
+ *
+ * - 날짜, 장소, 상황 등을 JSON으로 직접 전송 (S3 업로드 불필요)
+ * - 성공 시 INCIDENT_LOG 목록 자동 갱신
+ *
+ * @param complaintId - 고소장 ID
+ * @returns useMutation — mutate(payload: IncidentLogFormDataUploadRequest)로 호출
+ */
+export function useUploadIncidentLogFormData(complaintId: string | undefined) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: IncidentLogFormDataUploadRequest) =>
+      uploadIncidentLogFormData(complaintId!, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: evidenceKeys.previews(complaintId!, 'INCIDENT_LOG'),
       });
     },
   });

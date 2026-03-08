@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { ToastContainer, Slide } from 'react-toastify';
 import '@/app/styles/index.css';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { QueryProvider } from '@/components/providers/QueryClientProvider';
@@ -22,6 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <AuthProvider>{children}</AuthProvider>
         </QueryProvider>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          closeButton={false}
+          hideProgressBar
+          stacked
+          transition={Slide}
+        />
       </body>
     </html>
   );

@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
 import { filterValidFiles } from '../components/evidence/validate';
 import { useEvidencePreviews, useUploadEvidence, useDeleteEvidence } from './useEvidence';
+import { showAlert } from '@/utils/alert';
 import type { EvidenceType } from '@/types/evidence';
 
 /**
@@ -19,6 +20,9 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
+  // 업로드 실패 모달 상태
+  const [uploadErrorFiles, setUploadErrorFiles] = useState<File[]>([]);
+
   // React Query 훅
   const { data } = useEvidencePreviews(complaintId, type);
   const upload = useUploadEvidence(complaintId, type);
@@ -28,11 +32,35 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
   const totalCount = data?.totalCount ?? 0;
   const isFull = totalCount >= config.maxFiles;
 
-  /** 파일 추가 — 프론트 검증 후 업로드 mutation 호출 */
+  /** 파일 추가 — 중복 검사 → 프론트 검증 → 업로드 mutation 호출 */
   const handleFilesAdd = async (newFiles: File[]) => {
-    if (isFull) return; // 개수 초과 시 업로드 차단
-    const valid = await filterValidFiles(newFiles, config, totalCount);
-    if (valid.length > 0) upload.mutate(valid);
+    if (isFull) return;
+
+    // 파일명 중복 검사 (서버 목록 + 배치 내 중복)
+    const newNames = newFiles.map((f) => f.name);
+    const hasBatchDuplicate = newNames.length !== new Set(newNames).size;
+    const hasServerDuplicate = newFiles.some((f) => items.some((item) => item.filename === f.name));
+    if (hasBatchDuplicate || hasServerDuplicate) {
+      showAlert.error({
+        title: '이미 업로드 된 파일입니다.',
+        description: '같은 파일명의 파일이 존재합니다. 파일명 확인 후 재업로드해주세요',
+      });
+      return;
+    }
+
+    const { valid, rejected } = await filterValidFiles(newFiles, config, totalCount);
+    if (rejected.length > 0) setUploadErrorFiles(rejected);
+    if (valid.length > 0) {
+      upload.mutate(valid, {
+        onError: () => {
+          showAlert.error({
+            title: '파일 업로드에 실패했습니다',
+            description:
+              '다시한번 진행해주시길 바라며, 문제가 반복되는 경우 왼쪽 하단 문의하기를 통해 전달해주시길 바랍니다.',
+          });
+        },
+      });
+    }
   };
 
   /** 증거 삭제 - 모달 열기 */
@@ -44,7 +72,14 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
   /** 삭제 확인 */
   const confirmDelete = () => {
     if (deleteTargetId) {
-      remove.mutate([deleteTargetId]);
+      remove.mutate([deleteTargetId], {
+        onError: () => {
+          showAlert.error({
+            title: '증거 삭제에 실패했습니다',
+            description: '잠시 후 다시 시도해주세요.',
+          });
+        },
+      });
     }
     setDeleteModalOpen(false);
     setDeleteTargetId(null);
@@ -73,6 +108,8 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
     // 모달 상태
     deleteModalOpen,
     setDeleteModalOpen,
+    uploadErrorFiles,
+    setUploadErrorFiles,
 
     // 핸들러
     handleFilesAdd,
