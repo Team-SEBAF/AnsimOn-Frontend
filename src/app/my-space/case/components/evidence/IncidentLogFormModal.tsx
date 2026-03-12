@@ -12,6 +12,7 @@ import { useUploadIncidentLogFormData, useUploadEvidence } from '../../hooks/use
 import { filterValidFiles } from './validate';
 import { EVIDENCE_CONFIG } from './constants';
 import { FilePreview } from './FilePreview';
+import { getTodayString } from '@/utils/date';
 
 const incidentLogSchema = z.object({
   filename: z.string().min(1, '제목을 입력해주세요'),
@@ -27,10 +28,6 @@ interface IncidentLogFormModalProps {
   open: boolean;
   onClose: () => void;
   complaintId: string | undefined;
-}
-
-function getTodayString() {
-  return new Date().toISOString().split('T')[0];
 }
 
 const config = EVIDENCE_CONFIG.INCIDENT_LOG;

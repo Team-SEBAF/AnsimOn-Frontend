@@ -1,4 +1,24 @@
 /**
+ * ISO 날짜 문자열을 한국어 날짜로 포맷 (예: "2026. 3. 12.")
+ *
+ * @param isoString - ISO 8601 날짜 문자열 (예: "2026-03-12T10:32:21Z")
+ */
+export function formatDateKo(isoString: string): string {
+  return new Date(isoString).toLocaleDateString('ko-KR');
+}
+
+/**
+ * 오늘 날짜를 YYYY-MM-DD 형식으로 반환 (로컬 시간 기준)
+ */
+export function getTodayString(): string {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/**
  * YYYY-MM-DD 문자열을 Date 객체로 파싱 (캘린더용)
  * @returns 유효하지 않으면 undefined
  */
