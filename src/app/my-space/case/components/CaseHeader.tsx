@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import EditOutlineIcon from '@/assets/icons/EditOutlineIcon.svg';
+import { formatDateKo } from '@/utils/date';
 
 interface CaseHeaderProps {
   /** 사건 제목 */
@@ -101,7 +102,7 @@ export function CaseHeader({
             <EditOutlineIcon className="aria-hidden size-5 text-gray-400" />
           </button>
         )}
-        <span className="typo-body-8 text-gray-400">최종 수정일: {updatedAt}</span>
+        <span className="typo-body-8 text-gray-400">최종 수정일: {formatDateKo(updatedAt)}</span>
       </div>
       <div className="flex items-center gap-2">
         <Button color="secondary" size="lg" onClick={onSave} loading={isSaving}>
