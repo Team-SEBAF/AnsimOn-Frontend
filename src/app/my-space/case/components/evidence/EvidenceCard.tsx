@@ -91,7 +91,12 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
               </span>
             </Button>
           )}
-          <Button color="secondary" size="lg" onClick={openFilePicker} disabled={isFull}>
+          <Button
+            color="secondary"
+            size="lg"
+            onClick={openFilePicker}
+            disabled={isFull || isUploading}
+          >
             <span className="flex items-center gap-2">
               <UploadIcon className="h-4 w-4" />
               증거 업로드
