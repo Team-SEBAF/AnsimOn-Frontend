@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Input, InputProps } from './Input';
 import { Button } from './Button';
+import { Spinner } from './Spinner';
 import { cn } from '@/lib/utils';
 
 type ButtonVariant = 'default' | 'outline' | 'ghost';
@@ -57,7 +58,7 @@ export const ActionInput = React.forwardRef<HTMLInputElement, ActionInputProps>(
           disabled={buttonDisabled || buttonLoading}
           className={cn('h-12 w-22.5 shrink-0', inputProps.label && 'mt-6')}
         >
-          {buttonLoading ? '처리중...' : buttonLabel}
+          {buttonLoading ? <Spinner size="sm" /> : buttonLabel}
         </Button>
       </div>
     );
