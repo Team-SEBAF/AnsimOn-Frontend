@@ -8,8 +8,7 @@ import UploadIcon from '@/assets/icons/UploadIcon.svg';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Modal } from '@/components/modals/Modal';
-import { useUploadIncidentLogFormData, useUploadEvidence } from '../../hooks/useEvidence';
-import { filterValidFiles } from './validate';
+import { useUploadIncidentLogFormData } from '../../hooks/useEvidence';
 import { EVIDENCE_CONFIG } from './constants';
 import { FilePreview } from './FilePreview';
 import { getTodayString } from '@/utils/date';
@@ -42,6 +41,7 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors, isValid },
   } = useForm<IncidentLogFormValues>({
     resolver: zodResolver(incidentLogSchema),
@@ -58,25 +58,19 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
   const descriptionLength = useWatch({ control, name: 'description' }).length;
 
   const uploadFormData = useUploadIncidentLogFormData(complaintId);
-  const uploadFiles = useUploadEvidence(complaintId, 'INCIDENT_LOG');
 
-  const handleFilesAdd = async (files: File[]) => {
-    const { valid } = await filterValidFiles(files, config, localFiles.length);
-    if (valid.length > 0) setLocalFiles((prev) => [...prev, ...valid]);
+  const handleFilesAdd = (files: File[]) => {
+    setLocalFiles((prev) => [...prev, ...files]);
   };
 
   const onSubmit = async (values: IncidentLogFormValues) => {
-    const tasks: Promise<unknown>[] = [
-      uploadFormData.mutateAsync({ ...values, witness: '', perceivedRisk: '' }),
-    ];
-    if (localFiles.length > 0) {
-      tasks.push(uploadFiles.mutateAsync(localFiles));
-    }
-    await Promise.all(tasks);
+    await uploadFormData.mutateAsync({ ...values, witness: '', perceivedRisk: '' });
+    reset();
+    setLocalFiles([]);
     onClose();
   };
 
-  const isPending = uploadFormData.isPending || uploadFiles.isPending;
+  const isPending = uploadFormData.isPending;
 
   return (
     <Modal.Root
