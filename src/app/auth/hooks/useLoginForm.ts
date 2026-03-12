@@ -8,6 +8,7 @@ import { loginSchema, type LoginFormValues } from '@/schemas/auth/login.schema';
 import { loginEmail } from '@/api/auth/login';
 import type { ApiError } from '@/types/api';
 import { useAuthStore } from '@/stores/authStore';
+import { showAlert } from '@/utils/alert';
 
 export function useLoginForm() {
   const router = useRouter();
@@ -41,15 +42,26 @@ export function useLoginForm() {
       const data = err as ApiError;
 
       if (data?.code === 'USER_NOT_FOUND') {
-        form.setError('email', { message: data.message });
+        showAlert.error({
+          title: '가입된 계정을 찾을 수 없습니다',
+          description:
+            '입력하신 이메일로 가입된 계정이 없습니다.\n이메일 주소를 다시 확인하시거나 회원가입을 진행해 주세요.',
+        });
       } else if (data?.code === 'INVALID_CREDENTIALS') {
         sessionStorage.setItem('loginEmail', values.email);
-        form.setError('password', { message: data.message });
+        showAlert.error({
+          title: '로그인 정보를 확인해 주세요',
+          description: '이메일 또는 비밀번호가 올바르지 않습니다.\n입력 내용을 다시 확인해 주세요.',
+        });
       } else if (data?.code === 'USER_NOT_CONFIRMED') {
         sessionStorage.setItem('loginEmail', values.email);
-        form.setError('root', { message: data.message });
+        showAlert.error({
+          title: '이메일 인증이 필요합니다',
+          description:
+            '아직 이메일 인증이 완료되지 않았습니다.\n이메일을 확인하신 후 인증을 완료해 주세요.',
+        });
       } else {
-        form.setError('root', { message: data?.message ?? '로그인에 실패했습니다' });
+        showAlert.error({ title: '로그인에 실패했습니다' });
       }
     }
   };

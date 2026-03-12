@@ -42,19 +42,19 @@ export function EvidenceContent({
 }: EvidenceContentProps) {
   /** 드래그 오버 상태 — true면 테두리/배경 강조 */
   const [isDragOver, setIsDragOver] = useState(false);
+  const canUpload = !isUploading;
 
   /** 드롭 시 파일 처리 + 드래그 상태 해제 */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    const droppedFiles = Array.from(e.dataTransfer.files);
-    if (droppedFiles.length > 0) onFilesAdd(droppedFiles);
+    if (canUpload && e.dataTransfer.files.length > 0) onFilesAdd(Array.from(e.dataTransfer.files));
   };
 
   /** 드래그 오버 시 기본 동작 방지 + 강조 표시 */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setIsDragOver(true);
+    setIsDragOver(canUpload);
   };
 
   /** 드래그 영역 벗어나면 강조 해제 */
@@ -72,10 +72,10 @@ export function EvidenceContent({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={onClickUpload}
-          className={`bg-bg-2 flex h-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-[1.5px] border-dashed px-6 py-9 transition ${
-            isDragOver ? 'border-primary bg-primary/5' : 'border-gray-200'
-          }`}
+          onClick={canUpload ? onClickUpload : undefined}
+          className={`bg-bg-2 flex h-full flex-col items-center justify-center gap-2 rounded-lg border-[1.5px] border-dashed px-6 py-9 transition ${
+            canUpload ? 'cursor-pointer' : 'cursor-default'
+          } ${isDragOver ? 'border-primary bg-primary/5' : 'border-gray-200'}`}
         >
           {isUploading ? (
             <Spinner size="lg" className="text-gray-400" label="파일 업로드 중" />

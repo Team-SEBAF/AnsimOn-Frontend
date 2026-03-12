@@ -42,6 +42,11 @@ axiosInstance.interceptors.response.use(
 
     // 401 에러이고, 재시도하지 않은 요청인 경우
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // 로그인 API에서 발생한 401은 인증 실패 에러이므로 갱신 시도 없이 그대로 처리
+      if (originalRequest.url?.includes('/users/login/')) {
+        return Promise.reject(error.response?.data ?? error);
+      }
+
       // 토큰 갱신 API 자체에서 401이 발생한 경우 → 로그인 페이지로
       if (originalRequest.url?.includes('/token/refresh')) {
         authCookies.clearTokens();

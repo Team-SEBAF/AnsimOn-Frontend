@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { VerifyEmailFormValues, verifyEmailSchema } from '@/schemas/auth/verify-email.schema';
 import { verifyEmail, resendVerificationEmail } from '@/api/auth/signup';
 import type { ApiError } from '@/types/api';
+import { showAlert } from '@/utils/alert';
 
 export function useEmailVerifyForm(email: string) {
   const router = useRouter();
@@ -28,10 +29,12 @@ export function useEmailVerifyForm(email: string) {
     setIsResending(true);
     try {
       await resendVerificationEmail(email);
-      // TODO: 성공 토스트 메시지
-    } catch (err) {
-      console.error('이메일 재전송 실패:', err);
-      // TODO: 실패 토스트 메시지
+      showAlert.success({
+        title: '인증 메일 재전송 완료',
+        description: '메일로 인증번호를 다시 전송드렸습니다',
+      });
+    } catch {
+      showAlert.error({ title: '인증 메일 재전송에 실패했습니다' });
     } finally {
       setIsResending(false);
     }

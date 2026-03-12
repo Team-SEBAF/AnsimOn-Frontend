@@ -50,13 +50,6 @@ export function LoginForm() {
           onIconClick={togglePassword}
           {...form.register('password')}
         />
-
-        {/* 전체 에러 메시지 (root 에러) */}
-        {form.formState.errors.root && (
-          <p className="text-error text-[12px] leading-4.5 font-medium">
-            {form.formState.errors.root.message}
-          </p>
-        )}
       </div>
 
       <div className="space-y-3">

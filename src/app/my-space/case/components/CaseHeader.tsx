@@ -2,8 +2,8 @@
 
 import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
-import { Input } from '@/components/Input';
 import EditOutlineIcon from '@/assets/icons/EditOutlineIcon.svg';
+import { formatDateKo } from '@/utils/date';
 
 interface CaseHeaderProps {
   /** 사건 제목 */
@@ -57,9 +57,9 @@ export function CaseHeader({
   /** 편집 확정 */
   const confirmEdit = () => {
     const trimmedTitle = draft.trim();
-    if (trimmedTitle) {
+    if (trimmedTitle && trimmedTitle !== title) {
       onTitleChange(trimmedTitle);
-    } else {
+    } else if (!trimmedTitle) {
       setDraft(title); // 빈 제목은 허용하지 않고 원래 제목으로 복구
     }
     setIsEditing(false);
@@ -82,13 +82,13 @@ export function CaseHeader({
       <div className="flex flex-col gap-1">
         {/* 제목 표시 / 편집 */}
         {isEditing ? (
-          <Input
+          <input
             ref={inputRef}
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDraft(e.target.value)}
             onBlur={confirmEdit}
             onKeyDown={handleKeyDown}
-            size="sm"
+            className="typo-heading-2 w-60 border-b border-gray-300 bg-transparent py-0 text-gray-900 outline-none focus:border-gray-500"
           />
         ) : (
           <button
@@ -101,7 +101,7 @@ export function CaseHeader({
             <EditOutlineIcon className="aria-hidden size-5 text-gray-400" />
           </button>
         )}
-        <span className="typo-body-8 text-gray-400">최종 수정일: {updatedAt}</span>
+        <span className="typo-body-8 text-gray-400">최종 수정일: {formatDateKo(updatedAt)}</span>
       </div>
       <div className="flex items-center gap-2">
         <Button color="secondary" size="lg" onClick={onSave} loading={isSaving}>

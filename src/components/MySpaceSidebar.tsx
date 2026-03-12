@@ -78,12 +78,16 @@ export function MySpaceSidebar() {
                 const isActive = pathname === item.href;
 
                 return (
-                  <SidebarMenuItem key={item.href}>
+                  <SidebarMenuItem
+                    key={item.href}
+                    className="group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:justify-center"
+                  >
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
+                      size="lg"
                       tooltip={item.label}
-                      className="typo-heading-5 h-12 p-0 text-gray-300 group-data-[collapsible=icon]:size-12! data-[active=true]:font-semibold data-[active=true]:text-gray-800"
+                      className="typo-heading-5 text-gray-300 group-data-[collapsible=icon]:size-12! data-[active=true]:font-semibold data-[active=true]:text-gray-800"
                     >
                       <Link href={item.href}>
                         <span className="relative size-12 shrink-0">
