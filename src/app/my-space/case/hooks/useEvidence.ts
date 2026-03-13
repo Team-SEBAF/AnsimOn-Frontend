@@ -29,7 +29,7 @@ import type {
   IncidentLogDetailListResponse,
 } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
-import { getMediaDuration } from '../components/evidence/validate';
+import { getMediaDuration, getCategoryForFile } from '../components/evidence/validate';
 
 // ─── query key ──────────────────────────────────────────
 
@@ -192,18 +192,21 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
   return useMutation({
     mutationFn: async (files: File[]) => {
       // 1) presigned URL 발급
-      // VOICE/VICTIM은 실제 재생 길이를 구해서 전달
-      let durations: number[] = [];
-      if (config.maxDuration) {
-        durations = await Promise.all(files.map((f) => getMediaDuration(f)));
-      }
+      // 영상·음성 파일만 실제 재생 길이를 구해서 전달 (이미지는 제외)
+      const fileCategories = files.map((f) => getCategoryForFile(f, config.categories));
+      const durations: (number | null)[] = await Promise.all(
+        files.map(async (f, i) => {
+          if (!fileCategories[i]?.maxDuration) return null;
+          return getMediaDuration(f);
+        }),
+      );
 
       const presignedItems: PresignedUrlItemRequest[] = files.map((file, i) => ({
         index: i,
         filename: file.name,
         contentType: file.type,
         sizeBytes: file.size,
-        ...(config.maxDuration ? { durationSeconds: Math.round(durations[i]) } : {}),
+        ...(durations[i] !== null ? { durationSeconds: Math.round(durations[i]!) } : {}),
       }));
 
       const { items: presignedUrls } = await getPresignedUrls(complaintId!, {
