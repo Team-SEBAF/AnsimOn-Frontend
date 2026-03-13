@@ -23,7 +23,7 @@ export const authCookies = {
     });
     Cookies.set(ID_TOKEN_KEY, idToken, {
       ...COOKIE_OPTIONS,
-      expires: 1 / 24, // 1시간 (access token과 동일)
+      expires: 3, // 3일 (refresh token과 동일 — refresh 시 사용자 식별용)
     });
   },
 
@@ -35,7 +35,7 @@ export const authCookies = {
     });
     Cookies.set(ID_TOKEN_KEY, idToken, {
       ...COOKIE_OPTIONS,
-      expires: 1 / 24,
+      expires: 3, // 3일
     });
   },
 
