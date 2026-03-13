@@ -17,12 +17,12 @@ import type {
   VoicePreviewListResponse,
   VoiceDetailListResponse,
   VoiceOriginal,
-  // TRACKING
-  TrackingRegisterRequest,
-  TrackingRegisterListResponse,
-  TrackingPreviewListResponse,
-  TrackingDetailListResponse,
-  TrackingOriginal,
+  // VICTIM
+  VictimRegisterRequest,
+  VictimRegisterListResponse,
+  VictimPreviewListResponse,
+  VictimDetailListResponse,
+  VictimOriginal,
   // REPORT_RECORD
   ReportRecordRegisterRequest,
   ReportRecordRegisterListResponse,
@@ -149,39 +149,39 @@ export async function getVoiceOriginal(voiceId: string) {
   return res.data;
 }
 
-// ─── TRACKING (접근/추적 흔적) ──────────────────────────
+// ─── VICTIM (접근/추적 흔적) ────────────────────────────
 
 /** S3 업로드 완료 후 서버에 등록 */
-export async function registerTrackings(complaintId: string, payload: TrackingRegisterRequest) {
-  const res = await axiosInstance.post<TrackingRegisterListResponse>(
-    `/api/v1/${complaintId}/evidences/trackings/register`,
+export async function registerVictims(complaintId: string, payload: VictimRegisterRequest) {
+  const res = await axiosInstance.post<VictimRegisterListResponse>(
+    `/api/v1/${complaintId}/evidences/victims/register`,
     payload,
   );
   return res.data;
 }
 
 /** 프리뷰 목록 (thumbnail_url, duration_seconds 포함) */
-export async function getTrackingPreviews(complaintId: string, limit?: number) {
-  const res = await axiosInstance.get<TrackingPreviewListResponse>(
-    `/api/v1/${complaintId}/evidences/trackings/previews`,
+export async function getVictimPreviews(complaintId: string, limit?: number) {
+  const res = await axiosInstance.get<VictimPreviewListResponse>(
+    `/api/v1/${complaintId}/evidences/victims/previews`,
     { params: { limit } },
   );
   return res.data;
 }
 
 /** 상세 목록 */
-export async function getTrackingDetails(complaintId: string, limit?: number) {
-  const res = await axiosInstance.get<TrackingDetailListResponse>(
-    `/api/v1/${complaintId}/evidences/trackings/details`,
+export async function getVictimDetails(complaintId: string, limit?: number) {
+  const res = await axiosInstance.get<VictimDetailListResponse>(
+    `/api/v1/${complaintId}/evidences/victims/details`,
     { params: { limit } },
   );
   return res.data;
 }
 
 /** 원본 파일 정보 + 다운로드 URL */
-export async function getTrackingOriginal(trackingId: string) {
-  const res = await axiosInstance.get<TrackingOriginal>(
-    `/api/v1/evidence/tracking/${trackingId}/original`,
+export async function getVictimOriginal(victimId: string) {
+  const res = await axiosInstance.get<VictimOriginal>(
+    `/api/v1/evidence/victim/${victimId}/original`,
   );
   return res.data;
 }
@@ -255,7 +255,7 @@ export async function uploadIncidentLogFormData(
 /** 폼 데이터 조회 */
 export async function getIncidentLogFormData(incidentLogId: string) {
   const res = await axiosInstance.get<IncidentLogFormDataResponse>(
-    `/api/v1/evidence/incident-log-form-data/${incidentLogId}`,
+    `/api/v1/evidence/incident-log/form-data/${incidentLogId}`,
   );
   return res.data;
 }

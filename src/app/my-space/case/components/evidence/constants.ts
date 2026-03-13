@@ -41,7 +41,7 @@ export const EVIDENCE_CONFIG: Record<
     description: '통화 기록(부재중 포함), 음성사서함, 통화 내용 녹음(당사자 녹음)',
     icon: talkIcon,
   },
-  TRACKING: {
+  VICTIM: {
     maxFiles: 3,
     maxSize: 500 * 1024 * 1024, // 500MB
     maxDuration: 300, // 5분
