@@ -101,7 +101,7 @@ export const EVIDENCE_CONFIG = withAccept({
     categories: ['VIDEO', 'IMAGE'] as FileCategoryKey[],
     previewType: 'image' as const,
     title: '피해 사진/영상',
-    description: '찾아옴/대기/미행 장면 사진·영상, 차량 블랙박스, CCTV',
+    description: '신체적 피해, 차량 블랙박스, CCTV 사진 및 영상',
     icon: locationIcon,
   },
   REPORT_RECORD: {

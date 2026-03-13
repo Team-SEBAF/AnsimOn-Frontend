@@ -149,7 +149,7 @@ export async function getVoiceOriginal(voiceId: string) {
   return res.data;
 }
 
-// ─── VICTIM (접근/추적 흔적) ────────────────────────────
+// ─── VICTIM (피해 사진/영상) ────────────────────────────
 
 /** S3 업로드 완료 후 서버에 등록 */
 export async function registerVictims(complaintId: string, payload: VictimRegisterRequest) {

@@ -167,7 +167,7 @@ export type VoiceOriginal = {
   updated_at: string;
 };
 
-// ─── VICTIM (접근/추적 흔적) ─────────────────────────────
+// ─── VICTIM (피해 사진/영상) ─────────────────────────────
 
 export type VictimRegisterItem = {
   victimId: string;
