@@ -266,7 +266,7 @@ export async function updateIncidentLogFormData(
   payload: IncidentLogFormDataUpdateRequest,
 ) {
   const res = await axiosInstance.patch<IncidentLogFormDataResponse>(
-    `/api/v1/evidences/incident-logs/form-data/${incidentLogId}`,
+    `/api/v1/evidence/incident-log/form-data/${incidentLogId}`,
     payload,
   );
   return res.data;
@@ -293,7 +293,7 @@ export async function getIncidentLogDetails(complaintId: string, limit?: number)
 /** 원본 파일 정보 + 다운로드 URL (파일 업로드 방식만) */
 export async function getIncidentLogFileOriginal(incidentLogId: string) {
   const res = await axiosInstance.get<IncidentLogFileOriginal>(
-    `/api/v1/evidence/incident-log-file/${incidentLogId}/original`,
+    `/api/v1/evidence/incident-log/file/${incidentLogId}/original`,
   );
   return res.data;
 }
