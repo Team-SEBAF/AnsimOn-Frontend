@@ -1,17 +1,31 @@
-import type { EVIDENCE_CONFIG } from './constants';
+import { FILE_CATEGORY_CONFIG } from './constants';
+import type { EVIDENCE_CONFIG, FileCategoryKey, EvidenceType } from './constants';
 
-type EvidenceConfig = (typeof EVIDENCE_CONFIG)[string];
+type EvidenceConfig = (typeof EVIDENCE_CONFIG)[EvidenceType];
 
-/** MIME type 또는 확장자로 파일 형식 검증 (드래그앤드롭은 input accept를 우회하므로 JS에서 재검증) */
-const isValidType = (file: File, config: EvidenceConfig): boolean => {
-  // 1차: MIME type 매칭
-  if (file.type && config.mimeTypes?.includes(file.type)) return true;
-  // 2차: MIME이 빈 문자열인 경우(.hwp 등) 확장자로 폴백
-  const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-  return config.accept.split(',').includes(ext);
-};
+/**
+ * 파일이 속한 카테고리 설정을 반환
+ * MIME type으로 먼저 찾고, 빈 문자열(.hwp 등)이면 확장자로 폴백
+ * 어느 카테고리에도 해당하지 않으면 null이 반환
+ */
+export function getCategoryForFile(
+  file: File,
+  categories: FileCategoryKey[],
+): (typeof FILE_CATEGORY_CONFIG)[FileCategoryKey] | null {
+  for (const key of categories) {
+    const categoryConfig = FILE_CATEGORY_CONFIG[key];
 
-/** 영상/음성 파일의 재생 길이(초)를 반환. 메타데이터만 로드하므로 전체 파일을 읽지 않음 */
+    const matchesMimeType = file.type && categoryConfig.mimeTypes.includes(file.type);
+    if (matchesMimeType) return categoryConfig;
+
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const matchesExtension = categoryConfig.accept.split(',').includes(fileExtension);
+    if (matchesExtension) return categoryConfig;
+  }
+  return null;
+}
+
+/** 영상/음성 파일의 재생 길이(초)가 반환됨. 메타데이터만 로드되므로 전체 파일을 읽지 않음 */
 export const getMediaDuration = (file: File): Promise<number> => {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
@@ -33,7 +47,11 @@ export type FilterResult = {
   rejected: File[];
 };
 
-/** 새 파일 목록에서 유효한 파일만 필터링 (타입 → 크기 → 영상 길이 → 개수 순으로 검증) */
+/** 새 파일 목록에서 유효한 파일만 필터링
+ * 1. 카테고리별 타입·크기
+ * 2. 영상/음성 길이
+ * 3. 개수
+ */
 export const filterValidFiles = async (
   newFiles: File[],
   config: EvidenceConfig,
@@ -42,43 +60,47 @@ export const filterValidFiles = async (
   const remaining = config.maxFiles - currentCount;
   if (remaining <= 0) return { valid: [], rejected: newFiles };
 
-  // 타입 + 크기 검증 (동기)
+  // 1단계: 카테고리 판별 + 크기 검증 (동기)
   const [typeAndSizeValid, typeAndSizeRejected] = newFiles.reduce<[File[], File[]]>(
     ([valid, rejected], file) => {
-      if (isValidType(file, config) && file.size <= config.maxSize) {
-        return [[...valid, file], rejected];
-      }
+      const categoryConfig = getCategoryForFile(file, config.categories);
+      const isValidType = categoryConfig !== null;
+      const isWithinSizeLimit = isValidType && file.size <= categoryConfig.maxSize;
+      if (isWithinSizeLimit) return [[...valid, file], rejected];
       return [valid, [...rejected, file]];
     },
     [[], []],
   );
 
-  // 영상 길이 검증 (비동기, maxDuration이 있는 타입만)
-  let result = typeAndSizeValid;
-  let durationRejected: File[] = [];
-  if (config.maxDuration) {
-    const checks = await Promise.all(
-      typeAndSizeValid.map(async (file) => {
-        try {
-          const duration = await getMediaDuration(file);
-          return duration <= config.maxDuration!;
-        } catch {
-          return false;
-        }
-      }),
-    );
-    [result, durationRejected] = typeAndSizeValid.reduce<[File[], File[]]>(
-      ([valid, rejected], file, i) => {
-        if (checks[i]) return [[...valid, file], rejected];
-        return [valid, [...rejected, file]];
-      },
-      [[], []],
-    );
-  }
+  // 2단계: 영상/음성 길이 검증 (비동기)
+  // maxDuration이 없는 카테고리(이미지, 문서)는 true가 반환되어 자동 통과됨
+  const durationChecks = await Promise.all(
+    typeAndSizeValid.map(async (file) => {
+      const categoryConfig = getCategoryForFile(file, config.categories);
+      const hasDurationLimit = categoryConfig?.maxDuration != null;
+      if (!hasDurationLimit) return true;
+      try {
+        const duration = await getMediaDuration(file);
+        const isWithinDurationLimit = duration <= categoryConfig!.maxDuration!;
+        return isWithinDurationLimit;
+      } catch {
+        return false;
+      }
+    }),
+  );
 
-  // 개수 초과 처리
-  const valid = result.slice(0, remaining);
-  const countRejected = result.slice(remaining);
+  const [durationValid, durationRejected] = typeAndSizeValid.reduce<[File[], File[]]>(
+    ([valid, rejected], file, i) => {
+      const passedDurationCheck = durationChecks[i];
+      if (passedDurationCheck) return [[...valid, file], rejected];
+      return [valid, [...rejected, file]];
+    },
+    [[], []],
+  );
+
+  // 3단계: 개수 초과 처리
+  const valid = durationValid.slice(0, remaining);
+  const countRejected = durationValid.slice(remaining);
 
   return {
     valid,

@@ -6,14 +6,14 @@ import {
   // 타입별 register
   registerMessages,
   registerVoices,
-  registerTrackings,
+  registerVictims,
   registerReportRecords,
   registerIncidentLogFiles,
   uploadIncidentLogFormData,
   // 타입별 detail
   getMessageDetails,
   getVoiceDetails,
-  getTrackingDetails,
+  getVictimDetails,
   getReportRecordDetails,
   getIncidentLogDetails,
 } from '@/api/evidence';
@@ -24,12 +24,12 @@ import type {
   IncidentLogFormDataUploadRequest,
   MessageDetailListResponse,
   VoiceDetailListResponse,
-  TrackingDetailListResponse,
+  VictimDetailListResponse,
   ReportRecordDetailListResponse,
   IncidentLogDetailListResponse,
 } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
-import { getMediaDuration } from '../components/evidence/validate';
+import { getMediaDuration, getCategoryForFile } from '../components/evidence/validate';
 
 // ─── query key ──────────────────────────────────────────
 
@@ -76,11 +76,11 @@ const fetchAndNormalize: Record<
       totalCount: res.total_count,
     };
   },
-  TRACKING: async (complaintId) => {
-    const res: TrackingDetailListResponse = await getTrackingDetails(complaintId);
+  VICTIM: async (complaintId) => {
+    const res: VictimDetailListResponse = await getVictimDetails(complaintId);
     return {
       items: res.details.map((d) => ({
-        id: d.tracking_id,
+        id: d.victim_id,
         filename: d.filename,
         thumbnailUrl: d.thumbnail_url,
         sizeBytes: d.size_bytes,
@@ -134,9 +134,9 @@ const registerByType = async (
       return registerVoices(complaintId, {
         items: items.map((i) => ({ voiceId: i.evidenceId, filename: i.filename })),
       });
-    case 'TRACKING':
-      return registerTrackings(complaintId, {
-        items: items.map((i) => ({ trackingId: i.evidenceId, filename: i.filename })),
+    case 'VICTIM':
+      return registerVictims(complaintId, {
+        items: items.map((i) => ({ victimId: i.evidenceId, filename: i.filename })),
       });
     case 'REPORT_RECORD':
       return registerReportRecords(complaintId, {
@@ -159,7 +159,7 @@ const registerByType = async (
  * - 업로드/삭제 시 invalidateQueries로 갱신
  *
  * @param complaintId - 고소장 ID (undefined이면 요청하지 않음)
- * @param type - 증거 타입 (MESSAGE, VOICE, TRACKING, REPORT_RECORD, INCIDENT_LOG)
+ * @param type - 증거 타입 (MESSAGE, VOICE, VICTIM, REPORT_RECORD, INCIDENT_LOG)
  * @returns `{ items: EvidencePreviewItem[], totalCount: number }`
  */
 export function useEvidencePreviews(complaintId: string | undefined, type: EvidenceType) {
@@ -177,7 +177,7 @@ export function useEvidencePreviews(complaintId: string | undefined, type: Evide
  * 증거 파일 업로드 훅 (3단계 플로우)
  *
  * - Presigned URL 발급 → S3 PUT 업로드 → 서버 Register 순차 실행
- * - VOICE/TRACKING은 업로드 전 getMediaDuration()으로 실제 재생 길이 측정
+ * - VOICE/VICTIM은 업로드 전 getMediaDuration()으로 실제 재생 길이 측정
  * - S3 PUT은 인증 토큰 없이 fetch 사용 (presigned URL 자체에 인증 포함)
  * - 성공 시 invalidateQueries로 목록 자동 갱신
  *
@@ -192,18 +192,21 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
   return useMutation({
     mutationFn: async (files: File[]) => {
       // 1) presigned URL 발급
-      // VOICE/TRACKING은 실제 재생 길이를 구해서 전달
-      let durations: number[] = [];
-      if (config.maxDuration) {
-        durations = await Promise.all(files.map((f) => getMediaDuration(f)));
-      }
+      // 영상·음성 파일만 실제 재생 길이를 구해서 전달 (이미지는 제외)
+      const fileCategories = files.map((f) => getCategoryForFile(f, config.categories));
+      const durations: (number | null)[] = await Promise.all(
+        files.map(async (f, i) => {
+          if (!fileCategories[i]?.maxDuration) return null;
+          return getMediaDuration(f);
+        }),
+      );
 
       const presignedItems: PresignedUrlItemRequest[] = files.map((file, i) => ({
         index: i,
         filename: file.name,
         contentType: file.type,
         sizeBytes: file.size,
-        ...(config.maxDuration ? { durationSeconds: Math.round(durations[i]) } : {}),
+        ...(durations[i] !== null ? { durationSeconds: Math.round(durations[i]!) } : {}),
       }));
 
       const { items: presignedUrls } = await getPresignedUrls(complaintId!, {

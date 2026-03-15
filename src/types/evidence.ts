@@ -1,6 +1,6 @@
 // ─── 공통 ───────────────────────────────────────────────
 
-export type EvidenceType = 'MESSAGE' | 'VOICE' | 'TRACKING' | 'REPORT_RECORD' | 'INCIDENT_LOG';
+export type EvidenceType = 'MESSAGE' | 'VOICE' | 'VICTIM' | 'REPORT_RECORD' | 'INCIDENT_LOG';
 
 // ─── Presigned URL (모든 타입 공통) ─────────────────────
 
@@ -167,42 +167,42 @@ export type VoiceOriginal = {
   updated_at: string;
 };
 
-// ─── TRACKING ───────────────────────────────────────────
+// ─── VICTIM (피해 사진/영상) ─────────────────────────────
 
-export type TrackingRegisterItem = {
-  trackingId: string;
+export type VictimRegisterItem = {
+  victimId: string;
   filename: string;
 };
 
-export type TrackingRegisterRequest = {
-  items: TrackingRegisterItem[];
+export type VictimRegisterRequest = {
+  items: VictimRegisterItem[];
 };
 
-export type TrackingRegisterItemResponse = {
-  tracking_id: string;
+export type VictimRegisterItemResponse = {
+  victim_id: string;
   filename: string;
   content_type: string;
   duration_seconds: number;
   size_bytes: number;
 };
 
-export type TrackingRegisterListResponse = {
-  items: TrackingRegisterItemResponse[];
+export type VictimRegisterListResponse = {
+  items: VictimRegisterItemResponse[];
 };
 
-export type TrackingPreview = {
-  tracking_id: string;
+export type VictimPreview = {
+  victim_id: string;
   duration_seconds: number;
   thumbnail_url: string;
 };
 
-export type TrackingPreviewListResponse = {
-  previews: TrackingPreview[];
+export type VictimPreviewListResponse = {
+  previews: VictimPreview[];
   total_count: number;
 };
 
-export type TrackingDetail = {
-  tracking_id: string;
+export type VictimDetail = {
+  victim_id: string;
   filename: string;
   duration_seconds: number;
   size_bytes: number;
@@ -211,13 +211,13 @@ export type TrackingDetail = {
   thumbnail_url: string;
 };
 
-export type TrackingDetailListResponse = {
-  details: TrackingDetail[];
+export type VictimDetailListResponse = {
+  details: VictimDetail[];
   total_count: number;
 };
 
-export type TrackingOriginal = {
-  tracking_id: string;
+export type VictimOriginal = {
+  victim_id: string;
   filename: string;
   content_type: string;
   size_bytes: number;

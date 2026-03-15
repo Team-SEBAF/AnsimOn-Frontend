@@ -151,7 +151,10 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
                   key={i}
                   name={file.name}
                   size={file.size}
-                  onRemove={() => setLocalFiles((prev) => prev.filter((_, idx) => idx !== i))}
+                  action={{
+                    type: 'remove',
+                    onRemove: () => setLocalFiles((prev) => prev.filter((_, idx) => idx !== i)),
+                  }}
                 />
               ))}
             </div>

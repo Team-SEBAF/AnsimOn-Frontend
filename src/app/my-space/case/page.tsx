@@ -69,6 +69,7 @@ export default function CasePage() {
         onTitleChange={handleTitleChange}
         onSave={handleSave}
         isSaving={isSaving}
+        isSaveDisabled={step === 1}
         onPrev={goPrev}
         onNext={goNext}
         hasPrev={step > MIN_STEP}

@@ -109,7 +109,7 @@ export function EvidenceContent({
                 key={item.id}
                 name={item.filename ?? '파일'}
                 size={item.sizeBytes ?? 0}
-                onRemove={() => onRemove(item.id)}
+                action={{ type: 'remove', onRemove: () => onRemove(item.id) }}
               />
             ),
           )}

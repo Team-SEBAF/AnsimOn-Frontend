@@ -2,7 +2,7 @@ import { EvidenceCard } from './evidence/EvidenceCard';
 import type { EvidenceType } from '@/types/evidence';
 
 /** 왼쪽: 이미지 프리뷰 카드 */
-const LEFT_TYPES: EvidenceType[] = ['MESSAGE', 'TRACKING'];
+const LEFT_TYPES: EvidenceType[] = ['MESSAGE', 'VICTIM'];
 
 /** 오른쪽: 파일 프리뷰 카드 */
 const RIGHT_TYPES: EvidenceType[] = ['VOICE', 'REPORT_RECORD', 'INCIDENT_LOG'];
