@@ -4,6 +4,7 @@ import VoiceFileIcon from '@/assets/icons/VoiceFileIcon.svg';
 import FileDownloadIcon from '@/assets/icons/FileDownloadIcon.svg';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
 import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
 import { formatFileSize } from '@/utils/format';
 
 type FileCategory = 'image' | 'voice' | 'document';
@@ -85,10 +86,13 @@ export function FilePreview({ name, size, action }: FilePreviewProps) {
 
   return (
     <div
-      className={`bg-bg-2 flex w-full items-center gap-2 rounded-sm border border-gray-200 px-2 py-3${action ? 'cursor-pointer' : ''}`}
+      className={cn(
+        'bg-bg-2 flex w-full items-center gap-2 rounded-sm border border-gray-200 px-2 py-3',
+        action && 'cursor-pointer',
+      )}
     >
       <LeftIcon className="h-4 w-4 shrink-0" />
-      <div className="flex min-w-0 flex-1 items-center gap-1">
+      <div className="flex min-w-0 flex-1 items-baseline gap-1">
         <span className="typo-heading-6 truncate text-gray-900">{name}</span>
         <span className="typo-body-8 shrink-0 text-gray-400">{formattedSize}</span>
       </div>
