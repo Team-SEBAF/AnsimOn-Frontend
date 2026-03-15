@@ -16,6 +16,8 @@ interface CaseHeaderProps {
   onSave: () => void;
   /** 저장 중 로딩 상태 */
   isSaving?: boolean;
+  /** 저장 버튼 비활성화 여부 (기본값: false) */
+  isSaveDisabled?: boolean;
   /** 이전 단계 이동 콜백 */
   onPrev: () => void;
   /** 다음 단계 이동 콜백 */
@@ -38,6 +40,7 @@ export function CaseHeader({
   updatedAt,
   onSave,
   isSaving = false,
+  isSaveDisabled = false,
   onPrev,
   onNext,
   hasPrev,
@@ -104,7 +107,13 @@ export function CaseHeader({
         <span className="typo-body-8 text-gray-400">최종 수정일: {formatDateKo(updatedAt)}</span>
       </div>
       <div className="flex items-center gap-2">
-        <Button color="secondary" size="lg" onClick={onSave} loading={isSaving}>
+        <Button
+          color="secondary"
+          size="lg"
+          onClick={onSave}
+          loading={isSaving}
+          disabled={isSaveDisabled || isSaving}
+        >
           저장
         </Button>
         <Button color="secondary" size="lg" onClick={onPrev} disabled={!hasPrev || isSaving}>
