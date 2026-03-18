@@ -1,86 +1,56 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import UploadIcon from '@/assets/icons/UploadIcon.svg';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Modal } from '@/components/modals/Modal';
-import { useUploadIncidentLogFormData } from '../../hooks/useEvidence';
-import { EVIDENCE_CONFIG } from './constants';
-import { FilePreview } from './FilePreview';
+import type { IncidentLogFormDataResponse } from '@/types/evidence';
+import { useIncidentLogForm } from '../../hooks/useIncidentLogForm';
+import { EvidenceContent } from './EvidenceContent';
 import { getTodayString } from '@/utils/date';
 
-const incidentLogSchema = z.object({
-  filename: z.string().min(1, '제목을 입력해주세요'),
-  date: z.string().min(1, '날짜를 선택해주세요'),
-  time: z.string().min(1, '시간을 입력해주세요'),
-  location: z.string().min(1, '장소를 입력해주세요'),
-  description: z.string().min(1, '상황을 입력해주세요'),
-});
-
-type IncidentLogFormValues = z.infer<typeof incidentLogSchema>;
+// ─── UI ──────────────────────────────────────────────────
 
 interface IncidentLogFormModalProps {
   open: boolean;
   onClose: () => void;
   complaintId: string | undefined;
+  /** 수정 모드: 기존 사건일지 데이터 */
+  initialData?: IncidentLogFormDataResponse;
 }
 
-const config = EVIDENCE_CONFIG.INCIDENT_LOG;
-
-export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLogFormModalProps) {
+export function IncidentLogFormModal({
+  open,
+  onClose,
+  complaintId,
+  initialData,
+}: IncidentLogFormModalProps) {
   const today = getTodayString();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [localFiles, setLocalFiles] = useState<File[]>([]);
-  const [isDragging, setIsDragging] = useState(false);
 
   const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors, isValid },
-  } = useForm<IncidentLogFormValues>({
-    resolver: zodResolver(incidentLogSchema),
-    mode: 'onChange',
-    defaultValues: {
-      filename: `${today} 사건일지`,
-      date: today,
-      time: '00:00',
-      location: '',
-      description: '',
+    fileInputRef,
+    form: {
+      register,
+      handleSubmit,
+      formState: { errors, isValid },
     },
-  });
-
-  const descriptionLength = useWatch({ control, name: 'description' }).length;
-
-  const uploadFormData = useUploadIncidentLogFormData(complaintId);
-
-  const handleFilesAdd = (files: File[]) => {
-    setLocalFiles((prev) => [...prev, ...files]);
-  };
-
-  const onSubmit = async (values: IncidentLogFormValues) => {
-    await uploadFormData.mutateAsync({ ...values, witness: '', perceivedRisk: '' });
-    reset();
-    setLocalFiles([]);
-    onClose();
-  };
-
-  const isPending = uploadFormData.isPending;
+    descriptionLength,
+    attachmentItems,
+    config,
+    isSubmitting,
+    handleFilesAdd,
+    handleAttachmentRemove,
+    onSubmit,
+  } = useIncidentLogForm({ open, onClose, complaintId, initialData });
 
   return (
     <Modal.Root
       open={open}
       onOpenChange={(o) => !o && onClose()}
-      className="max-h-[90vh] w-120 flex-col"
+      className="max-h-[90vh] w-135 flex-col"
     >
       <Modal.Header title="사건일지 작성" subTitle="사건에 대해 자세하게 작성할수록 좋습니다" />
 
-      <Modal.Body className="flex flex-col gap-5 overflow-y-auto">
+      <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto">
         {/* 제목 */}
         <Input
           label="제목"
@@ -127,9 +97,8 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
           </div>
           <textarea
             maxLength={1000}
-            rows={6}
             placeholder="구체적으로 어떤 일이 있었는지 기록해주세요"
-            className="typo-body-7 w-full resize-none rounded-md border border-gray-200 bg-white px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
+            className="typo-body-7 h-30 w-full resize-none rounded-md border border-gray-200 bg-white px-3 py-3 text-gray-900 placeholder:text-gray-400 focus:border-gray-400 focus:outline-none"
             {...register('description')}
           />
           {errors.description && (
@@ -141,51 +110,25 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
 
         {/* 증거자료 */}
         <div className="flex flex-col gap-2">
-          <p className="typo-label text-gray-700">증거자료</p>
+          <div className="flex items-center justify-between">
+            <p className="typo-label text-gray-700">증거자료</p>
+            <Button color="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+              증거 업로드
+            </Button>
+          </div>
 
-          {/* 선택된 파일 목록 */}
-          {localFiles.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {localFiles.map((file, i) => (
-                <FilePreview
-                  key={i}
-                  name={file.name}
-                  size={file.size}
-                  action={{
-                    type: 'remove',
-                    onRemove: () => setLocalFiles((prev) => prev.filter((_, idx) => idx !== i)),
-                  }}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* 업로드 영역 */}
-          {localFiles.length < config.maxFiles && (
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => fileInputRef.current?.click()}
-              onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setIsDragging(false);
-                handleFilesAdd(Array.from(e.dataTransfer.files));
-              }}
-              className={`bg-bg-2 flex cursor-pointer flex-col items-center gap-2 rounded-lg border-[1.5px] border-dashed py-8 transition-colors ${isDragging ? 'border-primary bg-primary/5' : 'border-gray-200'}`}
-            >
-              <UploadIcon className="h-6 w-6 text-gray-400" />
-              <p className="typo-heading-4 text-gray-400">증거 업로드</p>
-              <p className="typo-body-7 text-gray-400">
-                클릭하거나 드래그앤드롭으로 자료를 업로드해주세요
-              </p>
-            </div>
-          )}
+          {/* 파일 2.5개 이상부터 스크롤 — 빈 상태(업로드 존)엔 높이 제한 없음 */}
+          <div
+            className={attachmentItems.length > 0 ? 'no-scrollbar max-h-28 overflow-y-auto' : ''}
+          >
+            <EvidenceContent
+              previewType="file"
+              items={attachmentItems}
+              onFilesAdd={handleFilesAdd}
+              onRemove={handleAttachmentRemove}
+              onClickUpload={() => fileInputRef.current?.click()}
+            />
+          </div>
 
           <input
             ref={fileInputRef}
@@ -206,9 +149,9 @@ export function IncidentLogFormModal({ open, onClose, complaintId }: IncidentLog
           color="contrast"
           size="xl"
           onClick={handleSubmit(onSubmit)}
-          disabled={!isValid || isPending}
+          disabled={!isValid || isSubmitting}
         >
-          {isPending ? '저장 중...' : '작성하기'}
+          {isSubmitting ? '저장 중...' : '작성하기'}
         </Button>
       </Modal.Footer>
     </Modal.Root>
