@@ -114,7 +114,7 @@ export const EVIDENCE_CONFIG = withAccept({
   },
   INCIDENT_LOG: {
     maxFiles: 3,
-    categories: ['DOCUMENT'] as FileCategoryKey[],
+    categories: ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT'] as FileCategoryKey[],
     previewType: 'file' as const,
     title: '사건 일지',
     description: '일어난 사건에 대한 내용을 작성한 기록',

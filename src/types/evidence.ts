@@ -316,11 +316,19 @@ export type IncidentLogFormDataUploadRequest = {
   time: string; // HH:MM
   location: string;
   description: string;
-  witness: string;
-  perceivedRisk: string; // 매우 높음 | 높음 | 보통 | 낮음 | 매우 낮음
 };
 
 export type IncidentLogFormDataUpdateRequest = Partial<IncidentLogFormDataUploadRequest>;
+
+export type IncidentLogAttachment = {
+  attachment_id: string;
+  type: string;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  duration_seconds: number | null;
+  created_at: string;
+};
 
 export type IncidentLogFormDataResponse = {
   incident_log_id: string;
@@ -329,10 +337,52 @@ export type IncidentLogFormDataResponse = {
   time: string;
   location: string;
   description: string;
-  witness: string;
-  perceived_risk: string;
+  attachments: IncidentLogAttachment[];
   created_at: string;
   updated_at: string;
+};
+
+// ─── INCIDENT_LOG 첨부자료 ───────────────────────────────
+
+export type IncidentLogAttachmentPresignedUrlRequest = {
+  items: PresignedUrlItemRequest[];
+};
+
+export type IncidentLogAttachmentPresignedUrlItemResponse = {
+  index: number;
+  filename: string;
+  url: string;
+  attachment_id: string;
+};
+
+export type IncidentLogAttachmentPresignedUrlResponse = {
+  items: IncidentLogAttachmentPresignedUrlItemResponse[];
+};
+
+export type IncidentLogAttachmentRegisterItem = {
+  attachmentId: string;
+  filename: string;
+};
+
+export type IncidentLogAttachmentRegisterRequest = {
+  items: IncidentLogAttachmentRegisterItem[];
+};
+
+export type IncidentLogAttachmentRegisterItemResponse = {
+  attachment_id: string;
+  type: string;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  duration_seconds: number | null;
+};
+
+export type IncidentLogAttachmentRegisterResponse = {
+  items: IncidentLogAttachmentRegisterItemResponse[];
+};
+
+export type DeleteIncidentLogAttachmentsRequest = {
+  attachmentIds: string[];
 };
 
 /** 프리뷰 / 상세 (FILE + FORM_DATA 혼합) */

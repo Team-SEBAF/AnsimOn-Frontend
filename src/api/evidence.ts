@@ -38,6 +38,12 @@ import type {
   IncidentLogFormDataUploadRequest,
   IncidentLogFormDataResponse,
   IncidentLogFormDataUpdateRequest,
+  // INCIDENT_LOG 첨부자료
+  IncidentLogAttachmentPresignedUrlRequest,
+  IncidentLogAttachmentPresignedUrlResponse,
+  IncidentLogAttachmentRegisterRequest,
+  IncidentLogAttachmentRegisterResponse,
+  DeleteIncidentLogAttachmentsRequest,
 } from '@/types/evidence';
 
 // ─── 공통 ───────────────────────────────────────────────
@@ -296,4 +302,43 @@ export async function getIncidentLogFileOriginal(incidentLogId: string) {
     `/api/v1/evidence/incident-log/file/${incidentLogId}/original`,
   );
   return res.data;
+}
+
+// ─── INCIDENT_LOG 첨부자료 ───────────────────────────────
+
+/** 첨부자료 Presigned URL 발급 */
+export async function getIncidentLogAttachmentPresignedUrls(
+  complaintId: string,
+  incidentLogId: string,
+  payload: IncidentLogAttachmentPresignedUrlRequest,
+) {
+  const res = await axiosInstance.post<IncidentLogAttachmentPresignedUrlResponse>(
+    `/api/v1/${complaintId}/evidence/incident-log/form-data/${incidentLogId}/attachments/presigned-url`,
+    payload,
+  );
+  return res.data;
+}
+
+/** S3 업로드 완료 후 첨부자료 등록 */
+export async function registerIncidentLogAttachments(
+  complaintId: string,
+  incidentLogId: string,
+  payload: IncidentLogAttachmentRegisterRequest,
+) {
+  const res = await axiosInstance.post<IncidentLogAttachmentRegisterResponse>(
+    `/api/v1/${complaintId}/evidence/incident-log/form-data/${incidentLogId}/attachments/register`,
+    payload,
+  );
+  return res.data;
+}
+
+/** 첨부자료 삭제 (복수 삭제 지원) */
+export async function deleteIncidentLogAttachments(
+  incidentLogId: string,
+  payload: DeleteIncidentLogAttachmentsRequest,
+) {
+  await axiosInstance.delete(
+    `/api/v1/evidence/incident-log/form-data/${incidentLogId}/attachments`,
+    { data: payload },
+  );
 }
