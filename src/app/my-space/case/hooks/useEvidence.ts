@@ -10,6 +10,7 @@ import {
   registerReportRecords,
   registerIncidentLogFiles,
   uploadIncidentLogFormData,
+  updateIncidentLogFormData,
   // 타입별 detail
   getMessageDetails,
   getVoiceDetails,
@@ -22,6 +23,7 @@ import type {
   EvidencePreviewItem,
   PresignedUrlItemRequest,
   IncidentLogFormDataUploadRequest,
+  IncidentLogFormDataUpdateRequest,
   MessageDetailListResponse,
   VoiceDetailListResponse,
   VictimDetailListResponse,
@@ -107,6 +109,7 @@ const fetchAndNormalize: Record<
         id: d.incident_log_id,
         filename: d.filename,
         sizeBytes: d.size_bytes ?? undefined,
+        isEditable: d.type === 'FORM_DATA',
       })),
       totalCount: res.total_count,
     };
@@ -255,6 +258,37 @@ export function useUploadIncidentLogFormData(complaintId: string | undefined) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: evidenceKeys.previews(complaintId!, 'INCIDENT_LOG'),
+      });
+    },
+  });
+}
+
+// ─── 사건일지 폼 데이터 수정 훅 ─────────────────────────
+
+/**
+ * 사건일지 직접 작성(폼 데이터) 수정 훅
+ *
+ * - 날짜, 장소, 상황 등을 Partial로 PATCH 전송
+ * - 성공 시 INCIDENT_LOG 목록 자동 갱신
+ *
+ * @param complaintId - 고소장 ID (invalidateQueries에 사용)
+ * @returns useMutation — mutate({ incidentLogId, payload })로 호출
+ */
+export function useUpdateIncidentLogFormData(complaintId: string | undefined) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      incidentLogId,
+      payload,
+    }: {
+      incidentLogId: string;
+      payload: IncidentLogFormDataUpdateRequest;
+    }) => updateIncidentLogFormData(incidentLogId, payload),
+    onSuccess: () => {
+      if (!complaintId) return;
+      queryClient.invalidateQueries({
+        queryKey: evidenceKeys.previews(complaintId, 'INCIDENT_LOG'),
       });
     },
   });

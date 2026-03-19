@@ -16,7 +16,7 @@ import {
   getCategoryForFile,
   getMediaDuration,
 } from '../components/evidence/validate';
-import { useUploadIncidentLogFormData } from './useEvidence';
+import { useUploadIncidentLogFormData, useUpdateIncidentLogFormData } from './useEvidence';
 import { getTodayString } from '@/utils/date';
 
 // ─── 검증 ────────────────────────────────────────────────
@@ -80,6 +80,10 @@ export function useIncidentLogForm({
 
   const descriptionLength = useWatch({ control: form.control, name: 'description' }).length;
   const uploadFormData = useUploadIncidentLogFormData(complaintId);
+  const updateFormData = useUpdateIncidentLogFormData(complaintId);
+
+  const isEditMode = !!initialData;
+  const isChanged = form.formState.isDirty || localFiles.length > 0 || pendingDeleteIds.length > 0;
 
   /** 모달 열릴 때마다 상태 초기화 (수정 모드면 기존 데이터로 채움) */
   useEffect(() => {
@@ -135,7 +139,12 @@ export function useIncidentLogForm({
   const onSubmit = async (values: IncidentLogFormValues) => {
     setIsSubmitting(true);
     try {
-      const { incident_log_id } = await uploadFormData.mutateAsync(values);
+      const { incident_log_id } = isEditMode
+        ? await updateFormData.mutateAsync({
+            incidentLogId: initialData.incident_log_id,
+            payload: values,
+          })
+        : await uploadFormData.mutateAsync(values);
 
       if (complaintId) {
         // 삭제 예정 첨부파일 일괄 삭제
@@ -200,6 +209,8 @@ export function useIncidentLogForm({
     config,
 
     // 상태
+    isEditMode,
+    isChanged,
     isSubmitting,
 
     // 핸들러

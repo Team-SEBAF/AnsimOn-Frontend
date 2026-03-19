@@ -432,6 +432,8 @@ export type EvidencePreviewItem = {
   thumbnailUrl?: string;
   sizeBytes?: number;
   durationSeconds?: number;
+  /** 수정 가능한 아이템 여부 (INCIDENT_LOG FORM_DATA 타입만 true) */
+  isEditable?: boolean;
 };
 
 // ─── 에러 응답 ──────────────────────────────────────────
