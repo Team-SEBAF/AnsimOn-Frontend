@@ -112,7 +112,7 @@ export function CaseHeader({
           size="lg"
           onClick={onSave}
           loading={isSaving}
-          disabled={isSaveDisabled || isSaving}
+          disabled={isSaveDisabled}
         >
           저장
         </Button>
