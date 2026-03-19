@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getPresignedUrls,
   uploadToS3,
@@ -164,11 +164,10 @@ const registerByType = async (
  * @param type - 증거 타입 (MESSAGE, VOICE, VICTIM, REPORT_RECORD, INCIDENT_LOG)
  * @returns `{ items: EvidencePreviewItem[], totalCount: number }`
  */
-export function useEvidencePreviews(complaintId: string | undefined, type: EvidenceType) {
-  return useQuery({
-    queryKey: evidenceKeys.previews(complaintId!, type),
-    queryFn: () => fetchAndNormalize[type](complaintId!),
-    enabled: !!complaintId,
+export function useEvidencePreviews(complaintId: string, type: EvidenceType) {
+  return useSuspenseQuery({
+    queryKey: evidenceKeys.previews(complaintId, type),
+    queryFn: () => fetchAndNormalize[type](complaintId),
     staleTime: 1000 * 60 * 5, // 5분간 캐시 유지 (불필요한 refetch 방지)
   });
 }

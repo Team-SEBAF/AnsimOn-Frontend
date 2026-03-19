@@ -30,7 +30,7 @@ const clampStep = (n: number): Step => {
  */
 export default function CasePage() {
   const user = useAuthStore((s) => s.user);
-  const { data: complaint, isLoading } = useComplaint(user?.complaint_id);
+  const { data: complaint } = useComplaint(user!.complaint_id);
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(user?.complaint_id);
 
   // 서버 데이터 → 프론트 step 변환

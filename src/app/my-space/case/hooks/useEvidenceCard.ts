@@ -12,7 +12,7 @@ import type { EvidenceType } from '@/types/evidence';
  * - 파일 업로드/삭제 핸들러
  * - 삭제 확인 모달 상태
  */
-export function useEvidenceCard(complaintId: string | undefined, type: EvidenceType) {
+export function useEvidenceCard(complaintId: string, type: EvidenceType) {
   const config = EVIDENCE_CONFIG[type];
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,8 +28,8 @@ export function useEvidenceCard(complaintId: string | undefined, type: EvidenceT
   const upload = useUploadEvidence(complaintId, type);
   const remove = useDeleteEvidence(complaintId, type);
 
-  const items = data?.items ?? [];
-  const totalCount = data?.totalCount ?? 0;
+  const items = data.items;
+  const totalCount = data.totalCount;
   const isFull = totalCount >= config.maxFiles;
 
   /** 파일 추가 — 중복 검사 → 프론트 검증 → 업로드 mutation 호출 */

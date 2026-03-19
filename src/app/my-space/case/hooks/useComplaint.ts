@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getComplaint, updateComplaint } from '@/api/complaint';
 import type { UpdateComplaintPayload } from '@/types/complaint';
 
@@ -11,11 +11,10 @@ import type { UpdateComplaintPayload } from '@/types/complaint';
  *
  * @param complaintId - 고소장 ID (undefined이면 요청하지 않음)
  */
-export function useComplaint(complaintId: string | undefined) {
-  return useQuery({
+export function useComplaint(complaintId: string) {
+  return useSuspenseQuery({
     queryKey: ['complaint', complaintId],
-    queryFn: () => getComplaint(complaintId!),
-    enabled: !!complaintId,
+    queryFn: () => getComplaint(complaintId),
     staleTime: 1000 * 60 * 5, // 5분간 캐시 유지
   });
 }
