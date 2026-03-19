@@ -3,6 +3,7 @@ import ImageFileIcon from '@/assets/icons/ImageFileIcon.svg';
 import VoiceFileIcon from '@/assets/icons/VoiceFileIcon.svg';
 import FileDownloadIcon from '@/assets/icons/FileDownloadIcon.svg';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
+import EditOutlineIcon from '@/assets/icons/EditOutlineIcon.svg';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { formatFileSize } from '@/utils/format';
@@ -21,6 +22,8 @@ interface FilePreviewProps {
   size: number;
   /** 우측 액션. 없으면 아무것도 렌더링되지 않음 */
   action?: RightAction;
+  /** 수정 버튼 콜백. 있으면 hover 시 action 좌측에 수정 아이콘 표시 */
+  onEdit?: () => void;
 }
 
 const LEFT_ICON: Record<FileCategory, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -79,7 +82,7 @@ function RightActionSlot({ action, name }: { action: RightAction; name: string }
  * - 왼쪽: 파일명 확장자로 카테고리를 판별해 문서/이미지/음성 아이콘 표시
  * - 오른쪽: action prop에 따라 삭제 버튼 / 다운로드 버튼 / 체크박스 표시 (없으면 생략)
  */
-export function FilePreview({ name, size, action }: FilePreviewProps) {
+export function FilePreview({ name, size, action, onEdit }: FilePreviewProps) {
   const category = getCategoryFromFilename(name);
   const LeftIcon = LEFT_ICON[category];
   const formattedSize = formatFileSize(size);
@@ -87,7 +90,7 @@ export function FilePreview({ name, size, action }: FilePreviewProps) {
   return (
     <div
       className={cn(
-        'bg-bg-2 flex w-full items-center gap-2 rounded-sm border border-gray-200 px-2 py-3',
+        'group bg-bg-2 flex w-full items-center gap-2 rounded-sm border border-gray-200 px-2 py-3',
         action && 'cursor-pointer',
       )}
     >
@@ -96,6 +99,16 @@ export function FilePreview({ name, size, action }: FilePreviewProps) {
         <span className="typo-heading-6 truncate text-gray-900">{name}</span>
         <span className="typo-body-8 shrink-0 text-gray-400">{formattedSize}</span>
       </div>
+      {onEdit && (
+        <button
+          type="button"
+          onClick={onEdit}
+          className="shrink-0 text-gray-300 opacity-0 transition-opacity group-hover:opacity-100 hover:text-gray-600"
+          aria-label={`${name} 수정`}
+        >
+          <EditOutlineIcon className="h-4 w-4" />
+        </button>
+      )}
       {action && <RightActionSlot action={action} name={name} />}
     </div>
   );

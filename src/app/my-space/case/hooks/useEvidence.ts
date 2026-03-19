@@ -10,6 +10,7 @@ import {
   registerReportRecords,
   registerIncidentLogFiles,
   uploadIncidentLogFormData,
+  updateIncidentLogFormData,
   // 타입별 detail
   getMessageDetails,
   getVoiceDetails,
@@ -20,8 +21,8 @@ import {
 import type {
   EvidenceType,
   EvidencePreviewItem,
-  PresignedUrlItemRequest,
   IncidentLogFormDataUploadRequest,
+  IncidentLogFormDataUpdateRequest,
   MessageDetailListResponse,
   VoiceDetailListResponse,
   VictimDetailListResponse,
@@ -29,7 +30,7 @@ import type {
   IncidentLogDetailListResponse,
 } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
-import { getMediaDuration, getCategoryForFile } from '../components/evidence/validate';
+import { buildPresignedUrlItems } from '../components/evidence/validate';
 
 // ─── query key ──────────────────────────────────────────
 
@@ -107,6 +108,7 @@ const fetchAndNormalize: Record<
         id: d.incident_log_id,
         filename: d.filename,
         sizeBytes: d.size_bytes ?? undefined,
+        isEditable: d.type === 'FORM_DATA',
       })),
       totalCount: res.total_count,
     };
@@ -192,22 +194,7 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
   return useMutation({
     mutationFn: async (files: File[]) => {
       // 1) presigned URL 발급
-      // 영상·음성 파일만 실제 재생 길이를 구해서 전달 (이미지는 제외)
-      const fileCategories = files.map((f) => getCategoryForFile(f, config.categories));
-      const durations: (number | null)[] = await Promise.all(
-        files.map(async (f, i) => {
-          if (!fileCategories[i]?.maxDuration) return null;
-          return getMediaDuration(f);
-        }),
-      );
-
-      const presignedItems: PresignedUrlItemRequest[] = files.map((file, i) => ({
-        index: i,
-        filename: file.name,
-        contentType: file.type,
-        sizeBytes: file.size,
-        ...(durations[i] !== null ? { durationSeconds: Math.round(durations[i]!) } : {}),
-      }));
+      const presignedItems = await buildPresignedUrlItems(files, config.categories);
 
       const { items: presignedUrls } = await getPresignedUrls(complaintId!, {
         type,
@@ -255,6 +242,37 @@ export function useUploadIncidentLogFormData(complaintId: string | undefined) {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: evidenceKeys.previews(complaintId!, 'INCIDENT_LOG'),
+      });
+    },
+  });
+}
+
+// ─── 사건일지 폼 데이터 수정 훅 ─────────────────────────
+
+/**
+ * 사건일지 직접 작성(폼 데이터) 수정 훅
+ *
+ * - 날짜, 장소, 상황 등을 Partial로 PATCH 전송
+ * - 성공 시 INCIDENT_LOG 목록 자동 갱신
+ *
+ * @param complaintId - 고소장 ID (invalidateQueries에 사용)
+ * @returns useMutation — mutate({ incidentLogId, payload })로 호출
+ */
+export function useUpdateIncidentLogFormData(complaintId: string | undefined) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      incidentLogId,
+      payload,
+    }: {
+      incidentLogId: string;
+      payload: IncidentLogFormDataUpdateRequest;
+    }) => updateIncidentLogFormData(incidentLogId, payload),
+    onSuccess: () => {
+      if (!complaintId) return;
+      queryClient.invalidateQueries({
+        queryKey: evidenceKeys.previews(complaintId, 'INCIDENT_LOG'),
       });
     },
   });

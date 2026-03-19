@@ -10,8 +10,9 @@ import { Modal } from '@/components/modals/Modal';
 import { UploadErrorModal } from './UploadErrorModal';
 import { IncidentLogFormModal } from './IncidentLogFormModal';
 import { EvidenceContent } from './EvidenceContent';
-import type { EvidenceType } from '@/types/evidence';
+import type { EvidenceType, IncidentLogFormDataResponse } from '@/types/evidence';
 import { useEvidenceCard } from '../../hooks/useEvidenceCard';
+import { getIncidentLogFormData } from '@/api/evidence';
 
 interface EvidenceCardProps {
   /** 증거 타입 (MESSAGE, VOICE 등) */
@@ -29,8 +30,15 @@ interface EvidenceCardProps {
  * - Contents: EvidenceContent (드래그앤드롭/클릭/프리뷰)
  * - Footer: 개수 뱃지 + 업로드 버튼
  */
+type FormModalState = { open: false } | { open: true; initialData?: IncidentLogFormDataResponse };
+
 export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps) {
-  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [formModal, setFormModal] = useState<FormModalState>({ open: false });
+
+  const handleEdit = async (id: string) => {
+    const data = await getIncidentLogFormData(id);
+    setFormModal({ open: true, initialData: data });
+  };
   const {
     inputRef,
     config,
@@ -73,6 +81,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         items={items}
         onFilesAdd={handleFilesAdd}
         onRemove={handleRemove}
+        onEdit={type === 'INCIDENT_LOG' ? handleEdit : undefined}
         onClickUpload={openFilePicker}
         isUploading={isUploading}
       />
@@ -84,7 +93,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         </span>
         <div className="flex items-center gap-2">
           {type === 'INCIDENT_LOG' && (
-            <Button color="contrast" size="lg" onClick={() => setFormModalOpen(true)}>
+            <Button color="contrast" size="lg" onClick={() => setFormModal({ open: true })}>
               <span className="flex items-center gap-2">
                 <QuoteOutlineIcon className="h-6 w-6" />
                 직접 작성
@@ -121,9 +130,10 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
       {/* 사건일지 직접 작성 모달 */}
       {type === 'INCIDENT_LOG' && (
         <IncidentLogFormModal
-          open={formModalOpen}
-          onClose={() => setFormModalOpen(false)}
+          open={formModal.open}
+          onClose={() => setFormModal({ open: false })}
           complaintId={complaintId}
+          initialData={formModal.open ? formModal.initialData : undefined}
         />
       )}
 

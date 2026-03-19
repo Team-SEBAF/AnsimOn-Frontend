@@ -1,5 +1,6 @@
 import { FILE_CATEGORY_CONFIG } from './constants';
 import type { EVIDENCE_CONFIG, FileCategoryKey, EvidenceType } from './constants';
+import type { PresignedUrlItemRequest } from '@/types/evidence';
 
 type EvidenceConfig = (typeof EVIDENCE_CONFIG)[EvidenceType];
 
@@ -42,6 +43,31 @@ export const getMediaDuration = (file: File): Promise<number> => {
   });
 };
 
+/**
+ * 파일 배열을 Presigned URL 요청 형식으로 변환
+ * - IMAGE/DOCUMENT는 duration 측정 없이 자동 통과
+ * - VIDEO/AUDIO는 실제 재생 길이를 측정해서 포함
+ */
+export async function buildPresignedUrlItems(
+  files: File[],
+  categories: FileCategoryKey[],
+): Promise<PresignedUrlItemRequest[]> {
+  const fileCategories = files.map((f) => getCategoryForFile(f, categories));
+  const durations = await Promise.all(
+    files.map(async (f, i) => {
+      if (!fileCategories[i]?.maxDuration) return null;
+      return getMediaDuration(f);
+    }),
+  );
+  return files.map((file, i) => ({
+    index: i,
+    filename: file.name,
+    contentType: file.type,
+    sizeBytes: file.size,
+    ...(durations[i] !== null ? { durationSeconds: Math.round(durations[i]!) } : {}),
+  }));
+}
+
 export type FilterResult = {
   valid: File[];
   rejected: File[];
@@ -54,7 +80,7 @@ export type FilterResult = {
  */
 export const filterValidFiles = async (
   newFiles: File[],
-  config: EvidenceConfig,
+  config: Pick<EvidenceConfig, 'maxFiles' | 'categories'>,
   currentCount: number,
 ): Promise<FilterResult> => {
   const remaining = config.maxFiles - currentCount;
