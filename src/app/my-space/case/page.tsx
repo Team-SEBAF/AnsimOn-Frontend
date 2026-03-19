@@ -31,7 +31,7 @@ const clampStep = (n: number): Step => {
 export default function CasePage() {
   const user = useAuthStore((s) => s.user);
   const { data: complaint } = useComplaint(user!.complaint_id);
-  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user?.complaint_id);
+  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user!.complaint_id);
 
   // 서버 데이터 → 프론트 step 변환
   const step: Step = complaint ? STEP_MAP[complaint.step] : 1;
@@ -59,8 +59,6 @@ export default function CasePage() {
     save({ name: title, step: STEP_REVERSE_MAP[step] });
   };
 
-  if (isLoading) return <div className="p-6">로딩 중...</div>;
-
   return (
     <div>
       {/* 상단 헤더: 제목 편집 + 저장 + 이전/다음 버튼 */}
@@ -80,7 +78,7 @@ export default function CasePage() {
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        {step === 1 && <StepCollect complaintId={user?.complaint_id} />}
+        {step === 1 && <StepCollect complaintId={user!.complaint_id} />}
         {step === 2 && <StepTimeline />}
         {step === 3 && <StepDocument />}
         {step === 4 && <StepComplete />}

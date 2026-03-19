@@ -8,7 +8,7 @@ const LEFT_TYPES: EvidenceType[] = ['MESSAGE', 'VICTIM'];
 const RIGHT_TYPES: EvidenceType[] = ['VOICE', 'REPORT_RECORD', 'INCIDENT_LOG'];
 
 interface StepCollectProps {
-  complaintId: string | undefined;
+  complaintId: string;
 }
 
 export function StepCollect({ complaintId }: StepCollectProps) {
