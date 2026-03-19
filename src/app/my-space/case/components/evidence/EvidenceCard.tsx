@@ -30,18 +30,14 @@ interface EvidenceCardProps {
  * - Contents: EvidenceContent (드래그앤드롭/클릭/프리뷰)
  * - Footer: 개수 뱃지 + 업로드 버튼
  */
+type FormModalState = { open: false } | { open: true; initialData?: IncidentLogFormDataResponse };
+
 export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps) {
-  const [formModalOpen, setFormModalOpen] = useState(false);
-  const [editingData, setEditingData] = useState<IncidentLogFormDataResponse | null>(null);
+  const [formModal, setFormModal] = useState<FormModalState>({ open: false });
 
   const handleEdit = async (id: string) => {
     const data = await getIncidentLogFormData(id);
-    setEditingData(data);
-  };
-
-  const handleFormModalClose = () => {
-    setFormModalOpen(false);
-    setEditingData(null);
+    setFormModal({ open: true, initialData: data });
   };
   const {
     inputRef,
@@ -97,14 +93,7 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
         </span>
         <div className="flex items-center gap-2">
           {type === 'INCIDENT_LOG' && (
-            <Button
-              color="contrast"
-              size="lg"
-              onClick={() => {
-                setEditingData(null);
-                setFormModalOpen(true);
-              }}
-            >
+            <Button color="contrast" size="lg" onClick={() => setFormModal({ open: true })}>
               <span className="flex items-center gap-2">
                 <QuoteOutlineIcon className="h-6 w-6" />
                 직접 작성
@@ -141,10 +130,10 @@ export function EvidenceCard({ type, complaintId, className }: EvidenceCardProps
       {/* 사건일지 직접 작성 모달 */}
       {type === 'INCIDENT_LOG' && (
         <IncidentLogFormModal
-          open={formModalOpen || !!editingData}
-          onClose={handleFormModalClose}
+          open={formModal.open}
+          onClose={() => setFormModal({ open: false })}
           complaintId={complaintId}
-          initialData={editingData ?? undefined}
+          initialData={formModal.open ? formModal.initialData : undefined}
         />
       )}
 

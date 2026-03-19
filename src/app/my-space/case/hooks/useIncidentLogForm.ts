@@ -8,14 +8,13 @@ import {
   registerIncidentLogAttachments,
   deleteIncidentLogAttachments,
 } from '@/api/evidence';
-import type { IncidentLogAttachment, IncidentLogFormDataResponse } from '@/types/evidence';
-import type { EvidencePreviewItem } from '@/types/evidence';
+import type {
+  IncidentLogAttachment,
+  IncidentLogFormDataResponse,
+  EvidencePreviewItem,
+} from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
-import {
-  filterValidFiles,
-  getCategoryForFile,
-  getMediaDuration,
-} from '../components/evidence/validate';
+import { filterValidFiles, buildPresignedUrlItems } from '../components/evidence/validate';
 import { useUploadIncidentLogFormData, useUpdateIncidentLogFormData } from './useEvidence';
 import { getTodayString } from '@/utils/date';
 
@@ -35,6 +34,31 @@ export type IncidentLogFormValues = z.infer<typeof incidentLogSchema>;
 type LocalFile = { id: string; file: File };
 
 const config = EVIDENCE_CONFIG.INCIDENT_LOG;
+
+/** presigned URL 발급 → S3 업로드 → 서버 등록 */
+async function uploadAttachments(
+  complaintId: string,
+  incidentLogId: string,
+  localFiles: { id: string; file: File }[],
+) {
+  const files = localFiles.map((f) => f.file);
+  const presignedUrlItems = await buildPresignedUrlItems(files, config.categories);
+
+  const { items: presignedItems } = await getIncidentLogAttachmentPresignedUrls(
+    complaintId,
+    incidentLogId,
+    { items: presignedUrlItems },
+  );
+
+  await Promise.all(presignedItems.map((p, i) => uploadToS3(p.url, files[i])));
+
+  await registerIncidentLogAttachments(complaintId, incidentLogId, {
+    items: presignedItems.map((p) => ({
+      attachmentId: p.attachment_id,
+      filename: p.filename,
+    })),
+  });
+}
 
 // ─── 기능 ────────────────────────────────────────────────
 
@@ -156,37 +180,7 @@ export function useIncidentLogForm({
 
         // 신규 첨부파일 업로드 (presigned URL → S3 → register)
         if (localFiles.length > 0) {
-          const files = localFiles.map((f) => f.file);
-          const fileCategories = files.map((f) => getCategoryForFile(f, config.categories));
-          const durations = await Promise.all(
-            files.map(async (f, i) => {
-              if (!fileCategories[i]?.maxDuration) return null;
-              return getMediaDuration(f);
-            }),
-          );
-
-          const { items: presignedItems } = await getIncidentLogAttachmentPresignedUrls(
-            complaintId,
-            incident_log_id,
-            {
-              items: files.map((file, i) => ({
-                index: i,
-                filename: file.name,
-                contentType: file.type,
-                sizeBytes: file.size,
-                ...(durations[i] !== null ? { durationSeconds: Math.round(durations[i]!) } : {}),
-              })),
-            },
-          );
-
-          await Promise.all(presignedItems.map((p, i) => uploadToS3(p.url, files[i])));
-
-          await registerIncidentLogAttachments(complaintId, incident_log_id, {
-            items: presignedItems.map((p) => ({
-              attachmentId: p.attachment_id,
-              filename: p.filename,
-            })),
-          });
+          await uploadAttachments(complaintId, incident_log_id, localFiles);
         }
       }
 
