@@ -53,8 +53,10 @@ export default function CasePage() {
  */
 function CasePageContent() {
   const user = useAuthStore((s) => s.user);
-  const { data: complaint } = useComplaint(user!.complaint_id);
-  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user!.complaint_id);
+  const { data: complaint } = useComplaint(user?.complaint_id ?? '');
+  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user?.complaint_id ?? '');
+
+  if (!user) return null;
 
   // 서버 데이터 → 프론트 step 변환
   const step: Step = STEP_MAP[complaint.step];
@@ -101,7 +103,7 @@ function CasePageContent() {
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        {step === 1 && <StepCollect complaintId={user!.complaint_id} />}
+        {step === 1 && <StepCollect complaintId={user.complaint_id} />}
         {step === 2 && <StepTimeline />}
         {step === 3 && <StepDocument />}
         {step === 4 && <StepComplete />}
