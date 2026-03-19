@@ -17,8 +17,18 @@ export function CasePageSkeleton() {
       </div>
       {/* CaseProgress + 컨텐츠 */}
       <div className="space-y-6 p-6">
-        <Skeleton className="h-2 w-full rounded-full" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
+        {/* CaseProgress: 4개 스텝 + dash 연결선 */}
+        <div className="flex items-center gap-6 px-12 py-3">
+          {[1, 2, 3, 4].map((step, index) => (
+            <div key={step} className="contents">
+              {index > 0 && <div className="h-px flex-1 bg-gray-200" />}
+              <div className="flex w-30 flex-col items-center gap-1">
+                <Skeleton className="h-4 w-14" />
+                <Skeleton className="h-6 w-20" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
