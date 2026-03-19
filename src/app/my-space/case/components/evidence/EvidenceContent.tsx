@@ -19,6 +19,8 @@ interface EvidenceContentProps {
   onFilesAdd: (files: File[]) => void;
   /** 증거 삭제 시 콜백 */
   onRemove: (id: string) => void;
+  /** 수정 버튼 클릭 시 콜백. isEditable 아이템에서만 hover 시 표시 */
+  onEdit?: (id: string) => void;
   /** 빈 상태 클릭 시 파일 선택 창을 여는 콜백 (EvidenceCard의 hidden input 트리거) */
   onClickUpload: () => void;
   /** 업로드 중 상태 */
@@ -37,6 +39,7 @@ export function EvidenceContent({
   items,
   onFilesAdd,
   onRemove,
+  onEdit,
   onClickUpload,
   isUploading = false,
 }: EvidenceContentProps) {
@@ -110,6 +113,7 @@ export function EvidenceContent({
                 name={item.filename ?? '파일'}
                 size={item.sizeBytes ?? 0}
                 action={{ type: 'remove', onRemove: () => onRemove(item.id) }}
+                onEdit={item.isEditable && onEdit ? () => onEdit(item.id) : undefined}
               />
             ),
           )}

@@ -36,6 +36,8 @@ export function IncidentLogFormModal({
     descriptionLength,
     attachmentItems,
     config,
+    isEditMode,
+    isChanged,
     isSubmitting,
     handleFilesAdd,
     handleAttachmentRemove,
@@ -48,7 +50,10 @@ export function IncidentLogFormModal({
       onOpenChange={(o) => !o && onClose()}
       className="max-h-[90vh] w-135 flex-col"
     >
-      <Modal.Header title="사건일지 작성" subTitle="사건에 대해 자세하게 작성할수록 좋습니다" />
+      <Modal.Header
+        title={isEditMode ? '사건일지 수정' : '사건일지 작성'}
+        subTitle="사건에 대해 자세하게 작성할수록 좋습니다"
+      />
 
       <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto">
         {/* 제목 */}
@@ -149,9 +154,10 @@ export function IncidentLogFormModal({
           color="contrast"
           size="xl"
           onClick={handleSubmit(onSubmit)}
-          disabled={!isValid || isSubmitting}
+          disabled={isEditMode ? !isChanged : !isValid}
+          loading={isSubmitting}
         >
-          {isSubmitting ? '저장 중...' : '작성하기'}
+          {isEditMode ? '수정하기' : '작성하기'}
         </Button>
       </Modal.Footer>
     </Modal.Root>
