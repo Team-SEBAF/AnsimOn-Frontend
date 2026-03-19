@@ -1,5 +1,7 @@
 'use client';
 
+import { Suspense } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
@@ -11,6 +13,9 @@ import {
   StepDocument,
   StepComplete,
 } from './components';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
+import { CasePageSkeleton } from '@/components/skeletons/CasePageSkeleton';
 
 const MIN_STEP: Step = 1;
 const MAX_STEP: Step = 4;
@@ -24,18 +29,36 @@ const clampStep = (n: number): Step => {
 
 /**
  * Case 퍼널 진입점
+ * - ErrorBoundary + Suspense로 로딩/에러 처리
+ */
+export default function CasePage() {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
+          <Suspense fallback={<CasePageSkeleton />}>
+            <CasePageContent />
+          </Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  );
+}
+
+/**
+ * Case 퍼널 컨텐츠
  * - 하나의 페이지에서 step 상태로 4단계를 전환하는 퍼널 패턴
  * - 헤더(제목·저장·이전/다음) + 프로그레스 바 + 스텝별 컨텐츠로 구성
  * - 이전/다음 버튼 → step 변경 → 헤더·프로그레스·컨텐츠 동기화
  */
-export default function CasePage() {
+function CasePageContent() {
   const user = useAuthStore((s) => s.user);
   const { data: complaint } = useComplaint(user!.complaint_id);
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(user!.complaint_id);
 
   // 서버 데이터 → 프론트 step 변환
-  const step: Step = complaint ? STEP_MAP[complaint.step] : 1;
-  const title = complaint?.name ?? '사건 제목';
+  const step: Step = STEP_MAP[complaint.step];
+  const title = complaint.name;
 
   /** 다음 스텝으로 이동 + 서버 저장 */
   const goNext = () => {
@@ -72,7 +95,7 @@ export default function CasePage() {
         onNext={goNext}
         hasPrev={step > MIN_STEP}
         hasNext={step < MAX_STEP}
-        updatedAt={complaint?.updated_at ?? ''}
+        updatedAt={complaint.updated_at}
       />
       <div className="space-y-6 p-6">
         {/* 4단계 프로그레스 바 */}
