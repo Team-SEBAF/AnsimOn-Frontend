@@ -37,12 +37,19 @@ export default function CasePage() {
       {({ reset }) => (
         <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
           <Suspense fallback={<CasePageSkeleton />}>
-            <CasePageContent />
+            <CasePageGuard />
           </Suspense>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>
   );
+}
+
+/** complaintId 존재 확인 후 CasePageContent 렌더 */
+function CasePageGuard() {
+  const user = useAuthStore((s) => s.user);
+  if (!user?.complaint_id) return null;
+  return <CasePageContent complaintId={user.complaint_id} />;
 }
 
 /**
@@ -51,12 +58,9 @@ export default function CasePage() {
  * - 헤더(제목·저장·이전/다음) + 프로그레스 바 + 스텝별 컨텐츠로 구성
  * - 이전/다음 버튼 → step 변경 → 헤더·프로그레스·컨텐츠 동기화
  */
-function CasePageContent() {
-  const user = useAuthStore((s) => s.user);
-  const { data: complaint } = useComplaint(user?.complaint_id ?? '');
-  const { mutate: save, isPending: isSaving } = useUpdateComplaint(user?.complaint_id ?? '');
-
-  if (!user) return null;
+function CasePageContent({ complaintId }: { complaintId: string }) {
+  const { data: complaint } = useComplaint(complaintId);
+  const { mutate: save, isPending: isSaving } = useUpdateComplaint(complaintId);
 
   // 서버 데이터 → 프론트 step 변환
   const step: Step = STEP_MAP[complaint.step];
@@ -103,7 +107,7 @@ function CasePageContent() {
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        {step === 1 && <StepCollect complaintId={user.complaint_id} />}
+        {step === 1 && <StepCollect complaintId={complaintId} />}
         {step === 2 && <StepTimeline />}
         {step === 3 && <StepDocument />}
         {step === 4 && <StepComplete />}
