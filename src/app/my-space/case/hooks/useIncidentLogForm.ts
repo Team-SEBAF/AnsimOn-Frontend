@@ -13,8 +13,8 @@ import type {
   IncidentLogFormDataResponse,
   EvidencePreviewItem,
 } from '@/types/evidence';
-import { EVIDENCE_CONFIG } from '../components/evidence/constants';
 import { filterValidFiles, buildPresignedUrlItems } from '../components/evidence/validate';
+import type { FileCategoryKey } from '../components/evidence/constants';
 import { useUploadIncidentLogFormData, useUpdateIncidentLogFormData } from './useEvidence';
 import { getTodayString } from '@/utils/date';
 
@@ -33,7 +33,12 @@ export type IncidentLogFormValues = z.infer<typeof incidentLogSchema>;
 /** 로컬 파일에 안정적인 임시 ID를 부여해 삭제 시 인덱스 충돌을 방지함 */
 type LocalFile = { id: string; file: File };
 
-const config = EVIDENCE_CONFIG.INCIDENT_LOG;
+/** 직접 작성 모달 첨부파일 설정 — 파일 업로드(DOCUMENT 전용)와 별도 */
+const attachmentConfig = {
+  maxFiles: 10,
+  categories: ['IMAGE', 'VIDEO', 'AUDIO', 'DOCUMENT'] as FileCategoryKey[],
+  accept: '.jpg,.jpeg,.png,.heic,.mp4,.mov,.m4a,.mp3,.wav,.pdf,.hwp,.docx,.txt',
+};
 
 /** presigned URL 발급 → S3 업로드 → 서버 등록 */
 async function uploadAttachments(
@@ -42,7 +47,7 @@ async function uploadAttachments(
   localFiles: { id: string; file: File }[],
 ) {
   const files = localFiles.map((f) => f.file);
-  const presignedUrlItems = await buildPresignedUrlItems(files, config.categories);
+  const presignedUrlItems = await buildPresignedUrlItems(files, attachmentConfig.categories);
 
   const { items: presignedItems } = await getIncidentLogAttachmentPresignedUrls(
     complaintId,
@@ -130,7 +135,7 @@ export function useIncidentLogForm({
   const handleFilesAdd = async (files: File[]) => {
     const { valid } = await filterValidFiles(
       files,
-      { ...config, maxFiles: 10 },
+      { ...attachmentConfig, maxFiles: 10 },
       localFiles.length + serverAttachments.length,
     );
     setLocalFiles((prev) => [...prev, ...valid.map((file) => ({ id: crypto.randomUUID(), file }))]);
@@ -200,7 +205,7 @@ export function useIncidentLogForm({
 
     // 첨부파일
     attachmentItems,
-    config,
+    attachmentConfig,
 
     // 상태
     isEditMode,

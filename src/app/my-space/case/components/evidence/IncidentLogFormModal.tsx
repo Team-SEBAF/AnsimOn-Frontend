@@ -35,7 +35,7 @@ export function IncidentLogFormModal({
     },
     descriptionLength,
     attachmentItems,
-    config,
+    attachmentConfig: config,
     isEditMode,
     isChanged,
     isSubmitting,

@@ -80,7 +80,7 @@ export type FilterResult = {
  */
 export const filterValidFiles = async (
   newFiles: File[],
-  config: EvidenceConfig,
+  config: Pick<EvidenceConfig, 'maxFiles' | 'categories'>,
   currentCount: number,
 ): Promise<FilterResult> => {
   const remaining = config.maxFiles - currentCount;
