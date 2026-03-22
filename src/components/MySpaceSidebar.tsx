@@ -7,6 +7,7 @@ import ProfileIcon from '@/assets/icons/profile-defalt.svg';
 
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/Button';
+import { Skeleton } from '@/components/ui/skeleton';
 import stalkingDefault from '@/assets/icons/stalking-default.png';
 import stalkingActive from '@/assets/icons/stalking-active.png';
 import evidenceDefault from '@/assets/icons/evidence-default.png';
@@ -162,7 +163,15 @@ export function MySpaceSidebar() {
               <div className="flex items-center gap-2 px-1 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
                 <ProfileIcon className="size-5 shrink-0" />
                 <span className="typo-body-3 text-gray-600 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
-                  {isLoggedIn ? `${user?.name ?? '...'}님` : 'Guest'}
+                  {isLoggedIn ? (
+                    user?.name ? (
+                      `${user.name}님`
+                    ) : (
+                      <Skeleton className="h-4 w-16" />
+                    )
+                  ) : (
+                    'Guest'
+                  )}
                 </span>
               </div>
             </SidebarMenuButton>
