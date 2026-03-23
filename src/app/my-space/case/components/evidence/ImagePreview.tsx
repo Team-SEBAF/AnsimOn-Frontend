@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
 import imageFallback from '@/assets/image-fallback.png';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type PreviewSize = 'sm' | 'md' | 'lg' | 'fill';
 
@@ -67,19 +68,23 @@ export function ImagePreview({
   const imgAlt = file?.name ?? alt ?? '';
   /** 이미지 로드 실패 시 fallback 이미지 표시용 */
   const [hasError, setHasError] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   return (
     <div
-      className={`group relative shrink-0 overflow-hidden rounded-lg border border-white bg-gray-100 ${sizeStyles[size]}`}
+      className={`group relative shrink-0 overflow-hidden rounded-lg border border-white ${sizeStyles[size]}`}
     >
+      {!isLoaded && <Skeleton className="absolute inset-0 rounded-lg" />}
       <Image
         src={hasError ? imageFallback : imgSrc}
         alt={imgAlt}
         fill
         sizes="(max-width: 768px) 25vw, 152px"
         className="object-cover"
+        onLoad={() => setIsLoaded(true)}
         onError={() => {
           if (!hasError) setHasError(true);
+          setIsLoaded(true);
         }}
         unoptimized={!!blobSrc}
       />

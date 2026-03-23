@@ -18,7 +18,7 @@ interface EvidenceCardProps {
   /** 증거 타입 (MESSAGE, VOICE 등) */
   type: EvidenceType;
   /** 고소장 ID (React Query 훅에 전달) */
-  complaintId: string | undefined;
+  complaintId: string;
   /** 외부에서 전달하는 추가 스타일 */
   className?: string;
 }
