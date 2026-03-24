@@ -108,7 +108,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
         {step === 1 && <StepCollect complaintId={complaintId} />}
-        {step === 2 && <StepTimeline />}
+        {step === 2 && <StepTimeline complaintId={complaintId} />}
         {step === 3 && <StepDocument />}
         {step === 4 && <StepComplete />}
       </div>
