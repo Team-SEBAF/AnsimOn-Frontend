@@ -32,7 +32,7 @@ export function TimelineDateGroup({ group, onAdd, onEdit, onDelete }: TimelineDa
       </div>
 
       {/* 카드 목록 — ml-1로 dot 중앙에 선 정렬 */}
-      <div className="ml-1 space-y-2 border-l border-gray-200 pl-4">
+      <div className="ml-1.5 space-y-2 border-l-2 border-gray-100 pl-6">
         {group.events.map((event) =>
           event.evidences.map((evidence) => (
             <TimelineItemCard
