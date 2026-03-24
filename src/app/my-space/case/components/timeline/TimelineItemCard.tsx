@@ -22,6 +22,10 @@ interface TimelineItemCardProps {
   onDelete: (id: string) => void;
 }
 
+/**
+ * 타임라인 증거 카드
+ * - 시각 / 썸네일(영상길이·개수 뱃지) / 제목·설명·태그 / 수정·삭제 드롭다운
+ */
 export function TimelineItemCard({ time, evidence, onEdit, onDelete }: TimelineItemCardProps) {
   const {
     timeline_evidence_id,
@@ -35,7 +39,7 @@ export function TimelineItemCard({ time, evidence, onEdit, onDelete }: TimelineI
   } = evidence;
 
   return (
-    <div className="flex w-full gap-6 rounded-2xl border border-gray-100 bg-white px-7 py-6 shadow-sm">
+    <div className="flex w-full gap-6 rounded-2xl border border-gray-100 bg-white px-7 py-6 shadow-[0_20px_50px_#4040400d]">
       {/* 시각 */}
       <span className="typo-body-6 w-20 shrink-0 text-gray-400">{time}</span>
 
