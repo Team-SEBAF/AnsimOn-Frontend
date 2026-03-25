@@ -8,16 +8,12 @@ import { TimelineView } from './TimelineView';
 interface ByTypeViewProps {
   groups: TimelineDateGroup[];
   allTags: TimelineTag[];
-  onAdd: (date: string) => void;
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
 }
 
 /** 종류별 보기 탭 — 태그 pill 선택 시 해당 태그 카드만 표시 */
-export function ByTypeView({ groups, allTags, onAdd, onEdit, onDelete }: ByTypeViewProps) {
+export function ByTypeView({ groups, allTags }: ByTypeViewProps) {
   const [selectedTag, setSelectedTag] = useState<TimelineTag>(allTags[0]);
 
-  // 선택된 태그를 가진 증거만 남기도록 그룹 필터링
   const filtered = groups
     .map((group) => ({
       ...group,
@@ -47,8 +43,7 @@ export function ByTypeView({ groups, allTags, onAdd, onEdit, onDelete }: ByTypeV
         ))}
       </div>
 
-      {/* 필터된 카드 목록 */}
-      <TimelineView groups={filtered} onAdd={onAdd} onEdit={onEdit} onDelete={onDelete} />
+      <TimelineView groups={filtered} />
     </div>
   );
 }
