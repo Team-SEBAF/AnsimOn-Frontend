@@ -6,7 +6,7 @@ interface TimelineTagBadgeProps {
   tag: TimelineTag;
 }
 
-const TAG_ICON: Partial<Record<TimelineTag, ReactNode>> = {
+export const TAG_ICON: Partial<Record<TimelineTag, ReactNode>> = {
   PHYSICAL_HARM: <WarningOutlineIcon width={16} height={16} />,
   THREAT: <WarningOutlineIcon width={16} height={16} />,
 };
