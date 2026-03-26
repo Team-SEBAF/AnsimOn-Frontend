@@ -4,7 +4,7 @@ const command = process.argv[2];
 
 async function startDb() {
   console.log('🚀 DB 시작 요청 중...');
-  const res = await fetch(`${BASE_URL}/api/v1/dev/db/start`, { method: 'POST' });
+  const res = await fetch(`${BASE_URL}/api/v1/server_cost/db/start`, { method: 'POST' });
   if (res.ok) {
     console.log('✅ DB 시작 요청 완료! 3~6분 후 사용 가능');
   } else {
@@ -14,7 +14,7 @@ async function startDb() {
 
 async function getStatus() {
   console.log('🔍 DB 상태 확인 중...');
-  const res = await fetch(`${BASE_URL}/api/v1/dev/db/status`);
+  const res = await fetch(`${BASE_URL}/api/v1/server_cost/db/status`);
   const data = await res.json();
   if (data.status === 'available') {
     console.log('✅ DB 사용 가능!');
@@ -25,7 +25,7 @@ async function getStatus() {
 
 async function stopDb() {
   console.log('🛑 DB 중지 요청 중...');
-  const res = await fetch(`${BASE_URL}/api/v1/dev/db/stop`, { method: 'POST' });
+  const res = await fetch(`${BASE_URL}/api/v1/server_cost/db/stop`, { method: 'POST' });
   if (res.ok) {
     console.log('✅ DB 중지 요청 완료!');
   } else {
