@@ -7,14 +7,17 @@ interface UseTimelineFormOptions {
   evidence?: TimelineEvidence;
 }
 
-/** 타임라인 추가/수정 폼 상태 및 핸들러 */
+/**
+ * 타임라인 추가/수정 폼 상태 및 핸들러
+ * TODO: API 연결 시 RHF + zod로 교체
+ */
 export function useTimelineForm({
   initialDate = '',
   initialTime = '',
   evidence,
 }: UseTimelineFormOptions) {
   const [date, setDate] = useState(initialDate);
-  const [time, setTime] = useState(initialTime || '00:00');
+  const [time, setTime] = useState(initialTime.replace(/^(AM|PM)\s*/i, '').trim() || '00:00');
   const [title, setTitle] = useState(evidence?.title ?? '');
   const [description, setDescription] = useState(evidence?.description ?? '');
   const [selectedTags, setSelectedTags] = useState<TimelineTag[]>(evidence?.tags ?? []);

@@ -1,10 +1,11 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Input } from '@/components/Input';
 import { Modal } from '@/components/modals/Modal';
-import { ImagePreview } from '../evidence/ImagePreview';
-import { FilePreview } from '../evidence/FilePreview';
+import { EvidenceContent } from '../evidence/EvidenceContent';
+import type { EvidencePreviewItem } from '@/types/evidence';
 import {
   TAG_LABEL_MAP,
   TAG_COLOR_MAP,
@@ -50,9 +51,24 @@ export function TimelineFormModal({
     toggleTag,
   } = useTimelineForm({ initialDate, initialTime, evidence });
 
+  // TODO: API 연결 시 filterValidFiles로 타입·크기·길이·개수 검증 추가, rejected 파일은 toast.error()로 표시
+  const [files, setFiles] = useState<EvidencePreviewItem[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFilesAdd = (newFiles: File[]) => {
+    const items: EvidencePreviewItem[] = newFiles.map((f) => ({
+      id: `${f.name}-${f.size}`,
+      filename: f.name,
+      sizeBytes: f.size,
+    }));
+    setFiles((prev) => [...prev, ...items]);
+  };
+
+  const handleFileRemove = (id: string) => setFiles((prev) => prev.filter((f) => f.id !== id));
+
   const handleSubmit = () => {
     // TODO: API 연결
-    console.log({ date, time, title, description, tags: selectedTags });
+    console.log({ date, time, title, description, tags: selectedTags, files });
     onOpenChange(false);
   };
 
@@ -92,10 +108,10 @@ export function TimelineFormModal({
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* 설명 */}
+        {/* 상황 */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <label className="typo-label text-gray-700">설명</label>
+            <label className="typo-label text-gray-700">상황</label>
             <span className="typo-body-8 text-gray-400">{description.length}/1,000</span>
           </div>
           <textarea
@@ -135,28 +151,35 @@ export function TimelineFormModal({
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <p className="typo-label text-gray-700">증거자료</p>
-            <button type="button" className="typo-heading-6 text-gray-400">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="typo-heading-6 hover:text-primary text-gray-400 transition-colors"
+            >
               + 추가하기
             </button>
           </div>
 
-          {/* 썸네일 목록 */}
-          {evidence?.has_thumbnail && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              <ImagePreview src={evidence.thumbnail_url} alt={evidence.title} size="md" />
-            </div>
-          )}
+          <div className={files.length > 0 ? 'no-scrollbar max-h-28 overflow-y-auto' : ''}>
+            <EvidenceContent
+              previewType="file"
+              items={files}
+              onFilesAdd={handleFilesAdd}
+              onRemove={handleFileRemove}
+              onClickUpload={() => fileInputRef.current?.click()}
+            />
+          </div>
 
-          {/* 파일 목록 */}
-          {evidence && (
-            <div className="flex flex-col gap-1">
-              <FilePreview
-                name={evidence.title}
-                size={0}
-                action={{ type: 'remove', onRemove: () => {} }}
-              />
-            </div>
-          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={(e) => {
+              if (e.target.files) handleFilesAdd(Array.from(e.target.files));
+              e.target.value = '';
+            }}
+            className="hidden"
+          />
         </div>
       </Modal.Body>
 
