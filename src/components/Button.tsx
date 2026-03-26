@@ -58,6 +58,13 @@ const sizeStyles: Record<ButtonSize, string> = {
   xl: 'h-12 px-6 gap-2 text-btn-1',
 };
 
+const spanGapStyles: Record<ButtonSize, string> = {
+  sm: 'gap-1',
+  md: 'gap-1.5',
+  lg: 'gap-2',
+  xl: 'gap-2',
+};
+
 /**
  * 버튼 모서리 라운드 스타일
  */
@@ -149,7 +156,14 @@ export function Button({
 
   return (
     <button {...props} disabled={disabled || loading} className={buttonClassName}>
-      <span className={loading ? 'invisible' : ''} aria-hidden={loading}>
+      <span
+        className={clsx(
+          'inline-flex items-center',
+          spanGapStyles[size],
+          loading ? 'invisible' : '',
+        )}
+        aria-hidden={loading}
+      >
         {children}
       </span>
       {loading && (

@@ -12,7 +12,7 @@ export type DbStatusResponse = {
  * - 3~6분 소요
  */
 export async function startDb(): Promise<void> {
-  await axiosInstance.post('/api/v1/dev/db/start');
+  await axiosInstance.post('/api/v1/server_cost/db/start');
 }
 
 /**
@@ -21,7 +21,7 @@ export async function startDb(): Promise<void> {
  * - unavailable: 사용 불가
  */
 export async function getDbStatus(): Promise<DbStatus> {
-  const { data } = await axiosInstance.get<DbStatusResponse>('/api/v1/dev/db/status');
+  const { data } = await axiosInstance.get<DbStatusResponse>('/api/v1/server_cost/db/status');
   return data.status;
 }
 
@@ -31,5 +31,5 @@ export async function getDbStatus(): Promise<DbStatus> {
  * - 8~15분 소요
  */
 export async function stopDb(): Promise<void> {
-  await axiosInstance.post('/api/v1/dev/db/stop');
+  await axiosInstance.post('/api/v1/server_cost/db/stop');
 }
