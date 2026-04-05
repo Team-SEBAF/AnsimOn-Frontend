@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { getTimelineEvidenceDetail } from '@/api/timeline';
@@ -43,7 +43,6 @@ export function useTimelineFiles({
   evidence,
 }: UseTimelineFilesParams) {
   const complaintId = useComplaintId();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
   const [serverFiles, setServerFiles] = useState<TimelineReferencedEvidence[]>([]);
@@ -103,7 +102,6 @@ export function useTimelineFiles({
   ];
 
   return {
-    fileInputRef,
     attachmentItems,
     isLoadingDetail,
     addFiles,
