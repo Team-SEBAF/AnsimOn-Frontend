@@ -18,6 +18,7 @@ import { TimelineDeleteDialog } from './TimelineDeleteDialog';
 import { TimelineFormModal } from './TimelineFormModal';
 import { EvidenceDownloadModal } from './EvidenceDownloadModal';
 import type { TimelineEvidence } from '@/types/timeline';
+import { useDeleteTimelineEvidences } from '../../hooks/useTimeline';
 
 type ModalType = 'edit' | 'delete' | 'download' | null;
 
@@ -33,6 +34,7 @@ interface TimelineItemCardProps {
  */
 export function TimelineItemCard({ date, time, evidence }: TimelineItemCardProps) {
   const [modal, setModal] = useState<ModalType>(null);
+  const deleteEvidences = useDeleteTimelineEvidences();
 
   const {
     timeline_evidence_id,
@@ -45,9 +47,8 @@ export function TimelineItemCard({ date, time, evidence }: TimelineItemCardProps
     referenced_evidence_count,
   } = evidence;
 
-  const handleDelete = () => {
-    // TODO: API 연결
-    console.log('delete', timeline_evidence_id);
+  const handleDelete = async () => {
+    await deleteEvidences.mutateAsync({ timelineEvidenceIds: [timeline_evidence_id] });
     setModal(null);
   };
 
