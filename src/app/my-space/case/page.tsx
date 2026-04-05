@@ -107,10 +107,16 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        {step === 1 && <StepCollect complaintId={complaintId} />}
-        {step === 2 && <StepTimeline />}
-        {step === 3 && <StepDocument />}
-        {step === 4 && <StepComplete />}
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
+              {step === 1 && <StepCollect complaintId={complaintId} />}
+              {step === 2 && <StepTimeline />}
+              {step === 3 && <StepDocument />}
+              {step === 4 && <StepComplete />}
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </div>
     </div>
   );
