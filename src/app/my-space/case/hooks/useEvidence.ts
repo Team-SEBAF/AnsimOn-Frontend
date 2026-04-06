@@ -31,6 +31,7 @@ import type {
 } from '@/types/evidence';
 import { EVIDENCE_CONFIG } from '../components/evidence/constants';
 import { buildPresignedUrlItems } from '../components/evidence/validate';
+import { fileLastModifiedToISO } from '@/utils/date';
 
 // ─── query key ──────────────────────────────────────────
 
@@ -125,28 +126,48 @@ const fetchAndNormalize: Record<
 const registerByType = async (
   type: EvidenceType,
   complaintId: string,
-  items: { evidenceId: string; filename: string }[],
+  items: { evidenceId: string; filename: string; fileCreatedAt: string }[],
 ) => {
   switch (type) {
     case 'MESSAGE':
       return registerMessages(complaintId, {
-        items: items.map((i) => ({ messageId: i.evidenceId, filename: i.filename })),
+        items: items.map((i) => ({
+          messageId: i.evidenceId,
+          filename: i.filename,
+          fileCreatedAt: i.fileCreatedAt,
+        })),
       });
     case 'VOICE':
       return registerVoices(complaintId, {
-        items: items.map((i) => ({ voiceId: i.evidenceId, filename: i.filename })),
+        items: items.map((i) => ({
+          voiceId: i.evidenceId,
+          filename: i.filename,
+          fileCreatedAt: i.fileCreatedAt,
+        })),
       });
     case 'VICTIM':
       return registerVictims(complaintId, {
-        items: items.map((i) => ({ victimId: i.evidenceId, filename: i.filename })),
+        items: items.map((i) => ({
+          victimId: i.evidenceId,
+          filename: i.filename,
+          fileCreatedAt: i.fileCreatedAt,
+        })),
       });
     case 'REPORT_RECORD':
       return registerReportRecords(complaintId, {
-        items: items.map((i) => ({ reportRecordId: i.evidenceId, filename: i.filename })),
+        items: items.map((i) => ({
+          reportRecordId: i.evidenceId,
+          filename: i.filename,
+          fileCreatedAt: i.fileCreatedAt,
+        })),
       });
     case 'INCIDENT_LOG':
       return registerIncidentLogFiles(complaintId, {
-        items: items.map((i) => ({ incidentLogId: i.evidenceId, filename: i.filename })),
+        items: items.map((i) => ({
+          incidentLogId: i.evidenceId,
+          filename: i.filename,
+          fileCreatedAt: i.fileCreatedAt,
+        })),
       });
   }
 };
@@ -207,9 +228,10 @@ export function useUploadEvidence(complaintId: string | undefined, type: Evidenc
       return registerByType(
         type,
         complaintId!,
-        presignedUrls.map((p) => ({
+        presignedUrls.map((p, i) => ({
           evidenceId: p.evidence_id,
           filename: p.filename,
+          fileCreatedAt: fileLastModifiedToISO(files[i]),
         })),
       );
     },
