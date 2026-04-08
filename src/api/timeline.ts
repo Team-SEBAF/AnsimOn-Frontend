@@ -11,6 +11,10 @@ import type {
   DeleteTimelineEvidencesRequest,
   DeleteManualReferencedEvidencesRequest,
   TimelineDownloadResponse,
+  NeedToGenerateResponse,
+  RequestGenerateResponse,
+  CurrentTaskIdResponse,
+  SseServerUrlResponse,
 } from '@/types/timeline';
 
 // ─── 타임라인 조회 ────────────────────────────────────────
@@ -120,6 +124,43 @@ export async function deleteManualReferencedEvidences(
 export async function downloadTimelineZip(complaintId: string) {
   const res = await axiosInstance.post<TimelineDownloadResponse>(
     `/api/v1/${complaintId}/timeline/download/zip`,
+  );
+  return res.data;
+}
+
+// ─── AI 생성 ─────────────────────────────────────────────
+
+/** SSE 서버 URL 조회 */
+export async function getSseServerUrl() {
+  const res = await axiosInstance.get<SseServerUrlResponse>('/api/v1/sse/server-url');
+  return res.data;
+}
+
+/** 타임라인 생성 필요 여부 확인 */
+export async function needToGenerateTimeline(complaintId: string) {
+  const res = await axiosInstance.get<NeedToGenerateResponse>(
+    `/api/v1/${complaintId}/ai/timeline/need-to-generate`,
+  );
+  return res.data;
+}
+
+/** AI 타임라인 생성 요청 */
+export async function requestGenerateTimeline(
+  complaintId: string,
+  llmType: 'mock' | 'openAI' = 'mock',
+) {
+  const res = await axiosInstance.post<RequestGenerateResponse>(
+    `/api/v1/${complaintId}/ai/timeline/request/generate`,
+    {},
+    { params: { llm_type: llmType } },
+  );
+  return res.data;
+}
+
+/** 재진입 시 현재 task_id 조회 */
+export async function getCurrentTaskId(complaintId: string) {
+  const res = await axiosInstance.get<CurrentTaskIdResponse>(
+    `/api/v1/${complaintId}/ai/timeline/current-task-id`,
   );
   return res.data;
 }

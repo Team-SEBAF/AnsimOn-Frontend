@@ -161,3 +161,29 @@ export type DeleteManualReferencedEvidencesRequest = {
 export type TimelineDownloadResponse = {
   download_url: string;
 };
+
+// ─── AI 생성 ─────────────────────────────────────────────
+
+export type NeedToGenerateResponse = {
+  need_to_generate: boolean;
+};
+
+export type RequestGenerateResponse = {
+  task_id: string;
+};
+
+export type CurrentTaskIdResponse = {
+  task_id: string;
+};
+
+export type SseServerUrlResponse = {
+  base_url: string;
+};
+
+export type TimelineProgressEvent = 'task_preparing' | 'progress' | 'done';
+
+export type TimelineProgressData = {
+  status: 'PENDING' | 'PROCESSING' | 'DONE' | null;
+  processed: number | null;
+  total: number | null;
+};
