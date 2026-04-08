@@ -1,9 +1,11 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
+import { useTimelineGenerate } from './hooks/useTimelineGenerate';
+import { needToGenerateTimeline, requestGenerateTimeline, getCurrentTaskId } from '@/api/timeline';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
 import {
   CaseHeader,
@@ -12,10 +14,12 @@ import {
   StepTimeline,
   StepDocument,
   StepComplete,
+  TimelineGeneratingView,
 } from './components';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
 import { CasePageSkeleton } from '@/components/skeletons/CasePageSkeleton';
+import { toast } from 'react-toastify';
 
 const MIN_STEP: Step = 1;
 const MAX_STEP: Step = 4;
@@ -61,15 +65,48 @@ function CasePageGuard() {
 function CasePageContent({ complaintId }: { complaintId: string }) {
   const { data: complaint } = useComplaint(complaintId);
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(complaintId);
+  const [generatingTaskId, setGeneratingTaskId] = useState<string | null>(null);
 
   // 서버 데이터 → 프론트 step 변환
   const step: Step = STEP_MAP[complaint.step];
+  const isGenerating = complaint.step === 'TIMELINE_GENERATING' || generatingTaskId !== null;
   const title = complaint.name;
 
+  // TIMELINE_GENERATING 재진입 처리 — task_id 조회 후 SSE 연결
+  useEffect(() => {
+    if (complaint.step === 'TIMELINE_GENERATING' && !generatingTaskId) {
+      getCurrentTaskId(complaintId).then(({ task_id }) => {
+        setGeneratingTaskId(task_id);
+      });
+    }
+  }, [complaint.step, complaintId, generatingTaskId]);
+
+  // SSE 연결 — done 이벤트 시 step TIMELINE으로 저장 → step 2로 이동
+  const { progressData } = useTimelineGenerate({
+    taskId: generatingTaskId,
+    onDone: () => {
+      setGeneratingTaskId(null);
+      save({ step: 'TIMELINE' });
+    },
+  });
+
   /** 다음 스텝으로 이동 + 서버 저장 */
-  const goNext = () => {
-    const nextStep = clampStep(step + 1);
-    save({ step: STEP_REVERSE_MAP[nextStep] });
+  const goNext = async () => {
+    try {
+      if (step === 1) {
+        const { need_to_generate } = await needToGenerateTimeline(complaintId);
+        if (need_to_generate) {
+          // TODO: 프로덕션 배포 전 'openAI'로 변경
+          const { task_id } = await requestGenerateTimeline(complaintId, 'mock');
+          setGeneratingTaskId(task_id);
+          return;
+        }
+      }
+      const nextStep = clampStep(step + 1);
+      save({ step: STEP_REVERSE_MAP[nextStep] });
+    } catch {
+      toast.error('다음 단계로 이동하는 중 오류가 발생했어요. 다시 시도해주세요.');
+    }
   };
 
   /** 이전 스텝으로 이동 + 서버 저장 */
@@ -96,27 +133,31 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         onTitleChange={handleTitleChange}
         onSave={handleSave}
         isSaving={isSaving}
-        isSaveDisabled={step === 1}
+        isSaveDisabled={step === 1 || isGenerating}
         onPrev={goPrev}
         onNext={goNext}
-        hasPrev={step > MIN_STEP}
-        hasNext={step < MAX_STEP}
+        hasPrev={step > MIN_STEP && !isGenerating}
+        hasNext={step < MAX_STEP && !isGenerating}
         updatedAt={complaint.updated_at}
       />
       <div className="space-y-6 p-6">
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
-              {step === 1 && <StepCollect complaintId={complaintId} />}
-              {step === 2 && <StepTimeline />}
-              {step === 3 && <StepDocument />}
-              {step === 4 && <StepComplete />}
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>
+        {isGenerating ? (
+          <TimelineGeneratingView progressData={progressData} />
+        ) : (
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
+                {step === 1 && <StepCollect complaintId={complaintId} />}
+                {step === 2 && <StepTimeline />}
+                {step === 3 && <StepDocument />}
+                {step === 4 && <StepComplete />}
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        )}
       </div>
     </div>
   );
