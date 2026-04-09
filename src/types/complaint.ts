@@ -25,10 +25,10 @@ export type UpdateComplaintPayload = {
   step?: ComplaintStep;
 };
 
-/** step 변환 맵 — TIMELINE_GENERATING은 프론트에서 step 1로 표시 (생성 중 UI) */
+/** step 변환 맵 — TIMELINE_GENERATING은 프론트에서 step 2로 표시 (생성 중 UI) */
 export const STEP_MAP: Record<ComplaintStep, Step> = {
   EVIDENCE: 1,
-  TIMELINE_GENERATING: 1,
+  TIMELINE_GENERATING: 2,
   TIMELINE: 2,
   DOCUMENT: 3,
   COMPLETE: 4,

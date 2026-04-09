@@ -67,9 +67,9 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(complaintId);
   const [generatingTaskId, setGeneratingTaskId] = useState<string | null>(null);
 
-  // 서버 데이터 → 프론트 step 변환
-  const step: Step = STEP_MAP[complaint.step];
+  // 서버 데이터 → 프론트 step 변환 — 생성 중에는 step 2로 표시
   const isGenerating = complaint.step === 'TIMELINE_GENERATING' || generatingTaskId !== null;
+  const step: Step = isGenerating ? 2 : STEP_MAP[complaint.step];
   const title = complaint.name;
 
   // TIMELINE_GENERATING 재진입 처리 — task_id 조회 후 SSE 연결
@@ -96,8 +96,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
       if (step === 1) {
         const { need_to_generate } = await needToGenerateTimeline(complaintId);
         if (need_to_generate) {
-          // TODO: 프로덕션 배포 전 'openAI'로 변경
-          const { task_id } = await requestGenerateTimeline(complaintId, 'mock');
+          const { task_id } = await requestGenerateTimeline(complaintId, 'openAI');
           setGeneratingTaskId(task_id);
           return;
         }
@@ -144,20 +143,21 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         {/* 4단계 프로그레스 바 */}
         <CaseProgress currentStep={step} />
         {/* 스텝별 컨텐츠 조건부 렌더링 */}
-        {isGenerating ? (
-          <TimelineGeneratingView progressData={progressData} />
-        ) : (
-          <QueryErrorResetBoundary>
-            {({ reset }) => (
-              <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
-                {step === 1 && <StepCollect complaintId={complaintId} />}
-                {step === 2 && <StepTimeline />}
-                {step === 3 && <StepDocument />}
-                {step === 4 && <StepComplete />}
-              </ErrorBoundary>
-            )}
-          </QueryErrorResetBoundary>
-        )}
+        <QueryErrorResetBoundary>
+          {({ reset }) => (
+            <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
+              {step === 1 && <StepCollect complaintId={complaintId} />}
+              {step === 2 &&
+                (isGenerating ? (
+                  <TimelineGeneratingView progressData={progressData} />
+                ) : (
+                  <StepTimeline />
+                ))}
+              {step === 3 && <StepDocument />}
+              {step === 4 && <StepComplete />}
+            </ErrorBoundary>
+          )}
+        </QueryErrorResetBoundary>
       </div>
     </div>
   );
