@@ -41,12 +41,6 @@ const STAGE_MESSAGE: Record<Stage, string> = {
   3: '타임라인을 정리하고 있어요',
 };
 
-const STAGE_TIME: Record<Stage, string> = {
-  1: '20분',
-  2: '15분',
-  3: '2분',
-};
-
 /**
  * AI 타임라인 생성 중 진행률 UI
  *
@@ -113,7 +107,9 @@ export function TimelineGeneratingView({ progressData }: TimelineGeneratingViewP
       {/* 상태 텍스트 */}
       <div className="flex flex-col items-center gap-2">
         <p className="typo-heading-3 text-gray-500">{message}</p>
-        <p className="typo-body-7 text-gray-500">예상 남은 시간 : {STAGE_TIME[stage]}</p>
+        <p className="typo-body-7 text-gray-500">
+          * 화면을 종료해도 타임라인 처리는 계속 진행됩니다
+        </p>
       </div>
     </div>
   );
