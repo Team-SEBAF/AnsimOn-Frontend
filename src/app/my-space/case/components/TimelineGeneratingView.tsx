@@ -1,7 +1,10 @@
+import { useTimelineGenerate } from '../hooks/useTimelineGenerate';
+import { Spinner } from '@/components/Spinner';
 import type { TimelineProgressData } from '@/types/timeline';
 
 interface TimelineGeneratingViewProps {
-  progressData: TimelineProgressData | null;
+  taskId: string;
+  onDone: () => void;
 }
 
 /** 각 스테이지의 라벨과 바 너비 정의 */
@@ -47,8 +50,20 @@ const STAGE_MESSAGE: Record<Stage, string> = {
  * 각 스테이지는 [라벨 → 도트 → 프로그레스 바] 세로 구조로 이루어짐
  * - 준비(PENDING) / 처리 중(PROCESSING) / 마무리(DONE) 3단계로 표시
  * - 처리 중 단계에서 processed/total 기반으로 바 채움
+ * - SSE 에러 발생 시 throw → 외부 ErrorBoundary가 처리
  */
-export function TimelineGeneratingView({ progressData }: TimelineGeneratingViewProps) {
+export function TimelineGeneratingView({ taskId, onDone }: TimelineGeneratingViewProps) {
+  const { progressData } = useTimelineGenerate({ taskId, onDone });
+
+  // SSE 이벤트 수신 전 — 스피너 표시
+  if (!progressData) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Spinner size="lg" className="text-primary" />
+      </div>
+    );
+  }
+
   const stage = getStage(progressData?.status ?? null);
   const processed = progressData?.processed ?? 0;
   const total = progressData?.total ?? 0;
