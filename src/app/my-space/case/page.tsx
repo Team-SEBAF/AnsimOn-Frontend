@@ -4,7 +4,6 @@ import { Suspense, useState, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
-import { useTimelineGenerate } from './hooks/useTimelineGenerate';
 import { needToGenerateTimeline, requestGenerateTimeline, getCurrentTaskId } from '@/api/timeline';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
 import {
@@ -18,6 +17,7 @@ import {
 } from './components';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
+import { TimelineErrorFallback } from '@/components/fallbacks/TimelineErrorFallback';
 import { CasePageSkeleton } from '@/components/skeletons/CasePageSkeleton';
 import { toast } from 'react-toastify';
 
@@ -66,6 +66,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
   const { data: complaint } = useComplaint(complaintId);
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(complaintId);
   const [generatingTaskId, setGeneratingTaskId] = useState<string | null>(null);
+  const [isTimelineError, setIsTimelineError] = useState(false);
 
   // 서버 데이터 → 프론트 step 변환 — 생성 중에는 step 2로 표시
   const isGenerating = complaint.step === 'TIMELINE_GENERATING' || generatingTaskId !== null;
@@ -81,14 +82,21 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
     }
   }, [complaint.step, complaintId, generatingTaskId]);
 
-  // SSE 연결 — done 이벤트 시 step TIMELINE으로 저장 → step 2로 이동
-  const { progressData } = useTimelineGenerate({
-    taskId: generatingTaskId,
-    onDone: () => {
-      setGeneratingTaskId(null);
-      save({ step: 'TIMELINE' });
-    },
-  });
+  const handleGenerateDone = () => {
+    setGeneratingTaskId(null);
+    save({ step: 'TIMELINE' });
+  };
+
+  /** 타임라인 생성 재시도 — 새 task_id로 SSE 재연결 */
+  const handleGenerateRetry = async () => {
+    try {
+      const { task_id } = await requestGenerateTimeline(complaintId, 'openAI');
+      setIsTimelineError(false);
+      setGeneratingTaskId(task_id);
+    } catch {
+      toast.error('타임라인 생성 요청에 실패했어요. 다시 시도해주세요.');
+    }
+  };
 
   /** 다음 스텝으로 이동 + 서버 저장 */
   const goNext = async () => {
@@ -110,6 +118,8 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
 
   /** 이전 스텝으로 이동 + 서버 저장 */
   const goPrev = () => {
+    setGeneratingTaskId(null);
+    setIsTimelineError(false);
     const prevStep = clampStep(step - 1);
     save({ step: STEP_REVERSE_MAP[prevStep] });
   };
@@ -135,7 +145,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         isSaveDisabled={step === 1 || isGenerating}
         onPrev={goPrev}
         onNext={goNext}
-        hasPrev={step > MIN_STEP && !isGenerating}
+        hasPrev={step > MIN_STEP && (!isGenerating || isTimelineError)}
         hasNext={step < MAX_STEP && !isGenerating}
         updatedAt={complaint.updated_at}
       />
@@ -149,7 +159,17 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
               {step === 1 && <StepCollect complaintId={complaintId} />}
               {step === 2 &&
                 (isGenerating ? (
-                  <TimelineGeneratingView progressData={progressData} />
+                  // SSE 에러는 TimelineErrorFallback으로 처리 — 헤더 유지
+                  <ErrorBoundary
+                    FallbackComponent={TimelineErrorFallback}
+                    onError={() => setIsTimelineError(true)}
+                    onReset={handleGenerateRetry}
+                  >
+                    <TimelineGeneratingView
+                      taskId={generatingTaskId!}
+                      onDone={handleGenerateDone}
+                    />
+                  </ErrorBoundary>
                 ) : (
                   <StepTimeline />
                 ))}
