@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
 import { needToGenerateTimeline, requestGenerateTimeline, getCurrentTaskId } from '@/api/timeline';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
+import type { TimelinePhase } from '@/types/timeline';
 import {
   CaseHeader,
   CaseProgress,
@@ -19,7 +20,8 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
 import { TimelineErrorFallback } from '@/components/fallbacks/TimelineErrorFallback';
 import { CasePageSkeleton } from '@/components/skeletons/CasePageSkeleton';
-import { toast } from 'react-toastify';
+import { Spinner } from '@/components/Spinner';
+import { showAlert } from '@/utils/alert';
 
 const MIN_STEP: Step = 1;
 const MAX_STEP: Step = 4;
@@ -65,36 +67,46 @@ function CasePageGuard() {
 function CasePageContent({ complaintId }: { complaintId: string }) {
   const { data: complaint } = useComplaint(complaintId);
   const { mutate: save, isPending: isSaving } = useUpdateComplaint(complaintId);
-  const [generatingTaskId, setGeneratingTaskId] = useState<string | null>(null);
-  const [isTimelineError, setIsTimelineError] = useState(false);
+  const [phase, setPhase] = useState<TimelinePhase>(
+    complaint.step === 'TIMELINE_GENERATING' ? 'restoring' : 'idle',
+  );
+  const [taskId, setTaskId] = useState<string | null>(null);
 
-  // 서버 데이터 → 프론트 step 변환 — 생성 중에는 step 2로 표시
-  const isGenerating = complaint.step === 'TIMELINE_GENERATING' || generatingTaskId !== null;
-  const step: Step = isGenerating ? 2 : STEP_MAP[complaint.step];
+  // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 step 2로 표시
+  const step: Step = phase !== 'idle' ? 2 : STEP_MAP[complaint.step];
   const title = complaint.name;
 
   // TIMELINE_GENERATING 재진입 처리 — task_id 조회 후 SSE 연결
   useEffect(() => {
-    if (complaint.step === 'TIMELINE_GENERATING' && !generatingTaskId) {
-      getCurrentTaskId(complaintId).then(({ task_id }) => {
-        setGeneratingTaskId(task_id);
+    if (phase !== 'restoring') return;
+    getCurrentTaskId(complaintId)
+      .then(({ task_id }) => {
+        setTaskId(task_id);
+        setPhase('generating');
+      })
+      .catch(() => {
+        setPhase('idle');
+        showAlert.error({
+          title: '타임라인 생성 정보를 불러오는 중 오류가 발생했어요.\n다시 시도해주세요.',
+        });
       });
-    }
-  }, [complaint.step, complaintId, generatingTaskId]);
+  }, [phase, complaintId]);
 
   const handleGenerateDone = () => {
-    setGeneratingTaskId(null);
+    setPhase('idle');
+    setTaskId(null);
     save({ step: 'TIMELINE' });
   };
 
   /** 타임라인 생성 재시도 — 새 task_id로 SSE 재연결 */
   const handleGenerateRetry = async () => {
     try {
+      setPhase('starting');
       const { task_id } = await requestGenerateTimeline(complaintId, 'openAI');
-      setIsTimelineError(false);
-      setGeneratingTaskId(task_id);
+      setTaskId(task_id);
+      setPhase('generating');
     } catch {
-      toast.error('타임라인 생성 요청에 실패했어요. 다시 시도해주세요.');
+      setPhase('error');
     }
   };
 
@@ -105,21 +117,24 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         const { need_to_generate } = await needToGenerateTimeline(complaintId);
         if (need_to_generate) {
           const { task_id } = await requestGenerateTimeline(complaintId, 'openAI');
-          setGeneratingTaskId(task_id);
+          setTaskId(task_id);
+          setPhase('generating');
           return;
         }
       }
       const nextStep = clampStep(step + 1);
       save({ step: STEP_REVERSE_MAP[nextStep] });
     } catch {
-      toast.error('다음 단계로 이동하는 중 오류가 발생했어요. 다시 시도해주세요.');
+      showAlert.error({
+        title: '다음 단계로 이동하는 중 오류가 발생했어요.\n다시 시도해주세요.',
+      });
     }
   };
 
   /** 이전 스텝으로 이동 + 서버 저장 */
   const goPrev = () => {
-    setGeneratingTaskId(null);
-    setIsTimelineError(false);
+    setPhase('idle');
+    setTaskId(null);
     const prevStep = clampStep(step - 1);
     save({ step: STEP_REVERSE_MAP[prevStep] });
   };
@@ -142,11 +157,11 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         onTitleChange={handleTitleChange}
         onSave={handleSave}
         isSaving={isSaving}
-        isSaveDisabled={step === 1 || isGenerating}
+        isSaveDisabled={step === 1 || phase !== 'idle'}
         onPrev={goPrev}
         onNext={goNext}
-        hasPrev={step > MIN_STEP && (!isGenerating || isTimelineError)}
-        hasNext={step < MAX_STEP && !isGenerating}
+        hasPrev={step > MIN_STEP && (phase === 'idle' || phase === 'error')}
+        hasNext={step < MAX_STEP && phase === 'idle'}
         updatedAt={complaint.updated_at}
       />
       <div className="space-y-6 p-6">
@@ -158,17 +173,21 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
             <ErrorBoundary FallbackComponent={CaseErrorFallback} onReset={reset}>
               {step === 1 && <StepCollect complaintId={complaintId} />}
               {step === 2 &&
-                (isGenerating ? (
-                  // SSE 에러는 TimelineErrorFallback으로 처리 — 헤더 유지
+                (phase !== 'idle' ? (
+                  // 생성 플로우 — phase !== 'idle'인 동안 ErrorBoundary 유지
                   <ErrorBoundary
                     FallbackComponent={TimelineErrorFallback}
-                    onError={() => setIsTimelineError(true)}
-                    onReset={handleGenerateRetry}
+                    onError={() => setPhase('error')}
+                    onReset={() => {
+                      handleGenerateRetry();
+                    }}
                   >
-                    <TimelineGeneratingView
-                      taskId={generatingTaskId!}
-                      onDone={handleGenerateDone}
-                    />
+                    {phase === 'generating' ? (
+                      <TimelineGeneratingView taskId={taskId!} onDone={handleGenerateDone} />
+                    ) : (
+                      // starting / restoring: taskId 미확보 — 스피너 표시
+                      <Spinner size="lg" className="text-primary mx-auto my-20" />
+                    )}
                   </ErrorBoundary>
                 ) : (
                   <StepTimeline />

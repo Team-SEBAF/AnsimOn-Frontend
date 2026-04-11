@@ -162,6 +162,10 @@ export type TimelineDownloadResponse = {
   download_url: string;
 };
 
+// ─── AI 생성 phase ───────────────────────────────────────
+
+export type TimelinePhase = 'idle' | 'starting' | 'restoring' | 'generating' | 'error';
+
 // ─── AI 생성 ─────────────────────────────────────────────
 
 export type NeedToGenerateResponse = {
