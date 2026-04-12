@@ -95,6 +95,7 @@ export function TimelineFormModal({
             label="날짜"
             required
             type="date"
+            size="md"
             {...register('date')}
             error={errors.date?.message}
           />
@@ -102,6 +103,7 @@ export function TimelineFormModal({
             label="시간"
             required
             placeholder="00:00"
+            size="md"
             {...register('time', {
               onChange: (e) => formHook.handleTimeChange(e.target.value),
             })}
@@ -115,6 +117,7 @@ export function TimelineFormModal({
           label="제목"
           required
           placeholder="제목을 입력해주세요"
+          size="md"
           {...register('title')}
           error={errors.title?.message}
         />
@@ -184,8 +187,9 @@ export function TimelineFormModal({
                 }
               >
                 <EvidenceContent
-                  previewType="file"
+                  previewType="mixed"
                   items={files.attachmentItems}
+                  localFileMap={files.localFileMap}
                   onFilesAdd={files.addFiles}
                   onRemove={files.removeFile}
                   onClickUpload={() => fileInputRef.current?.click()}
