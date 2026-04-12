@@ -4,6 +4,8 @@ import { useState } from 'react';
 import EllipsisIcon from '@/assets/icons/ellipsis-vertical.svg';
 import EditIcon from '@/assets/icons/EditOutlineIcon.svg';
 import TrashIcon from '@/assets/icons/TrashOutlineIcon.svg';
+import voiceFallback from '@/assets/voice-fallback.png';
+import fileFallback from '@/assets/file-fallback.png';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -61,13 +63,14 @@ export function TimelineItemCard({ date, time, evidence }: TimelineItemCardProps
         {/* 썸네일 */}
         <ImagePreview
           src={has_thumbnail && thumbnail_url ? thumbnail_url : undefined}
+          fallback={!has_thumbnail && duration_seconds > 0 ? voiceFallback : fileFallback}
           alt={title}
           size="sm"
-          duration={duration_seconds > 0 ? formatDuration(duration_seconds) : undefined}
           showFileCount={
-            duration_seconds === 0 && referenced_evidence_count > 1
-              ? String(referenced_evidence_count)
-              : undefined
+            referenced_evidence_count > 1 ? String(referenced_evidence_count) : undefined
+          }
+          duration={
+            has_thumbnail && duration_seconds > 0 ? formatDuration(duration_seconds) : undefined
           }
         />
 
