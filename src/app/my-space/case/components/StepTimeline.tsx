@@ -28,7 +28,7 @@ export function StepTimeline() {
   };
 
   return (
-    <>
+    <div className="rounded-xl border border-[#F5F5F5] bg-white px-7 py-6 shadow-[0_20px_50px_-5px_rgba(64,64,64,0.05)]">
       <AppTabs defaultValue="timeline">
         {/* 탭 헤더 + 다운로드 버튼 */}
         <div className="mb-6 flex items-center justify-between">
@@ -69,6 +69,6 @@ export function StepTimeline() {
         onDownload={handleDownload}
         isDownloading={downloadTimeline.isPending}
       />
-    </>
+    </div>
   );
 }
