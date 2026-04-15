@@ -30,6 +30,15 @@ export function parseBirthdate(value: string | undefined): Date | undefined {
 }
 
 /**
+ * File의 lastModified 타임스탬프를 ISO 8601 문자열로 변환
+ *
+ * @param file - 변환할 File 객체
+ */
+export function fileLastModifiedToISO(file: File): string {
+  return new Date(file.lastModified).toISOString();
+}
+
+/**
  * 숫자 입력을 YYYY-MM-DD 형식으로 자동 포맷
  */
 export function formatBirthdateInput(value: string): string {

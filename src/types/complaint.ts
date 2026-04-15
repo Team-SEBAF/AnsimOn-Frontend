@@ -1,5 +1,10 @@
 /** 백엔드 step 값 */
-export type ComplaintStep = 'EVIDENCE' | 'TIMELINE' | 'DOCUMENT' | 'COMPLETE';
+export type ComplaintStep =
+  | 'EVIDENCE'
+  | 'TIMELINE_GENERATING'
+  | 'TIMELINE'
+  | 'DOCUMENT'
+  | 'COMPLETE';
 
 /** 프론트 step 값 (1~4) */
 export type Step = 1 | 2 | 3 | 4;
@@ -20,9 +25,10 @@ export type UpdateComplaintPayload = {
   step?: ComplaintStep;
 };
 
-/** step 변환 맵 */
+/** step 변환 맵 — TIMELINE_GENERATING은 프론트에서 step 2로 표시 (생성 중 UI) */
 export const STEP_MAP: Record<ComplaintStep, Step> = {
   EVIDENCE: 1,
+  TIMELINE_GENERATING: 2,
   TIMELINE: 2,
   DOCUMENT: 3,
   COMPLETE: 4,

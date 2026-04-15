@@ -53,6 +53,7 @@ export type UpdateEvidenceFilenameResponse = {
 export type MessageRegisterItem = {
   messageId: string;
   filename: string;
+  fileCreatedAt: string; // ISO 8601 — file.lastModified 변환값
 };
 
 export type MessageRegisterRequest = {
@@ -113,6 +114,7 @@ export type MessageOriginal = {
 export type VoiceRegisterItem = {
   voiceId: string;
   filename: string;
+  fileCreatedAt: string;
 };
 
 export type VoiceRegisterRequest = {
@@ -172,6 +174,7 @@ export type VoiceOriginal = {
 export type VictimRegisterItem = {
   victimId: string;
   filename: string;
+  fileCreatedAt: string;
 };
 
 export type VictimRegisterRequest = {
@@ -232,6 +235,7 @@ export type VictimOriginal = {
 export type ReportRecordRegisterItem = {
   reportRecordId: string;
   filename: string;
+  fileCreatedAt: string;
 };
 
 export type ReportRecordRegisterRequest = {
@@ -292,6 +296,7 @@ export type IncidentLogType = 'FILE' | 'FORM_DATA';
 export type IncidentLogFileRegisterItem = {
   incidentLogId: string;
   filename: string;
+  fileCreatedAt: string;
 };
 
 export type IncidentLogFileRegisterRequest = {

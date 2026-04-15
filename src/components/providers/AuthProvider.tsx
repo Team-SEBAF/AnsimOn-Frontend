@@ -17,6 +17,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const initAuth = useAuthStore((state) => state.initAuth);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const fetchUser = useAuthStore((state) => state.fetchUser);
+  const fetchSseServerUrl = useAuthStore((state) => state.fetchSseServerUrl);
 
   useEffect(() => {
     initAuth();
@@ -26,8 +27,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (isLoggedIn) {
       console.log('[AuthProvider] isLoggedIn=true → fetchUser 호출');
       fetchUser();
+      fetchSseServerUrl();
     }
-  }, [isLoggedIn, fetchUser]);
+  }, [isLoggedIn, fetchUser, fetchSseServerUrl]);
 
   return <>{children}</>;
 }
