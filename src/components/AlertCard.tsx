@@ -25,7 +25,7 @@ export function AlertCard({ variant, title, description, onClose }: AlertCardPro
     <div className="flex w-full items-start gap-3 rounded-lg bg-white p-4">
       <Image src={icon} alt="" width={24} height={24} className="shrink-0" />
       <div className="flex-1 space-y-0.5">
-        <p className="typo-heading-4 text-gray-900">{title}</p>
+        <p className="typo-heading-4 whitespace-pre-line text-gray-900">{title}</p>
         {description && (
           <p className="typo-body-7 whitespace-pre-line text-gray-500">{description}</p>
         )}
