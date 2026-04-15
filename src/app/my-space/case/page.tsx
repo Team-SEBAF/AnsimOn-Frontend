@@ -157,7 +157,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         onTitleChange={handleTitleChange}
         onSave={handleSave}
         isSaving={isSaving}
-        isSaveDisabled={step === 1 || phase !== 'idle'}
+        isSaveDisabled={step <= 2}
         onPrev={goPrev}
         onNext={goNext}
         hasPrev={step > MIN_STEP && (phase === 'idle' || phase === 'error')}
