@@ -113,7 +113,7 @@ export const EVIDENCE_CONFIG = withAccept({
     icon: messageIcon,
   },
   INCIDENT_LOG: {
-    maxFiles: 3,
+    maxFiles: 5,
     categories: ['DOCUMENT'] as FileCategoryKey[],
     previewType: 'file' as const,
     title: '사건 일지',
