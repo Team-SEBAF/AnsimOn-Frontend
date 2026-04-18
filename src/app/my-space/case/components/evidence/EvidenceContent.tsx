@@ -6,13 +6,16 @@ import { ImagePreview } from './ImagePreview';
 import { FilePreview } from './FilePreview';
 import type { EvidencePreviewItem } from '@/types/evidence';
 import { formatDuration } from '@/utils/format';
+import { getCategoryKeyFromFilename } from './constants';
 
 /** 프리뷰 표시 방식 */
-type PreviewType = 'image' | 'file';
+type PreviewType = 'image' | 'file' | 'mixed';
 
 interface EvidenceContentProps {
-  /** 프리뷰 표시 방식 (image: 썸네일, file: 파일명+크기) */
+  /** 프리뷰 표시 방식 (image: 썸네일, file: 파일명+크기, mixed: 확장자 기준 자동 분기) */
   previewType?: PreviewType;
+  /** mixed 모드에서 로컬 파일 blob URL 썸네일 참조용 */
+  localFileMap?: Record<string, File>;
   /** 서버에서 가져온 프리뷰 아이템 목록 */
   items: EvidencePreviewItem[];
   /** 파일 추가 시 콜백 (드래그앤드롭) */
@@ -37,6 +40,7 @@ interface EvidenceContentProps {
 export function EvidenceContent({
   previewType = 'file',
   items,
+  localFileMap = {},
   onFilesAdd,
   onRemove,
   onEdit,
@@ -94,7 +98,7 @@ export function EvidenceContent({
       )}
 
       {/* 프리뷰 표시 */}
-      {hasItems && (
+      {hasItems && previewType !== 'mixed' && (
         <div className={previewType === 'image' ? 'grid grid-cols-4 gap-2' : 'flex flex-col gap-2'}>
           {items.map((item, index) =>
             previewType === 'image' ? (
@@ -119,6 +123,55 @@ export function EvidenceContent({
           )}
         </div>
       )}
+
+      {/* mixed 프리뷰 — IMAGE/VIDEO는 상단 그리드, 나머지는 하단 리스트 */}
+      {hasItems &&
+        previewType === 'mixed' &&
+        (() => {
+          const imageItems = items.filter((item) => {
+            const cat = getCategoryKeyFromFilename(item.filename ?? '');
+            return cat === 'IMAGE' || cat === 'VIDEO';
+          });
+          const fileItems = items.filter((item) => {
+            const cat = getCategoryKeyFromFilename(item.filename ?? '');
+            return cat !== 'IMAGE' && cat !== 'VIDEO';
+          });
+          return (
+            <div className="flex flex-col gap-2">
+              {imageItems.length > 0 && (
+                <div className="grid grid-cols-4 gap-2">
+                  {imageItems.map((item, index) => (
+                    <ImagePreview
+                      key={item.id}
+                      file={localFileMap[item.id]}
+                      src={item.thumbnailUrl}
+                      alt={item.filename ?? `이미지 ${index + 1}`}
+                      size="fill"
+                      showFileName
+                      duration={
+                        item.durationSeconds ? formatDuration(item.durationSeconds) : undefined
+                      }
+                      onRemove={() => onRemove(item.id)}
+                    />
+                  ))}
+                </div>
+              )}
+              {fileItems.length > 0 && (
+                <div className="flex flex-col gap-2">
+                  {fileItems.map((item) => (
+                    <FilePreview
+                      key={item.id}
+                      name={item.filename ?? '파일'}
+                      size={item.sizeBytes ?? 0}
+                      action={{ type: 'remove', onRemove: () => onRemove(item.id) }}
+                      onEdit={item.isEditable && onEdit ? () => onEdit(item.id) : undefined}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
     </div>
   );
 }

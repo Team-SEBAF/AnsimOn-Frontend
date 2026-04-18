@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
+import { showAlert } from '@/utils/alert';
 import { getTimelineEvidenceDetail } from '@/api/timeline';
 import type { TimelineEvidence, TimelineReferencedEvidence } from '@/types/timeline';
 import type { EvidencePreviewItem } from '@/types/evidence';
@@ -76,7 +76,10 @@ export function useTimelineFiles({
       localFiles.length + serverFiles.length,
     );
     if (rejected.length > 0) {
-      toast.error(`${rejected.length}개 파일은 업로드할 수 없습니다.`);
+      showAlert.error({
+        title: '업로드할 수 없는 파일이 있습니다.',
+        description: `${rejected.length}개 파일이 제외됐습니다. 파일 형식과 크기를 확인해주세요.`,
+      });
     }
     setLocalFiles((prev) => [...prev, ...valid.map((file) => ({ id: crypto.randomUUID(), file }))]);
   };
@@ -97,12 +100,20 @@ export function useTimelineFiles({
       id: f.referenced_id,
       filename: f.filename,
       sizeBytes: f.size_bytes,
+      thumbnailUrl: f.thumbnail_url || undefined,
+      durationSeconds: f.duration_seconds || undefined,
     })),
     ...localFiles.map(({ id, file }) => ({ id, filename: file.name, sizeBytes: file.size })),
   ];
 
+  /** 로컬 파일 id → File 맵 — 렌더 시점에 blob URL 썸네일 참조용 */
+  const localFileMap: Record<string, File> = Object.fromEntries(
+    localFiles.map(({ id, file }) => [id, file]),
+  );
+
   return {
     attachmentItems,
+    localFileMap,
     isLoadingDetail,
     addFiles,
     removeFile,
