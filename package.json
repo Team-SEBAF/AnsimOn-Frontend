@@ -12,7 +12,10 @@
     "prepare": "husky",
     "db:start": "node --env-file=.env.local scripts/db.mjs start",
     "db:status": "node --env-file=.env.local scripts/db.mjs status",
-    "db:stop": "node --env-file=.env.local scripts/db.mjs stop"
+    "db:stop": "node --env-file=.env.local scripts/db.mjs stop",
+    "sse:start": "node --env-file=.env.local scripts/sse.mjs start",
+    "sse:status": "node --env-file=.env.local scripts/sse.mjs status",
+    "sse:stop": "node --env-file=.env.local scripts/sse.mjs stop"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

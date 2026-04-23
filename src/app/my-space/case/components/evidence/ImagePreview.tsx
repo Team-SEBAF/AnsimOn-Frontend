@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import type { StaticImageData } from 'next/image';
 import TrashOutlineIcon from '@/assets/icons/TrashOutlineIcon.svg';
 import imageFallback from '@/assets/image-fallback.png';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -32,6 +33,8 @@ interface ImagePreviewProps {
   duration?: string;
   /** 이미지 alt 텍스트 (src 사용 시) */
   alt?: string;
+  /** 썸네일 없을 때 사용할 커스텀 fallback 이미지 */
+  fallback?: StaticImageData;
 }
 
 /**
@@ -49,6 +52,7 @@ export function ImagePreview({
   showFileCount,
   duration,
   alt,
+  fallback,
 }: ImagePreviewProps) {
   /** File → blob URL 변환. file이 바뀌면 이전 URL을 해제(revokeObjectURL)하고 새로 생성 */
   const [blobSrc, setBlobSrc] = useState<string | null>(null);
@@ -63,8 +67,8 @@ export function ImagePreview({
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  /** blob URL(로컬) → 서버 URL → fallback 순으로 폴백 */
-  const imgSrc = blobSrc ?? serverSrc ?? imageFallback;
+  /** blob URL(로컬) → 서버 URL → 커스텀 fallback → 기본 fallback 순으로 폴백 */
+  const imgSrc = blobSrc ?? serverSrc ?? fallback ?? imageFallback;
   const imgAlt = file?.name ?? alt ?? '';
   /** 이미지 로드 실패 시 fallback 이미지 표시용 */
   const [hasError, setHasError] = useState(false);
@@ -76,7 +80,7 @@ export function ImagePreview({
     >
       {!isLoaded && <Skeleton className="absolute inset-0 rounded-lg" />}
       <Image
-        src={hasError ? imageFallback : imgSrc}
+        src={hasError ? (fallback ?? imageFallback) : imgSrc}
         alt={imgAlt}
         fill
         sizes="(max-width: 768px) 25vw, 152px"

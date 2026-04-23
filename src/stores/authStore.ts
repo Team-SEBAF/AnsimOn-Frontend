@@ -1,5 +1,6 @@
 import { authCookies } from '@/utils/auth';
 import { axiosInstance } from '@/api/axiosInstance';
+import { getSseServerUrl } from '@/api/timeline';
 import { create } from 'zustand';
 
 export interface User {
@@ -16,17 +17,20 @@ interface AuthState {
   isLoggedIn: boolean;
   isAuthInitialized: boolean;
   user: User | null;
+  sseBaseUrl: string | null;
 
   login: (accessToken: string, refreshToken: string, idToken: string) => void;
   logout: () => void;
   initAuth: () => void;
   fetchUser: () => Promise<void>;
+  fetchSseServerUrl: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
   isAuthInitialized: false,
   user: null,
+  sseBaseUrl: null,
 
   login: (accessToken, refreshToken, idToken) => {
     authCookies.setTokens(accessToken, refreshToken, idToken);
@@ -35,7 +39,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   logout: () => {
     authCookies.clearTokens();
-    set({ isLoggedIn: false, user: null });
+    set({ isLoggedIn: false, user: null, sseBaseUrl: null });
   },
 
   initAuth: () => {
@@ -54,6 +58,15 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (err) {
       console.error('[AuthStore] fetchUser 실패:', err);
       set({ user: null });
+    }
+  },
+
+  fetchSseServerUrl: async () => {
+    try {
+      const { base_url } = await getSseServerUrl();
+      set({ sseBaseUrl: base_url });
+    } catch (err) {
+      console.error('[AuthStore] fetchSseServerUrl 실패:', err);
     }
   },
 }));

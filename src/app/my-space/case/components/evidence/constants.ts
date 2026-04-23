@@ -113,7 +113,7 @@ export const EVIDENCE_CONFIG = withAccept({
     icon: messageIcon,
   },
   INCIDENT_LOG: {
-    maxFiles: 3,
+    maxFiles: 5,
     categories: ['DOCUMENT'] as FileCategoryKey[],
     previewType: 'file' as const,
     title: '사건 일지',
@@ -123,3 +123,18 @@ export const EVIDENCE_CONFIG = withAccept({
 });
 
 export type EvidenceType = keyof typeof EVIDENCE_CONFIG;
+
+/**
+ * 파일명 확장자로 카테고리 키를 반환
+ * 렌더링 분기용 — 확장자가 없거나 매칭 안 되면 null 반환
+ */
+export function getCategoryKeyFromFilename(filename: string): FileCategoryKey | null {
+  const ext = '.' + filename.split('.').pop()?.toLowerCase();
+  for (const [key, config] of Object.entries(FILE_CATEGORY_CONFIG) as [
+    FileCategoryKey,
+    (typeof FILE_CATEGORY_CONFIG)[FileCategoryKey],
+  ][]) {
+    if (config.accept.split(',').includes(ext)) return key;
+  }
+  return null;
+}

@@ -5,27 +5,30 @@ import FileDownloadIcon from '@/assets/icons/FileDownloadIcon.svg';
 import { Button } from '@/components/Button';
 import { TabsList } from '@/components/ui/tabs';
 import { AppTabs, AppTabsTrigger, AppTabsContent } from '@/components/AppTabs';
-import { useTimeline } from '../hooks/useTimeline';
+import { useTimeline, useDownloadTimeline } from '../hooks/useTimeline';
 import { TimelineView } from './timeline/TimelineView';
 import { ByDateView } from './timeline/ByDateView';
 import { ByTypeView } from './timeline/ByTypeView';
 import { EvidenceDownloadModal } from './timeline/EvidenceDownloadModal';
-
-interface StepTimelineProps {
-  complaintId: string;
-}
 
 /**
  * 타임라인 정리 단계 (Step 2)
  * - 타임라인 보기 / 날짜별 보기 / 종류별 보기 탭
  * - 다운로드 버튼
  */
-export function StepTimeline({ complaintId }: StepTimelineProps) {
-  const { groups, allDates, allTags } = useTimeline(complaintId);
+export function StepTimeline() {
+  const { groups, allDates, allTags } = useTimeline();
+  const downloadTimeline = useDownloadTimeline();
   const [downloadOpen, setDownloadOpen] = useState(false);
 
+  const handleDownload = async () => {
+    const { download_url } = await downloadTimeline.mutateAsync();
+    window.open(download_url, '_blank');
+    setDownloadOpen(false);
+  };
+
   return (
-    <>
+    <div className="rounded-xl border border-[#F5F5F5] bg-white px-7 py-6 shadow-[0_20px_50px_-5px_rgba(64,64,64,0.05)]">
       <AppTabs defaultValue="timeline">
         {/* 탭 헤더 + 다운로드 버튼 */}
         <div className="mb-6 flex items-center justify-between">
@@ -57,7 +60,15 @@ export function StepTimeline({ complaintId }: StepTimelineProps) {
         </AppTabsContent>
       </AppTabs>
 
-      <EvidenceDownloadModal open={downloadOpen} onOpenChange={setDownloadOpen} />
-    </>
+      <EvidenceDownloadModal
+        open={downloadOpen}
+        onOpenChange={setDownloadOpen}
+        title="타임라인 다운로드"
+        subTitle="타임라인으로 정리된 증거 자료 ZIP 파일입니다"
+        fileName="안심은_증거분석타임라인.zip"
+        onDownload={handleDownload}
+        isDownloading={downloadTimeline.isPending}
+      />
+    </div>
   );
 }
