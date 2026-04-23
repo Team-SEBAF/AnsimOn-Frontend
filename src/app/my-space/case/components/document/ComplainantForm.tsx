@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { FormTable } from './FormTable';
+import { SectionBlock } from './SectionBlock';
 import type { ComplainantFormValues, RowConfig } from '@/types/document';
 
 const ROWS: RowConfig[] = [
@@ -47,22 +48,12 @@ const ROWS: RowConfig[] = [
       {
         type: 'checkbox-group',
         items: [
-          {
-            checkboxName: 'legalRep',
-            label: '법정 대리인',
-            fields: [
-              { label: '( 성명 :', name: 'legalRepName' },
-              { label: ', 연락처 :', name: 'legalRepContact' },
-            ],
-          },
-          {
-            checkboxName: 'lawyerRep',
-            label: '고소 대리인',
-            fields: [
-              { label: '( 성명 : 변호사', name: 'lawyerRepName' },
-              { label: ', 연락처 :', name: 'lawyerRepContact' },
-            ],
-          },
+          { checkboxName: 'representative_is_legal', label: '법정 대리인' },
+          { checkboxName: 'representative_is_lawyer', label: '고소 대리인 ( 변호사 )' },
+        ],
+        sharedFields: [
+          { label: '성명 :', name: 'representative_name' },
+          { label: '연락처 :', name: 'representative_contact' },
         ],
       },
     ],
@@ -81,21 +72,16 @@ export function ComplainantForm() {
       phoneHome: '',
       phoneOffice: '',
       email: '',
-      legalRep: false,
-      legalRepName: '',
-      legalRepContact: '',
-      lawyerRep: false,
-      lawyerRepName: '',
-      lawyerRepContact: '',
+      representative_is_legal: false,
+      representative_is_lawyer: false,
+      representative_name: '',
+      representative_contact: '',
     },
   });
 
   return (
-    <section>
-      <h3 className="typo-heading-3 mb-3 text-gray-900">
-        1. 고소인 <span className="typo-body-8 text-error ml-1">필수</span>
-      </h3>
+    <SectionBlock title="1. 고소인" required>
       <FormTable rows={ROWS} register={register} watch={watch} control={control} />
-    </section>
+    </SectionBlock>
   );
 }

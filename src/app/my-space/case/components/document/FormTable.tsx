@@ -87,11 +87,12 @@ function AgentField({
   register: UseFormRegister<FieldValues>;
   watch: UseFormWatch<FieldValues>;
 }) {
+  const anyChecked = cell.items.some((item) => watch(item.checkboxName));
+
   return (
-    <div className="flex flex-col gap-2">
-      {cell.items.map((item) => {
-        const checked = watch(item.checkboxName);
-        return (
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap gap-5">
+        {cell.items.map((item) => (
           <label key={item.checkboxName} className="flex items-center gap-1.5">
             <Controller
               control={control}
@@ -101,19 +102,23 @@ function AgentField({
               )}
             />
             <span className="typo-body-7 text-gray-700">{item.label}</span>
-            {item.fields.map((f) => (
-              <span key={f.name} className="flex items-center gap-1">
-                <span className="typo-body-7 text-gray-500">{f.label}</span>
-                <input
-                  {...register(f.name)}
-                  disabled={!checked}
-                  className="typo-body-7 w-28 border-b border-gray-300 bg-transparent text-gray-900 outline-none disabled:text-gray-300"
-                />
-              </span>
-            ))}
           </label>
-        );
-      })}
+        ))}
+      </div>
+      {cell.sharedFields && cell.sharedFields.length > 0 && (
+        <div className="flex flex-wrap gap-4">
+          {cell.sharedFields.map((f) => (
+            <span key={f.name} className="flex items-center gap-1.5">
+              <span className="typo-body-7 shrink-0 text-gray-500">{f.label}</span>
+              <input
+                {...register(f.name)}
+                disabled={!anyChecked}
+                className="typo-body-7 w-36 border-b border-gray-300 bg-transparent text-gray-900 outline-none disabled:text-gray-300"
+              />
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

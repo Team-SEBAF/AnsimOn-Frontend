@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { FormTable } from './FormTable';
+import { SectionBlock } from './SectionBlock';
 import type { DefendantFormValues, RowConfig } from '@/types/document';
 
 const ROWS: RowConfig[] = [
@@ -66,11 +67,8 @@ export function DefendantForm() {
   });
 
   return (
-    <section>
-      <h3 className="typo-heading-3 mb-3 text-gray-900">
-        2. 피고소인 <span className="typo-body-8 text-error ml-1">필수</span>
-      </h3>
+    <SectionBlock title="2. 피고소인" required>
       <FormTable rows={ROWS} register={register} watch={watch} control={control} />
-    </section>
+    </SectionBlock>
   );
 }

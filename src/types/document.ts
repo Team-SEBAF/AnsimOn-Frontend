@@ -19,12 +19,13 @@ type InputCell = {
 type CheckboxItem = {
   checkboxName: string;
   label: string;
-  fields: { label: string; name: string }[];
 };
 
 type CheckboxGroupCell = {
   type: 'checkbox-group';
   items: CheckboxItem[];
+  /** 체크박스들이 공유하는 입력 필드 (하나라도 체크 시 활성화) */
+  sharedFields?: { label: string; name: string }[];
 };
 
 export type CellConfig = LabelCell | InputCell | CheckboxGroupCell;
@@ -42,7 +43,8 @@ export type FormTableProps<T extends FieldValues> = {
   rows: RowConfig[];
   register: UseFormRegister<T>;
   watch: UseFormWatch<T>;
-  control: Control<T>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: Control<T, any, any>;
 };
 
 // ─── 폼 값 ────────────────────────────────────────────
@@ -57,12 +59,10 @@ export type ComplainantFormValues = {
   phoneHome: string;
   phoneOffice: string;
   email: string;
-  legalRep: boolean;
-  legalRepName: string;
-  legalRepContact: string;
-  lawyerRep: boolean;
-  lawyerRepName: string;
-  lawyerRepContact: string;
+  representative_is_legal: boolean;
+  representative_is_lawyer: boolean;
+  representative_name: string;
+  representative_contact: string;
 };
 
 export type DefendantFormValues = {
