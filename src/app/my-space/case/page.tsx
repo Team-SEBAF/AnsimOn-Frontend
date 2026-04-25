@@ -13,10 +13,10 @@ import {
   CaseProgress,
   StepCollect,
   StepTimeline,
-  StepDocument,
   StepComplete,
   TimelineGeneratingView,
 } from './components';
+import { StepDocument, type StepDocumentHandle } from './components/StepDocument';
 import { QueryErrorResetBoundary, useQueryClient } from '@tanstack/react-query';
 import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
 import { TimelineErrorFallback } from '@/components/fallbacks/TimelineErrorFallback';
@@ -77,6 +77,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
   );
   const queryClient = useQueryClient();
   const documentPollCountRef = useRef(0);
+  const stepDocumentRef = useRef<StepDocumentHandle>(null);
   const MAX_DOCUMENT_POLL = 100; // 3초 × 100 = 300초(5분)
 
   // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 해당 step 유지
@@ -168,6 +169,13 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
           return;
         }
       }
+      if (step === 3) {
+        if (stepDocumentRef.current?.isDirty()) {
+          await stepDocumentRef.current.save();
+        }
+        stepDocumentRef.current?.submit();
+        return;
+      }
       const nextStep = clampStep(step + 1);
       save({ step: STEP_REVERSE_MAP[nextStep] });
     } catch {
@@ -192,6 +200,10 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
 
   /** 저장 버튼 클릭 */
   const handleSave = () => {
+    if (step === 3) {
+      stepDocumentRef.current?.save();
+      return;
+    }
     save({ name: title, step: STEP_REVERSE_MAP[step] });
   };
 
@@ -241,7 +253,13 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
                 ) : (
                   <StepTimeline />
                 ))}
-              {step === 3 && <StepDocument complaintId={complaintId} />}
+              {step === 3 && (
+                <StepDocument
+                  ref={stepDocumentRef}
+                  complaintId={complaintId}
+                  onValidSubmit={() => save({ step: 'COMPLETE' })}
+                />
+              )}
               {step === 4 && <StepComplete />}
             </ErrorBoundary>
           )}
