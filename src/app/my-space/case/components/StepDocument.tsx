@@ -1,10 +1,8 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import ExternalLinkIcon from '@/assets/icons/external-link.svg';
 import { TabsList } from '@/components/ui/tabs';
 import { AppTabs, AppTabsTrigger, AppTabsContent } from '@/components/AppTabs';
-import { Button } from '@/components/Button';
 import { ComplainantForm } from './document/ComplainantForm';
 import { DefendantForm } from './document/DefendantForm';
 import { ComplaintPurposeSection } from './document/ComplaintPurposeSection';
@@ -16,17 +14,13 @@ import { ContentBlock } from './document/ContentBlock';
 import { SubmissionFooter } from './document/SubmissionFooter';
 import type { DocumentFormValues } from '@/types/document';
 import { useGetDocument } from '../hooks/useDocument';
-import { usePatchDocument } from '../hooks/useDocument';
 
 export function StepDocument({ complaintId }: { complaintId: string }) {
   const { data: document } = useGetDocument(complaintId);
-  const { mutate: saveDocument, isPending: isSaving } = usePatchDocument(complaintId);
 
-  const { register, watch, control, handleSubmit } = useForm<DocumentFormValues>({
+  const { register, watch, control } = useForm<DocumentFormValues>({
     defaultValues: document,
   });
-
-  const onSave = (values: DocumentFormValues) => saveDocument(values);
 
   return (
     <AppTabs defaultValue="complaint">
@@ -36,15 +30,6 @@ export function StepDocument({ complaintId }: { complaintId: string }) {
           <AppTabsTrigger value="complaint">고소장</AppTabsTrigger>
           <AppTabsTrigger value="statement">진술서</AppTabsTrigger>
         </TabsList>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <ExternalLinkIcon />
-            미리보기
-          </Button>
-          <Button size="sm" onClick={handleSubmit(onSave)} loading={isSaving}>
-            저장
-          </Button>
-        </div>
       </div>
 
       {/* 고소장 탭 */}
@@ -97,7 +82,11 @@ export function StepDocument({ complaintId }: { complaintId: string }) {
               </ContentBlock>
             </SectionBlock>
 
-            <SubmissionFooter />
+            <SubmissionFooter
+              accuserName={document.submission_footer.accuser_name}
+              submitterName={document.submission_footer.submitter_name}
+              policeStation={document.submission_footer.submission_target_police_station}
+            />
           </div>
         </div>
       </AppTabsContent>

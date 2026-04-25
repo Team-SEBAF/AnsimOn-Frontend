@@ -88,11 +88,16 @@ export type DocumentFormValues = {
     evidence_list_text: string[];
   };
   section_7_related_cases: {
-    is_duplicate_complaint: boolean;
-    has_related_criminal_investigation: boolean;
-    has_related_civil_lawsuit: boolean;
+    is_duplicate_complaint: boolean | null;
+    has_related_criminal_investigation: boolean | null;
+    has_related_civil_lawsuit: boolean | null;
   };
-  section_8_other: { content: string };
+  section_8_other: { content: string | null };
+  submission_footer: {
+    accuser_name: string | null;
+    submitter_name: string | null;
+    submission_target_police_station: string | null;
+  };
 };
 
 export type PatchDocumentPayload = Partial<DocumentFormValues>;
@@ -138,9 +143,14 @@ export const defaultDocumentValues: DocumentFormValues = {
     evidence_list_text: [],
   },
   section_7_related_cases: {
-    is_duplicate_complaint: false,
-    has_related_criminal_investigation: false,
-    has_related_civil_lawsuit: false,
+    is_duplicate_complaint: null,
+    has_related_criminal_investigation: null,
+    has_related_civil_lawsuit: null,
   },
-  section_8_other: { content: '' },
+  section_8_other: { content: null },
+  submission_footer: {
+    accuser_name: null,
+    submitter_name: null,
+    submission_target_police_station: null,
+  },
 };
