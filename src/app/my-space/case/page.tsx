@@ -77,7 +77,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
   );
   const queryClient = useQueryClient();
   const documentPollCountRef = useRef(0);
-  const MAX_DOCUMENT_POLL = 30; // 3초 × 30 = 90초
+  const MAX_DOCUMENT_POLL = 100; // 3초 × 100 = 300초(5분)
 
   // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 해당 step 유지
   const step: Step = phase !== 'idle' ? 2 : isDocumentGenerating ? 2 : STEP_MAP[complaint.step];

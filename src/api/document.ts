@@ -33,14 +33,16 @@ export async function requestGenerateDocument(
 
 /** 고소장 폼 데이터 조회 */
 export async function getDocument(complaintId: string) {
-  const res = await axiosInstance.get<DocumentFormValues>(`/api/v1/${complaintId}/document`);
+  const res = await axiosInstance.get<DocumentFormValues>(
+    `/api/v1/${complaintId}/document/complaint-form-data`,
+  );
   return res.data;
 }
 
 /** 고소장 폼 데이터 부분 수정 */
 export async function patchDocument(complaintId: string, payload: PatchDocumentPayload) {
   const res = await axiosInstance.patch<DocumentFormValues>(
-    `/api/v1/${complaintId}/document`,
+    `/api/v1/${complaintId}/document/complaint-form-data`,
     payload,
   );
   return res.data;
