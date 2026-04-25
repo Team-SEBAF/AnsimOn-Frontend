@@ -14,12 +14,19 @@ import { RelatedCasesSection } from './document/RelatedCasesSection';
 import { SectionBlock } from './document/SectionBlock';
 import { ContentBlock } from './document/ContentBlock';
 import { SubmissionFooter } from './document/SubmissionFooter';
-import { type DocumentFormValues, defaultDocumentValues } from '@/types/document';
+import type { DocumentFormValues } from '@/types/document';
+import { useGetDocument } from '../hooks/useDocument';
+import { usePatchDocument } from '../hooks/useDocument';
 
-export function StepDocument() {
-  const { register, watch, control } = useForm<DocumentFormValues>({
-    defaultValues: defaultDocumentValues,
+export function StepDocument({ complaintId }: { complaintId: string }) {
+  const { data: document } = useGetDocument(complaintId);
+  const { mutate: saveDocument, isPending: isSaving } = usePatchDocument(complaintId);
+
+  const { register, watch, control, handleSubmit } = useForm<DocumentFormValues>({
+    defaultValues: document,
   });
+
+  const onSave = (values: DocumentFormValues) => saveDocument(values);
 
   return (
     <AppTabs defaultValue="complaint">
@@ -29,6 +36,15 @@ export function StepDocument() {
           <AppTabsTrigger value="complaint">고소장</AppTabsTrigger>
           <AppTabsTrigger value="statement">진술서</AppTabsTrigger>
         </TabsList>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm">
+            <ExternalLinkIcon />
+            미리보기
+          </Button>
+          <Button size="sm" onClick={handleSubmit(onSave)} loading={isSaving}>
+            저장
+          </Button>
+        </div>
       </div>
 
       {/* 고소장 탭 */}
@@ -62,7 +78,11 @@ export function StepDocument() {
               fieldName="section_5_complaint_reason.content"
               register={register}
             />
-            <EvidenceSection control={control} watch={watch} />
+            <EvidenceSection
+              control={control}
+              watch={watch}
+              evidenceList={document.section_6_evidence.evidence_list_text}
+            />
             <RelatedCasesSection control={control} />
 
             {/* 8. 기타 */}

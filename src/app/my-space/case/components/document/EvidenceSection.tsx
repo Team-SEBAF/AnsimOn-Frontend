@@ -10,19 +10,11 @@ import type { DocumentFormValues } from '@/types/document';
 interface Props {
   control: Control<DocumentFormValues>;
   watch: UseFormWatch<DocumentFormValues>;
+  evidenceList: string[];
 }
 
-export function EvidenceSection({ control, watch }: Props) {
+export function EvidenceSection({ control, watch, evidenceList }: Props) {
   const hasEvidence = watch('section_6_evidence.has_evidence_beyond_statement');
-  // TODO: API 연결 후 watch('section_6_evidence.evidence_list_text')로 교체
-  const evidenceList = [
-    '문자 메시지 캡처 화면 (2024.12.15 - 2024.12.20, 총 23건)',
-    '카카오톡 대화 내역 (2024.12.20, 3건)',
-    '음성사서함 녹음 파일 (2024.12.18, 1건)',
-    '미행 영상 (2024.12.20, 1건)',
-    '112 신고 접수증 (2024.12.17)',
-    '사건 일지 (2024.12.15 - 2024.12.20)',
-  ];
 
   return (
     <SectionBlock title="6. 증거자료">
