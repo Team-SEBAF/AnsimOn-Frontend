@@ -56,7 +56,8 @@ export function RelatedCasesSection({ control }: Props) {
               key={row.field}
               control={control}
               name={`section_7_related_cases.${row.field}`}
-              render={({ field }) => (
+              rules={{ validate: (v) => v !== null || '선택해주세요' }}
+              render={({ field, fieldState }) => (
                 <div
                   className={`grid grid-cols-[240px_1fr] ${i < ROWS.length - 1 ? 'border-b border-gray-200' : ''}`}
                 >
@@ -79,6 +80,9 @@ export function RelatedCasesSection({ control }: Props) {
                       />
                       <span className="typo-body-7 text-gray-700">{row.falseText}</span>
                     </label>
+                    {fieldState.error?.message && (
+                      <p className="typo-body-8 text-error">{fieldState.error.message}</p>
+                    )}
                   </div>
                 </div>
               )}

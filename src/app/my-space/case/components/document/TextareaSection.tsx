@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import type { UseFormRegister } from 'react-hook-form';
+import type { UseFormRegister, RegisterOptions, FieldError } from 'react-hook-form';
 import type { Path } from 'react-hook-form';
 import { SectionBlock } from './SectionBlock';
 import { ContentBlock } from './ContentBlock';
@@ -14,6 +14,8 @@ interface Props {
   placeholder: string;
   fieldName: Path<DocumentFormValues>;
   register: UseFormRegister<DocumentFormValues>;
+  rules?: RegisterOptions<DocumentFormValues, Path<DocumentFormValues>>;
+  error?: FieldError;
 }
 
 export function TextareaSection({
@@ -23,9 +25,11 @@ export function TextareaSection({
   placeholder,
   fieldName,
   register,
+  rules,
+  error,
 }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const { ref: registerRef, ...rest } = register(fieldName);
+  const { ref: registerRef, ...rest } = register(fieldName, rules);
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -45,8 +49,10 @@ export function TextareaSection({
           }}
           rows={6}
           placeholder={placeholder}
+          aria-invalid={!!error}
           className="typo-body-7 focus:border-primary w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none placeholder:text-gray-300"
         />
+        {error?.message && <p className="typo-body-8 text-error mt-1">{error.message}</p>}
       </ContentBlock>
     </SectionBlock>
   );
