@@ -5,6 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
 import { needToGenerateTimeline, requestGenerateTimeline, getCurrentTaskId } from '@/api/timeline';
+import { needToGenerateDocument, requestGenerateDocument } from '@/api/document';
 import { STEP_MAP, STEP_REVERSE_MAP, type Step } from '@/types/complaint';
 import type { TimelinePhase } from '@/types/timeline';
 import {
@@ -16,7 +17,7 @@ import {
   StepComplete,
   TimelineGeneratingView,
 } from './components';
-import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { QueryErrorResetBoundary, useQueryClient } from '@tanstack/react-query';
 import { CaseErrorFallback } from '@/components/fallbacks/CaseErrorFallback';
 import { TimelineErrorFallback } from '@/components/fallbacks/TimelineErrorFallback';
 import { CasePageSkeleton } from '@/components/skeletons/CasePageSkeleton';
@@ -71,10 +72,27 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
     complaint.step === 'TIMELINE_GENERATING' ? 'restoring' : 'idle',
   );
   const [taskId, setTaskId] = useState<string | null>(null);
+  const [isDocumentGenerating, setIsDocumentGenerating] = useState(
+    complaint.step === 'DOCUMENT_GENERATING',
+  );
+  const queryClient = useQueryClient();
 
-  // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 step 2로 표시
-  const step: Step = phase !== 'idle' ? 2 : STEP_MAP[complaint.step];
+  // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 해당 step 유지
+  const step: Step = phase !== 'idle' ? 2 : isDocumentGenerating ? 2 : STEP_MAP[complaint.step];
   const title = complaint.name;
+
+  // DOCUMENT_GENERATING 중 polling — 3초마다 complaint 조회, DOCUMENT 확인 시 종료
+  useEffect(() => {
+    if (!isDocumentGenerating) return;
+    if (complaint.step === 'DOCUMENT') {
+      setIsDocumentGenerating(false);
+      return;
+    }
+    const id = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ['complaint', complaintId] });
+    }, 3000);
+    return () => clearInterval(id);
+  }, [isDocumentGenerating, complaint.step, complaintId, queryClient]);
 
   // TIMELINE_GENERATING 재진입 처리 — task_id 조회 후 SSE 연결
   useEffect(() => {
@@ -122,6 +140,19 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
           return;
         }
       }
+      if (step === 2) {
+        const { need_to_generate } = await needToGenerateDocument(complaintId);
+        if (need_to_generate) {
+          await requestGenerateDocument(complaintId, 'openAI');
+          setIsDocumentGenerating(true);
+          queryClient.invalidateQueries({ queryKey: ['complaint', complaintId] });
+          return;
+        }
+        if (complaint.step === 'DOCUMENT_GENERATING') {
+          setIsDocumentGenerating(true);
+          return;
+        }
+      }
       const nextStep = clampStep(step + 1);
       save({ step: STEP_REVERSE_MAP[nextStep] });
     } catch {
@@ -160,8 +191,11 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         isSaveDisabled={step <= 2}
         onPrev={goPrev}
         onNext={goNext}
-        hasPrev={step > MIN_STEP && (phase === 'idle' || phase === 'error')}
+        hasPrev={
+          step > MIN_STEP && (phase === 'idle' || phase === 'error') && !isDocumentGenerating
+        }
         hasNext={step < MAX_STEP && phase === 'idle'}
+        isNextLoading={isDocumentGenerating}
         updatedAt={complaint.updated_at}
       />
       <div className="space-y-6 p-6">
@@ -192,7 +226,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
                 ) : (
                   <StepTimeline />
                 ))}
-              {step === 3 && <StepDocument />}
+              {step === 3 && <StepDocument complaintId={complaintId} />}
               {step === 4 && <StepComplete />}
             </ErrorBoundary>
           )}

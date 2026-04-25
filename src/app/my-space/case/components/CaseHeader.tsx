@@ -26,6 +26,8 @@ interface CaseHeaderProps {
   hasPrev: boolean;
   /** 다음 버튼 활성화 여부 (step 4이면 false) */
   hasNext: boolean;
+  /** 다음 버튼 로딩 상태 */
+  isNextLoading?: boolean;
 }
 
 /**
@@ -45,6 +47,7 @@ export function CaseHeader({
   onNext,
   hasPrev,
   hasNext,
+  isNextLoading = false,
 }: CaseHeaderProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(title);
@@ -119,7 +122,13 @@ export function CaseHeader({
         <Button color="secondary" size="lg" onClick={onPrev} disabled={!hasPrev || isSaving}>
           이전
         </Button>
-        <Button color="primary" size="lg" onClick={onNext} disabled={!hasNext || isSaving}>
+        <Button
+          color="primary"
+          size="lg"
+          onClick={onNext}
+          disabled={!hasNext || isSaving || isNextLoading}
+          loading={isNextLoading}
+        >
           다음 단계로
         </Button>
       </div>
