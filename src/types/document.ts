@@ -95,6 +95,16 @@ export type DocumentFormValues = {
   section_8_other: { content: string };
 };
 
+export type PatchDocumentPayload = Partial<DocumentFormValues>;
+
+export type NeedToGenerateDocumentResponse = {
+  need_to_generate: boolean;
+};
+
+export type RequestGenerateDocumentResponse = {
+  task_id: string;
+};
+
 export const defaultDocumentValues: DocumentFormValues = {
   section_1_complainant: {
     name_or_company: '',
