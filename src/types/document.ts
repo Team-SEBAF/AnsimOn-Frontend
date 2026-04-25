@@ -19,19 +19,17 @@ type InputCell = {
 type CheckboxItem = {
   checkboxName: string;
   label: string;
+  fields?: { label: string; name: string; prefix?: string }[];
 };
 
 type CheckboxGroupCell = {
   type: 'checkbox-group';
   items: CheckboxItem[];
-  /** 체크박스들이 공유하는 입력 필드 (하나라도 체크 시 활성화) */
-  sharedFields?: { label: string; name: string }[];
 };
 
 export type CellConfig = LabelCell | InputCell | CheckboxGroupCell;
 
 // ─── 행 설정 ─────────────────────────────────────────
-// cells[0]은 항상 LabelCell (메인 라벨)
 
 export type RowConfig = {
   cells: [LabelCell, ...CellConfig[]];
@@ -47,33 +45,92 @@ export type FormTableProps<T extends FieldValues> = {
   control: Control<T, any, any>;
 };
 
-// ─── 폼 값 ────────────────────────────────────────────
+// ─── 전체 고소장 폼 값 (백엔드 스펙과 동일) ──────────────────
 
-export type ComplainantFormValues = {
-  name: string;
-  idNumber: string;
-  address: string;
-  job: string;
-  officeAddress: string;
-  phoneMobile: string;
-  phoneHome: string;
-  phoneOffice: string;
-  email: string;
-  representative_is_legal: boolean;
-  representative_is_lawyer: boolean;
-  representative_name: string;
-  representative_contact: string;
+export type DocumentFormValues = {
+  section_1_complainant: {
+    name_or_company: string;
+    resident_or_corp_registration_number: string;
+    address: string;
+    occupation: string;
+    office_address: string;
+    contact: {
+      mobile: string;
+      home: string;
+      office: string;
+    };
+    email: string;
+    representative: {
+      is_legal_representative: boolean;
+      is_lawyer: boolean;
+      name: string;
+      contact: string;
+    };
+  };
+  section_2_accused: {
+    name: string;
+    resident_registration_number: string;
+    address: string;
+    occupation: string;
+    office_address: string;
+    contact: {
+      mobile: string;
+      home: string;
+      office: string;
+    };
+    email: string;
+    other_details: string;
+  };
+  section_4_crime_facts: { content: string };
+  section_5_complaint_reason: { content: string };
+  section_6_evidence: {
+    has_evidence_beyond_statement: boolean;
+    evidence_list_text: string[];
+  };
+  section_7_related_cases: {
+    is_duplicate_complaint: boolean;
+    has_related_criminal_investigation: boolean;
+    has_related_civil_lawsuit: boolean;
+  };
+  section_8_other: { content: string };
 };
 
-export type DefendantFormValues = {
-  name: string;
-  idNumber: string;
-  address: string;
-  job: string;
-  officeAddress: string;
-  phoneMobile: string;
-  phoneHome: string;
-  phoneOffice: string;
-  email: string;
-  notes: string;
+export const defaultDocumentValues: DocumentFormValues = {
+  section_1_complainant: {
+    name_or_company: '',
+    resident_or_corp_registration_number: '',
+    address: '',
+    occupation: '',
+    office_address: '',
+    contact: { mobile: '', home: '', office: '' },
+    email: '',
+    representative: {
+      is_legal_representative: false,
+      is_lawyer: false,
+      name: '',
+      contact: '',
+    },
+  },
+  section_2_accused: {
+    name: '',
+    resident_registration_number: '',
+    address: '',
+    occupation: '',
+    office_address: '',
+    contact: { mobile: '', home: '', office: '' },
+    email: '',
+    other_details: '',
+  },
+  section_4_crime_facts: { content: '' },
+  section_5_complaint_reason: { content: '' },
+  section_6_evidence: {
+    has_evidence_beyond_statement: false,
+    evidence_list_text: [],
+  },
+  section_7_related_cases: {
+    is_duplicate_complaint: false,
+    has_related_criminal_investigation: false,
+    has_related_civil_lawsuit: false,
+  },
+  section_8_other: { content: '' },
 };
