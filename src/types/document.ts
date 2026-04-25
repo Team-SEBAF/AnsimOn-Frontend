@@ -1,4 +1,12 @@
-import type { UseFormRegister, UseFormWatch, Control, FieldValues } from 'react-hook-form';
+import type {
+  UseFormRegister,
+  UseFormWatch,
+  Control,
+  FieldValues,
+  RegisterOptions,
+  FieldErrors,
+  Path,
+} from 'react-hook-form';
 
 // ─── 셀 설정 ─────────────────────────────────────────
 
@@ -8,12 +16,14 @@ type LabelCell = {
   subText?: string;
 };
 
-type InputCell = {
+export type InputCell<T extends FieldValues = FieldValues> = {
   type?: 'input';
-  name: string;
+  name: Path<T>;
   placeholder?: string;
   /** 인라인 앞 라벨 (예: "휴대폰", "자택") */
   prefix?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  rules?: RegisterOptions<any, any>;
 };
 
 type CheckboxItem = {
@@ -27,22 +37,26 @@ type CheckboxGroupCell = {
   items: CheckboxItem[];
 };
 
-export type CellConfig = LabelCell | InputCell | CheckboxGroupCell;
+export type CellConfig<T extends FieldValues = FieldValues> =
+  | LabelCell
+  | InputCell<T>
+  | CheckboxGroupCell;
 
 // ─── 행 설정 ─────────────────────────────────────────
 
-export type RowConfig = {
-  cells: [LabelCell, ...CellConfig[]];
+export type RowConfig<T extends FieldValues = FieldValues> = {
+  cells: [LabelCell, ...CellConfig<T>[]];
 };
 
 // ─── FormTable props ──────────────────────────────────
 
 export type FormTableProps<T extends FieldValues> = {
-  rows: RowConfig[];
+  rows: RowConfig<T>[];
   register: UseFormRegister<T>;
   watch: UseFormWatch<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<T, any, any>;
+  errors?: FieldErrors<T>;
 };
 
 // ─── 전체 고소장 폼 값 (백엔드 스펙과 동일) ──────────────────
@@ -108,6 +122,12 @@ export type NeedToGenerateDocumentResponse = {
 
 export type RequestGenerateDocumentResponse = {
   task_id: string;
+};
+
+/** 필수 텍스트 필드 공통 규칙 */
+export const requiredText: RegisterOptions<FieldValues> = {
+  required: '필수 입력 항목입니다',
+  validate: (v: string) => !!v?.trim() || '필수 입력 항목입니다',
 };
 
 export const defaultDocumentValues: DocumentFormValues = {
