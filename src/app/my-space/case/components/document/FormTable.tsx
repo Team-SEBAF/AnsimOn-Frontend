@@ -45,7 +45,7 @@ export function FormTable<T extends FieldValues>({
             if (cell.type === 'checkbox-group') {
               return (
                 <div key={i} className={cellBase}>
-                  <AgentField
+                  <CheckboxGroupField
                     cell={cell}
                     control={control as Control<FieldValues>}
                     register={register as UseFormRegister<FieldValues>}
@@ -76,7 +76,7 @@ export function FormTable<T extends FieldValues>({
   );
 }
 
-function AgentField({
+function CheckboxGroupField({
   cell,
   control,
   register,
@@ -87,38 +87,36 @@ function AgentField({
   register: UseFormRegister<FieldValues>;
   watch: UseFormWatch<FieldValues>;
 }) {
-  const anyChecked = cell.items.some((item) => watch(item.checkboxName));
-
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-5">
-        {cell.items.map((item) => (
-          <label key={item.checkboxName} className="flex items-center gap-1.5">
-            <Controller
-              control={control}
-              name={item.checkboxName}
-              render={({ field }) => (
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              )}
-            />
-            <span className="typo-body-7 text-gray-700">{item.label}</span>
-          </label>
-        ))}
-      </div>
-      {cell.sharedFields && cell.sharedFields.length > 0 && (
-        <div className="flex flex-wrap gap-4">
-          {cell.sharedFields.map((f) => (
-            <span key={f.name} className="flex items-center gap-1.5">
-              <span className="typo-body-7 shrink-0 text-gray-500">{f.label}</span>
-              <input
-                {...register(f.name)}
-                disabled={!anyChecked}
-                className="typo-body-7 w-36 border-b border-gray-300 bg-transparent text-gray-900 outline-none disabled:text-gray-300"
+      {cell.items.map((item) => {
+        const isChecked = watch(item.checkboxName);
+        return (
+          <div key={item.checkboxName} className="flex flex-wrap items-center gap-3">
+            <label className="flex items-center gap-1.5">
+              <Controller
+                control={control}
+                name={item.checkboxName}
+                render={({ field }) => (
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                )}
               />
-            </span>
-          ))}
-        </div>
-      )}
+              <span className="typo-body-7 shrink-0 text-gray-700">{item.label}</span>
+            </label>
+            {item.fields?.map((f) => (
+              <span key={f.name} className="flex items-center gap-1.5">
+                <span className="typo-body-7 shrink-0 text-gray-500">{f.label}</span>
+                {f.prefix && <span className="typo-body-7 shrink-0 text-gray-500">{f.prefix}</span>}
+                <input
+                  {...register(f.name)}
+                  disabled={!isChecked}
+                  className="typo-body-7 w-32 border-b border-gray-300 bg-transparent text-gray-900 outline-none disabled:text-gray-300"
+                />
+              </span>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
