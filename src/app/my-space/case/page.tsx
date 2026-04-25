@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useRef } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
@@ -76,19 +76,34 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
     complaint.step === 'DOCUMENT_GENERATING',
   );
   const queryClient = useQueryClient();
+  const documentPollCountRef = useRef(0);
+  const MAX_DOCUMENT_POLL = 30; // 3초 × 30 = 90초
 
   // 서버 데이터 → 프론트 step 변환 — 생성 플로우 진입 중에는 해당 step 유지
   const step: Step = phase !== 'idle' ? 2 : isDocumentGenerating ? 2 : STEP_MAP[complaint.step];
   const title = complaint.name;
 
   // DOCUMENT_GENERATING 중 polling — 3초마다 complaint 조회, DOCUMENT 확인 시 종료
+  // 90초 초과 시 생성 실패로 처리
   useEffect(() => {
-    if (!isDocumentGenerating) return;
+    if (!isDocumentGenerating) {
+      documentPollCountRef.current = 0;
+      return;
+    }
     if (complaint.step === 'DOCUMENT') {
       setIsDocumentGenerating(false);
       return;
     }
     const id = setInterval(() => {
+      if (documentPollCountRef.current >= MAX_DOCUMENT_POLL) {
+        clearInterval(id);
+        setIsDocumentGenerating(false);
+        showAlert.error({
+          title: '고소장 생성 중 오류가 발생했어요.\n다시 시도해주세요.',
+        });
+        return;
+      }
+      documentPollCountRef.current += 1;
       queryClient.invalidateQueries({ queryKey: ['complaint', complaintId] });
     }, 3000);
     return () => clearInterval(id);
