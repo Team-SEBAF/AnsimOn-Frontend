@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 import { ComplainantForm } from './document/ComplainantForm';
 import { SectionBlock } from './document/SectionBlock';
 import { ContentBlock } from './document/ContentBlock';
+import { ComplaintPurposeSection } from './document/ComplaintPurposeSection';
 
 export function StepDocument() {
   return (
@@ -39,8 +40,7 @@ export function StepDocument() {
             <ComplainantForm />
 
             {/* TODO: DefendantForm */}
-            {/* TODO: ComplaintPurposeSection */}
-
+            <ComplaintPurposeSection />
             {/* SectionBlock + ContentBlock 미리보기 */}
             <SectionBlock title="4. 범죄 사실" required>
               <ContentBlock note="※ 범죄사실은 일시, 장소, 방법, 결과 등을 구체적으로 특정하여 기재하여 주시기 바랍니다.">
