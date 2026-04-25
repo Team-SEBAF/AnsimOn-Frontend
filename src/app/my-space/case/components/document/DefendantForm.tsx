@@ -4,7 +4,24 @@ import { FormTable } from './FormTable';
 import { SectionBlock } from './SectionBlock';
 import type { DocumentFormValues, FormTableProps, RowConfig } from '@/types/document';
 
-const ROWS: RowConfig[] = [
+const isBlank = (value?: string | null) => !value || value.trim() === '';
+
+const isSection2Empty = (formValues: DocumentFormValues) => {
+  const a = formValues.section_2_accused;
+  return [
+    a.name,
+    a.resident_registration_number,
+    a.address,
+    a.occupation,
+    a.office_address,
+    a.email,
+    a.contact?.mobile,
+    a.contact?.home,
+    a.contact?.office,
+  ].every(isBlank);
+};
+
+const ROWS: RowConfig<DocumentFormValues>[] = [
   {
     cells: [
       { type: 'label', text: '성 명' },
@@ -50,18 +67,33 @@ const ROWS: RowConfig[] = [
   {
     cells: [
       { type: 'label', text: '기타사항' },
-      { name: 'section_2_accused.other_details', placeholder: '특징 기재' },
+      {
+        name: 'section_2_accused.other_details',
+        placeholder: '특징 기재',
+        rules: {
+          validate: (value: string | null, formValues: DocumentFormValues) => {
+            if (!isSection2Empty(formValues)) return true;
+            return !isBlank(value) || '피고소인 정보가 없을 경우 기타사항을 입력해주세요';
+          },
+        },
+      },
     ],
   },
 ];
 
-type Props = Pick<FormTableProps<DocumentFormValues>, 'register' | 'watch' | 'control'>;
+type Props = Pick<FormTableProps<DocumentFormValues>, 'register' | 'watch' | 'control' | 'errors'>;
 
-export function DefendantForm({ register, watch, control }: Props) {
+export function DefendantForm({ register, watch, control, errors }: Props) {
   return (
     <SectionBlock title="2. 피고소인" required>
       <div className="flex flex-col gap-2">
-        <FormTable rows={ROWS} register={register} watch={watch} control={control} />
+        <FormTable
+          rows={ROWS}
+          register={register}
+          watch={watch}
+          control={control}
+          errors={errors}
+        />
         <p className="typo-body-7 text-gray-400">
           ※ 기타사항에는 고소인의 관계 및 피고소인의 인적사항과 연락처를 정확히 알 수 없을 경우
           피고소인의 성별, 특징적 외모, 인상착의 등으로 기재하시기 바랍니다.

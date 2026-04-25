@@ -1,7 +1,15 @@
 'use client';
 
 import { Controller } from 'react-hook-form';
-import type { FieldValues, Path, Control, UseFormRegister, UseFormWatch } from 'react-hook-form';
+import type {
+  FieldValues,
+  Path,
+  Control,
+  UseFormRegister,
+  UseFormWatch,
+  FieldErrors,
+  RegisterOptions,
+} from 'react-hook-form';
 import type { FormTableProps, CellConfig } from '@/types/document';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -9,8 +17,16 @@ import { Checkbox } from '@/components/ui/checkbox';
  * - label 셀: 128px 고정
  * - input / checkbox-group 셀: 1fr 균등
  */
-function getGridTemplate(cells: CellConfig[]): string {
+function getGridTemplate(cells: CellConfig<FieldValues>[]): string {
   return cells.map((cell) => (cell.type === 'label' ? '128px' : '1fr')).join(' ');
+}
+
+/** 점(.)으로 연결된 path로 중첩 errors 객체에서 에러를 꺼냄 */
+function getFieldError(errors: FieldErrors, path: string) {
+  return path.split('.').reduce<unknown>((obj, key) => {
+    if (obj && typeof obj === 'object') return (obj as Record<string, unknown>)[key];
+    return undefined;
+  }, errors);
 }
 
 const cellBase = 'flex min-h-18 items-center border-r border-b border-gray-200 px-4 py-6';
@@ -20,6 +36,7 @@ export function FormTable<T extends FieldValues>({
   register,
   watch,
   control,
+  errors = {},
 }: FormTableProps<T>) {
   return (
     <div className="overflow-hidden rounded-lg border-t border-l border-gray-200">
@@ -55,6 +72,9 @@ export function FormTable<T extends FieldValues>({
               );
             }
 
+            const fieldError = getFieldError(errors as FieldErrors, cell.name);
+            const hasError = !!fieldError;
+
             return (
               <div key={i} className={cellBase}>
                 <div className="flex w-full items-center gap-1.5">
@@ -62,10 +82,16 @@ export function FormTable<T extends FieldValues>({
                     <span className="typo-heading-5 shrink-0 text-gray-500">{cell.prefix}</span>
                   )}
                   <input
-                    {...register(cell.name as Path<T>)}
+                    {...register(cell.name as Path<T>, cell.rules as RegisterOptions<T, Path<T>>)}
                     placeholder={cell.placeholder}
+                    aria-invalid={hasError}
                     className="typo-body-7 w-full bg-transparent text-gray-900 outline-none placeholder:text-gray-300"
                   />
+                  {hasError && (fieldError as { message?: string }).message && (
+                    <p className="typo-body-8 text-error shrink-0">
+                      {(fieldError as { message?: string }).message}
+                    </p>
+                  )}
                 </div>
               </div>
             );

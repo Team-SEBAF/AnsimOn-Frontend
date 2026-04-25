@@ -1,10 +1,9 @@
 'use client';
 
+import { forwardRef, useImperativeHandle, useCallback, useRef, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import ExternalLinkIcon from '@/assets/icons/external-link.svg';
 import { TabsList } from '@/components/ui/tabs';
 import { AppTabs, AppTabsTrigger, AppTabsContent } from '@/components/AppTabs';
-import { Button } from '@/components/Button';
 import { ComplainantForm } from './document/ComplainantForm';
 import { DefendantForm } from './document/DefendantForm';
 import { ComplaintPurposeSection } from './document/ComplaintPurposeSection';
@@ -14,12 +13,72 @@ import { RelatedCasesSection } from './document/RelatedCasesSection';
 import { SectionBlock } from './document/SectionBlock';
 import { ContentBlock } from './document/ContentBlock';
 import { SubmissionFooter } from './document/SubmissionFooter';
-import { type DocumentFormValues, defaultDocumentValues } from '@/types/document';
+import type { DocumentFormValues } from '@/types/document';
+import { useGetDocument } from '../hooks/useDocument';
+import { usePatchDocument } from '../hooks/useDocument';
 
-export function StepDocument() {
-  const { register, watch, control } = useForm<DocumentFormValues>({
-    defaultValues: defaultDocumentValues,
+export type StepDocumentHandle = {
+  submit: () => void;
+  save: () => Promise<void>;
+  isDirty: () => boolean;
+};
+
+interface Props {
+  complaintId: string;
+  onValidSubmit: (values: DocumentFormValues) => void;
+}
+
+export const StepDocument = forwardRef<StepDocumentHandle, Props>(function StepDocument(
+  { complaintId, onValidSubmit },
+  ref,
+) {
+  const { data: documentData } = useGetDocument(complaintId);
+  const { mutateAsync: saveDocument } = usePatchDocument(complaintId);
+
+  const {
+    register,
+    watch,
+    control,
+    handleSubmit,
+    getValues,
+    formState: { errors, dirtyFields },
+  } = useForm<DocumentFormValues>({
+    defaultValues: documentData,
   });
+
+  const dirtyFieldsRef = useRef(dirtyFields);
+  useEffect(() => {
+    dirtyFieldsRef.current = dirtyFields;
+  });
+
+  const onInvalid = useCallback(() => {
+    window.document
+      .querySelector('[aria-invalid="true"]')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, []);
+
+  const onValid = useCallback(
+    (values: DocumentFormValues) => {
+      onValidSubmit(values);
+    },
+    [onValidSubmit],
+  );
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      submit: () => handleSubmit(onValid, onInvalid)(),
+      isDirty: () => Object.keys(dirtyFieldsRef.current).length > 0,
+      save: async () => {
+        const values = getValues();
+        const payload = (
+          Object.keys(dirtyFieldsRef.current) as (keyof DocumentFormValues)[]
+        ).reduce((acc, key) => ({ ...acc, [key]: values[key] }), {} as Partial<DocumentFormValues>);
+        if (Object.keys(payload).length > 0) await saveDocument(payload);
+      },
+    }),
+    [handleSubmit, onValid, onInvalid, saveDocument, getValues],
+  );
 
   return (
     <AppTabs defaultValue="complaint">
@@ -44,8 +103,8 @@ export function StepDocument() {
 
           {/* 폼 섹션 목록 */}
           <div className="flex flex-col gap-10 px-10 py-10">
-            <ComplainantForm register={register} watch={watch} control={control} />
-            <DefendantForm register={register} watch={watch} control={control} />
+            <ComplainantForm register={register} watch={watch} control={control} errors={errors} />
+            <DefendantForm register={register} watch={watch} control={control} errors={errors} />
             <ComplaintPurposeSection />
             <TextareaSection
               title="4. 범죄 사실"
@@ -54,6 +113,11 @@ export function StepDocument() {
               placeholder="범죄 사실을 입력하세요"
               fieldName="section_4_crime_facts.content"
               register={register}
+              rules={{
+                required: '범죄사실 내용을 입력해주세요',
+                validate: (v: unknown) => !!(v as string)?.trim() || '범죄사실 내용을 입력해주세요',
+              }}
+              error={errors.section_4_crime_facts?.content}
             />
             <TextareaSection
               title="5. 고소 이유"
@@ -62,7 +126,11 @@ export function StepDocument() {
               fieldName="section_5_complaint_reason.content"
               register={register}
             />
-            <EvidenceSection control={control} watch={watch} />
+            <EvidenceSection
+              control={control}
+              watch={watch}
+              evidenceList={documentData.section_6_evidence.evidence_list_text}
+            />
             <RelatedCasesSection control={control} />
 
             {/* 8. 기타 */}
@@ -77,7 +145,11 @@ export function StepDocument() {
               </ContentBlock>
             </SectionBlock>
 
-            <SubmissionFooter />
+            <SubmissionFooter
+              accuserName={documentData.submission_footer.accuser_name}
+              submitterName={documentData.submission_footer.submitter_name}
+              policeStation={documentData.submission_footer.submission_target_police_station}
+            />
           </div>
         </div>
       </AppTabsContent>
@@ -90,4 +162,4 @@ export function StepDocument() {
       </AppTabsContent>
     </AppTabs>
   );
-}
+});

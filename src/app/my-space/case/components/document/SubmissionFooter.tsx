@@ -1,4 +1,10 @@
-export function SubmissionFooter() {
+interface Props {
+  accuserName: string | null;
+  submitterName: string | null;
+  policeStation: string | null;
+}
+
+export function SubmissionFooter({ accuserName, submitterName, policeStation }: Props) {
   return (
     <div className="flex flex-col items-center gap-6">
       {/* 법적 고지 */}
@@ -22,10 +28,13 @@ export function SubmissionFooter() {
 
       {/* 고소인 · 제출인 */}
       <div className="flex flex-col gap-6">
-        {['고소인', '제출인'].map((label) => (
+        {[
+          { label: '고소인', value: accuserName },
+          { label: '제출인', value: submitterName },
+        ].map(({ label, value }) => (
           <div key={label} className="typo-body-3 flex items-end gap-2 text-black">
             <span>{label}</span>
-            <span className="w-40 border-b px-0.5" />
+            <span className="w-40 border-b px-0.5 text-center">{value ?? ''}</span>
             <span>(인)</span>
           </div>
         ))}
@@ -43,7 +52,7 @@ export function SubmissionFooter() {
       {/* 경찰서 */}
       <div className="flex items-end justify-center gap-2 pt-6">
         <div className="flex w-40 flex-col items-center">
-          <span className="typo-body-4 text-gray-300">경찰서장</span>
+          <span className="typo-body-4 text-gray-900">{policeStation ?? ''}</span>
           <span className="w-full border-b" />
         </div>
         <span className="typo-heading-1 shrink-0 text-gray-900">귀중</span>
