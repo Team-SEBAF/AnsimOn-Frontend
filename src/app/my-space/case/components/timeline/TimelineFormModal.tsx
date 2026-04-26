@@ -82,13 +82,13 @@ export function TimelineFormModal({
   });
 
   return (
-    <Modal.Root open={open} onOpenChange={onOpenChange} className="max-h-[90vh] w-135 flex-col">
+    <Modal.Root open={open} onOpenChange={onOpenChange} className="max-h-[60vh] w-135 flex-col">
       <Modal.Header
         title={mode === 'edit' ? '타임라인 수정하기' : '타임라인 추가하기'}
         subTitle="날짜 기반으로 사건을 수정합니다"
       />
 
-      <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto">
+      <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto pr-2">
         {/* 날짜 + 시간 */}
         <div className="grid grid-cols-2 gap-3">
           <Input
@@ -181,11 +181,7 @@ export function TimelineFormModal({
                 <Spinner size="md" label="파일 목록 불러오는 중" />
               </div>
             ) : (
-              <div
-                className={
-                  files.attachmentItems.length > 0 ? 'no-scrollbar max-h-28 overflow-y-auto' : ''
-                }
-              >
+              <div>
                 <EvidenceContent
                   previewType="mixed"
                   items={files.attachmentItems}
