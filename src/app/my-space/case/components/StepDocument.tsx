@@ -3,16 +3,18 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 import { TabsList } from '@/components/ui/tabs';
 import { AppTabs, AppTabsTrigger, AppTabsContent } from '@/components/AppTabs';
-import { ComplainantForm } from './document/ComplainantForm';
-import { DefendantForm } from './document/DefendantForm';
-import { ComplaintPurposeSection } from './document/ComplaintPurposeSection';
-import { TextareaSection } from './document/TextareaSection';
-import { EvidenceSection } from './document/EvidenceSection';
-import { RelatedCasesSection } from './document/RelatedCasesSection';
-import { SectionBlock } from './document/SectionBlock';
-import { ContentBlock } from './document/ContentBlock';
-import { SubmissionFooter } from './document/SubmissionFooter';
-import { StatementContent } from './document/StatementContent';
+import {
+  ComplainantForm,
+  DefendantForm,
+  ComplaintPurposeSection,
+  TextareaSection,
+  EvidenceSection,
+  RelatedCasesSection,
+  SectionBlock,
+  ContentBlock,
+  SubmissionFooter,
+  StatementContent,
+} from './document';
 import type { DocumentFormValues } from '@/types/document';
 import { useGetDocument, usePatchDocument } from '../hooks/useDocument';
 import { useStepDocumentForm } from '../hooks/useStepDocumentForm';
