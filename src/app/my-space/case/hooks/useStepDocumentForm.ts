@@ -1,13 +1,14 @@
 'use client';
 
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, type RefObject } from 'react';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister, UseFormWatch, Control, FieldErrors } from 'react-hook-form';
 import type { DocumentFormValues, CombinedDocumentFormValues } from '@/types/document';
 import { showAlert } from '@/utils/alert';
 
 const getDocumentValues = (values: CombinedDocumentFormValues): DocumentFormValues => {
-  const { statement: _statement, ...documentValues } = values;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { statement, ...documentValues } = values;
   return documentValues;
 };
 
@@ -15,6 +16,7 @@ interface Params {
   documentData: DocumentFormValues;
   saveDocument: (payload: Partial<DocumentFormValues>) => Promise<unknown>;
   onValidSubmit: (values: DocumentFormValues) => void;
+  rootRef: RefObject<HTMLElement | null>;
 }
 
 interface DocForm {
@@ -24,7 +26,12 @@ interface DocForm {
   errors: FieldErrors<DocumentFormValues>;
 }
 
-export function useStepDocumentForm({ documentData, saveDocument, onValidSubmit }: Params) {
+export function useStepDocumentForm({
+  documentData,
+  saveDocument,
+  onValidSubmit,
+  rootRef,
+}: Params) {
   const form = useForm<CombinedDocumentFormValues>({
     defaultValues: {
       ...documentData,
@@ -61,7 +68,8 @@ export function useStepDocumentForm({ documentData, saveDocument, onValidSubmit 
     values: CombinedDocumentFormValues,
   ): Partial<DocumentFormValues> => {
     const documentValues = getDocumentValues(values);
-    const { statement: _statement, ...documentDirtyFields } = dirtyFieldsRef.current;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { statement, ...documentDirtyFields } = dirtyFieldsRef.current;
     return Object.keys(documentDirtyFields).reduce((acc, key) => {
       const documentKey = key as keyof DocumentFormValues;
       return { ...acc, [documentKey]: documentValues[documentKey] };
@@ -69,9 +77,9 @@ export function useStepDocumentForm({ documentData, saveDocument, onValidSubmit 
   };
 
   const scrollToFirstInvalid = () => {
-    const invalidEl = Array.from(window.document.querySelectorAll('[aria-invalid="true"]')).find(
-      (el) => (el as HTMLElement).offsetParent !== null,
-    );
+    const invalidEl = Array.from(
+      rootRef.current?.querySelectorAll('[aria-invalid="true"]') ?? [],
+    ).find((el) => (el as HTMLElement).offsetParent !== null);
     invalidEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
@@ -82,18 +90,15 @@ export function useStepDocumentForm({ documentData, saveDocument, onValidSubmit 
     scrollToFirstInvalid();
   };
 
-  const submit = useCallback(
-    () =>
-      handleSubmit(async (values) => {
-        const documentValues = getDocumentValues(values);
-        const payload = getDirtyDocumentPayload(values);
-        if (Object.keys(payload).length > 0) await saveDocument(payload);
-        onValidSubmit(documentValues);
-      }, handleInvalidSubmit)(),
-    [handleSubmit, saveDocument, onValidSubmit],
-  );
+  const submit = () =>
+    handleSubmit(async (values) => {
+      const documentValues = getDocumentValues(values);
+      const payload = getDirtyDocumentPayload(values);
+      if (Object.keys(payload).length > 0) await saveDocument(payload);
+      onValidSubmit(documentValues);
+    }, handleInvalidSubmit)();
 
-  const save = useCallback(async () => {
+  const save = async () => {
     const isValid = await trigger();
     if (!isValid) {
       handleInvalidSubmit();
@@ -102,7 +107,7 @@ export function useStepDocumentForm({ documentData, saveDocument, onValidSubmit 
     const values = getValues();
     const payload = getDirtyDocumentPayload(values);
     if (Object.keys(payload).length > 0) await saveDocument(payload);
-  }, [trigger, getValues, saveDocument]);
+  };
 
   return { form, docForm, submit, save };
 }
