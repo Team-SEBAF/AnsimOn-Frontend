@@ -114,6 +114,16 @@ export type DocumentFormValues = {
   };
 };
 
+export type StatementFormValues = {
+  damage_facts_statement: string;
+  declarant_name: string;
+  submission_target_police_station: string;
+};
+
+export type CombinedDocumentFormValues = DocumentFormValues & {
+  statement: StatementFormValues;
+};
+
 export type PatchDocumentPayload = Partial<DocumentFormValues>;
 
 export type NeedToGenerateDocumentResponse = {
