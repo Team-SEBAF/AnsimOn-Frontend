@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState, useEffect, useRef } from 'react';
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useAuthStore } from '@/stores/authStore';
 import { useComplaint, useUpdateComplaint } from './hooks/useComplaint';
@@ -170,9 +170,6 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
         }
       }
       if (step === 3) {
-        if (stepDocumentRef.current?.isDirty()) {
-          await stepDocumentRef.current.save();
-        }
         stepDocumentRef.current?.submit();
         return;
       }
@@ -192,6 +189,8 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
     const prevStep = clampStep(step - 1);
     save({ step: STEP_REVERSE_MAP[prevStep] });
   };
+
+  const handleValidSubmit = useCallback(() => save({ step: 'COMPLETE' }), [save]);
 
   /** 제목 변경 + 서버 저장 */
   const handleTitleChange = (newTitle: string) => {
@@ -257,7 +256,7 @@ function CasePageContent({ complaintId }: { complaintId: string }) {
                 <StepDocument
                   ref={stepDocumentRef}
                   complaintId={complaintId}
-                  onValidSubmit={() => save({ step: 'COMPLETE' })}
+                  onValidSubmit={handleValidSubmit}
                 />
               )}
               {step === 4 && <StepComplete />}

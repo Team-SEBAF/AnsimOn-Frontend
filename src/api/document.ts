@@ -1,6 +1,7 @@
 import { axiosInstance } from './axiosInstance';
 import type {
   DocumentFormValues,
+  StatementFormValues,
   NeedToGenerateDocumentResponse,
   PatchDocumentPayload,
   RequestGenerateDocumentResponse,
@@ -43,6 +44,25 @@ export async function getDocument(complaintId: string) {
 export async function patchDocument(complaintId: string, payload: PatchDocumentPayload) {
   const res = await axiosInstance.patch<DocumentFormValues>(
     `/api/v1/${complaintId}/document/complaint-form-data`,
+    payload,
+  );
+  return res.data;
+}
+
+// ─── 진술서 조회 / 수정 ───────────────────────────────────
+
+/** 진술서 폼 데이터 조회 */
+export async function getStatement(complaintId: string) {
+  const res = await axiosInstance.get<StatementFormValues>(
+    `/api/v1/${complaintId}/document/statement-form-data`,
+  );
+  return res.data;
+}
+
+/** 진술서 폼 데이터 부분 수정 */
+export async function patchStatement(complaintId: string, payload: Partial<StatementFormValues>) {
+  const res = await axiosInstance.patch<StatementFormValues>(
+    `/api/v1/${complaintId}/document/statement-form-data`,
     payload,
   );
   return res.data;
