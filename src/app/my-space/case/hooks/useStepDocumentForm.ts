@@ -3,7 +3,11 @@
 import { useRef, useEffect, type RefObject } from 'react';
 import { useForm } from 'react-hook-form';
 import type { UseFormRegister, UseFormWatch, Control, FieldErrors } from 'react-hook-form';
-import type { DocumentFormValues, CombinedDocumentFormValues } from '@/types/document';
+import type {
+  DocumentFormValues,
+  StatementFormValues,
+  CombinedDocumentFormValues,
+} from '@/types/document';
 import { showAlert } from '@/utils/alert';
 
 const getDocumentValues = (values: CombinedDocumentFormValues): DocumentFormValues => {
@@ -14,7 +18,9 @@ const getDocumentValues = (values: CombinedDocumentFormValues): DocumentFormValu
 
 interface Params {
   documentData: DocumentFormValues;
+  statementData: StatementFormValues;
   saveDocument: (payload: Partial<DocumentFormValues>) => Promise<unknown>;
+  saveStatement: (payload: Partial<StatementFormValues>) => Promise<unknown>;
   onValidSubmit: (values: DocumentFormValues) => void;
   rootRef: RefObject<HTMLElement | null>;
 }
@@ -28,18 +34,16 @@ interface DocForm {
 
 export function useStepDocumentForm({
   documentData,
+  statementData,
   saveDocument,
+  saveStatement,
   onValidSubmit,
   rootRef,
 }: Params) {
   const form = useForm<CombinedDocumentFormValues>({
     defaultValues: {
       ...documentData,
-      statement: {
-        damage_facts_statement: '',
-        declarant_name: '',
-        submission_target_police_station: '',
-      },
+      statement: statementData,
     },
   });
   const {
@@ -76,6 +80,29 @@ export function useStepDocumentForm({
     }, {} as Partial<DocumentFormValues>);
   };
 
+  const getDirtyStatementPayload = (
+    values: CombinedDocumentFormValues,
+  ): Partial<StatementFormValues> => {
+    const statementDirtyFields = dirtyFieldsRef.current.statement;
+    if (!statementDirtyFields) return {};
+    return Object.keys(statementDirtyFields).reduce((acc, key) => {
+      const statementKey = key as keyof StatementFormValues;
+      return { ...acc, [statementKey]: values.statement[statementKey] };
+    }, {} as Partial<StatementFormValues>);
+  };
+
+  const saveDirtyFields = async (values: CombinedDocumentFormValues, showToast = true) => {
+    const documentPayload = getDirtyDocumentPayload(values);
+    const statementPayload = getDirtyStatementPayload(values);
+    const hasChanges =
+      Object.keys(documentPayload).length > 0 || Object.keys(statementPayload).length > 0;
+    await Promise.all([
+      Object.keys(documentPayload).length > 0 ? saveDocument(documentPayload) : null,
+      Object.keys(statementPayload).length > 0 ? saveStatement(statementPayload) : null,
+    ]);
+    if (showToast && hasChanges) showAlert.success({ title: '저장되었습니다.' });
+  };
+
   const scrollToFirstInvalid = () => {
     const invalidEl = Array.from(
       rootRef.current?.querySelectorAll('[aria-invalid="true"]') ?? [],
@@ -92,10 +119,8 @@ export function useStepDocumentForm({
 
   const submit = () =>
     handleSubmit(async (values) => {
-      const documentValues = getDocumentValues(values);
-      const payload = getDirtyDocumentPayload(values);
-      if (Object.keys(payload).length > 0) await saveDocument(payload);
-      onValidSubmit(documentValues);
+      await saveDirtyFields(values, false);
+      onValidSubmit(getDocumentValues(values));
     }, handleInvalidSubmit)();
 
   const save = async () => {
@@ -104,9 +129,7 @@ export function useStepDocumentForm({
       handleInvalidSubmit();
       return;
     }
-    const values = getValues();
-    const payload = getDirtyDocumentPayload(values);
-    if (Object.keys(payload).length > 0) await saveDocument(payload);
+    await saveDirtyFields(getValues());
   };
 
   return { form, docForm, submit, save };

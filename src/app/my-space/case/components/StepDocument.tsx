@@ -16,7 +16,12 @@ import {
   StatementContent,
 } from './document';
 import type { DocumentFormValues } from '@/types/document';
-import { useGetDocument, usePatchDocument } from '../hooks/useDocument';
+import {
+  useGetDocument,
+  usePatchDocument,
+  useGetStatement,
+  usePatchStatement,
+} from '../hooks/useDocument';
 import { useStepDocumentForm } from '../hooks/useStepDocumentForm';
 
 export type StepDocumentHandle = {
@@ -34,11 +39,15 @@ export const StepDocument = forwardRef<StepDocumentHandle, Props>(function StepD
   ref,
 ) {
   const { data: documentData } = useGetDocument(complaintId);
+  const { data: statementData } = useGetStatement(complaintId);
   const { mutateAsync: saveDocument } = usePatchDocument(complaintId);
+  const { mutateAsync: saveStatement } = usePatchStatement(complaintId);
   const rootRef = useRef<HTMLDivElement>(null);
   const { form, docForm, submit, save } = useStepDocumentForm({
     documentData,
+    statementData,
     saveDocument,
+    saveStatement,
     onValidSubmit,
     rootRef,
   });
@@ -136,7 +145,7 @@ export const StepDocument = forwardRef<StepDocumentHandle, Props>(function StepD
           <StatementContent
             register={form.register}
             errors={form.formState.errors}
-            policeStation={documentData.submission_footer.submission_target_police_station}
+            policeStation={statementData.submission_target_police_station}
           />
         </AppTabsContent>
       </AppTabs>
