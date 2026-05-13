@@ -1,10 +1,11 @@
+import { useEffect, useRef } from 'react';
 import type { UseFormRegister, FieldErrors } from 'react-hook-form';
 import type { CombinedDocumentFormValues } from '@/types/document';
 
 const GUIDE_ITEMS = [
-  '불이익을 받지 않으려면 진실을 말하고 진술을 잘 해주시기 바랍니다.',
-  '진술사항은 사건에 관하여 알고 있는 모든 내용을 빠짐없이 진술하여 주십시오.',
-  '각 칸은 끝까지 작성하셔야 하고, 법회검토 기재 후 다음 페이지로 넘어갑니다.',
+  '진술서는 피해 사실을 본인의 언어로 자유롭게 작성하는 문서입니다.',
+  '시간 순서대로 구체적인 사실을 기재하되, 감정이나 느낌도 함께 서술하시면 좋습니다.',
+  '피해로 인한 정신적·신체적 고통, 일상생활의 어려움 등도 상세히 기록해주세요.',
 ];
 
 interface Props {
@@ -14,21 +15,34 @@ interface Props {
 }
 
 export function StatementContent({ register, errors, policeStation }: Props) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { ref: registerRef, ...statementRest } = register('statement.damage_facts_statement', {
+    required: '피해 사실 진술을 입력해주세요',
+    validate: (v: string) => !!v?.trim() || '피해 사실 진술을 입력해주세요',
+  });
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${el.scrollHeight}px`;
+  });
+
   return (
     <div className="min-w-292 rounded-xl bg-white py-6 shadow-[0px_20px_50px_-5px_#4040400D]">
       {/* 문서 헤더 */}
-      <div className="border-b border-gray-200 p-6 text-center">
+      <div className="border-b border-gray-200 px-6 py-12 text-center">
         <h2 className="typo-heading-1 text-gray-900">진술서</h2>
-        <p className="typo-body-4 mt-2 text-gray-400">스토킹 피해 사실의 진정 진술서</p>
+        <p className="typo-body-4 mt-2 text-gray-400">스토킹 피해 사실에 관한 진술서</p>
       </div>
 
-      <div className="flex flex-col gap-10 px-10 py-10">
+      <div className="flex flex-col gap-6 px-6 py-12">
         {/* 작성 안내 */}
-        <div className="rounded-lg bg-gray-50 px-5 py-4">
-          <p className="typo-label mb-2 text-gray-700">진술서 작성 안내</p>
-          <ul className="flex flex-col gap-1">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p className="typo-heading-5 mb-2">진술서 작성 안내</p>
+          <ul className="flex flex-col gap-2">
             {GUIDE_ITEMS.map((item) => (
-              <li key={item} className="typo-body-7 flex gap-1.5 text-gray-500">
+              <li key={item} className="typo-body-6 flex gap-1.5 text-gray-500">
                 <span className="shrink-0">•</span>
                 <span>{item}</span>
               </li>
@@ -38,18 +52,19 @@ export function StatementContent({ register, errors, policeStation }: Props) {
 
         {/* 피해 사실 진술 */}
         <div className="flex flex-col gap-2">
-          <p className="typo-label text-gray-900">
-            피해 사실 진술 <span className="text-error">*</span>
-          </p>
+          <h3 className="typo-body-2 text-gray-700">
+            피해 사실 진술<span className="typo-label text-primary ml-1">필수</span>
+          </h3>
           <textarea
-            {...register('statement.damage_facts_statement', {
-              required: '피해 사실 진술을 입력해주세요',
-              validate: (v: string) => !!v?.trim() || '피해 사실 진술을 입력해주세요',
-            })}
-            rows={8}
+            {...statementRest}
+            ref={(el) => {
+              registerRef(el);
+              textareaRef.current = el;
+            }}
+            style={{ minHeight: '336px' }}
             placeholder="피해 사실을 입력해주세요"
             aria-invalid={!!errors?.statement?.damage_facts_statement}
-            className="typo-body-7 w-full resize-none text-gray-900 outline-none placeholder:text-gray-300"
+            className="typo-body-7 focus:border-primary w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-900 outline-none placeholder:text-gray-300"
           />
           {errors?.statement?.damage_facts_statement && (
             <p className="typo-body-8 text-error">
@@ -60,7 +75,9 @@ export function StatementContent({ register, errors, policeStation }: Props) {
 
         {/* 하단 서명 영역 */}
         <div className="flex flex-col items-center gap-6 pt-4">
-          <p className="typo-body-7 text-center text-black">이 진술은 사실과 다름이 없습니다</p>
+          <p className="typo-body-7 text-center text-black">
+            위 진술 내용은 사실과 다름없음을 확인합니다
+          </p>
 
           {/* 날짜 */}
           <div className="typo-body-3 flex items-end justify-center gap-2 text-black">
