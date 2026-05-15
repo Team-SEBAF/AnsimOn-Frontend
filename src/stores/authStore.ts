@@ -18,8 +18,14 @@ interface AuthState {
   isAuthInitialized: boolean;
   user: User | null;
   sseBaseUrl: string | null;
+  loginMethod: 'google' | 'email' | null;
 
-  login: (accessToken: string, refreshToken: string, idToken: string) => void;
+  login: (
+    accessToken: string,
+    refreshToken: string,
+    idToken: string,
+    method: 'google' | 'email',
+  ) => void;
   logout: () => void;
   initAuth: () => void;
   fetchUser: () => Promise<void>;
@@ -31,15 +37,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthInitialized: false,
   user: null,
   sseBaseUrl: null,
+  loginMethod: null,
 
-  login: (accessToken, refreshToken, idToken) => {
+  login: (accessToken, refreshToken, idToken, method) => {
     authCookies.setTokens(accessToken, refreshToken, idToken);
-    set({ isLoggedIn: true });
+    set({ isLoggedIn: true, loginMethod: method });
   },
 
   logout: () => {
     authCookies.clearTokens();
-    set({ isLoggedIn: false, user: null, sseBaseUrl: null });
+    set({ isLoggedIn: false, user: null, sseBaseUrl: null, loginMethod: null });
   },
 
   initAuth: () => {
