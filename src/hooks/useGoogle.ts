@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { getGoogleToken } from '@/api/auth/google';
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL!.replace(/\/$/, '');
-const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN!.replace(/\/$/, '');
+const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '');
+const cognitoDomain = (process.env.NEXT_PUBLIC_COGNITO_DOMAIN ?? '').replace(/\/$/, '');
 
 export function useGoogleAuth() {
   const logout = useAuthStore((state) => state.logout);
