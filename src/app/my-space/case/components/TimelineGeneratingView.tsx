@@ -98,7 +98,7 @@ export function TimelineGeneratingView({ taskId, onDone }: TimelineGeneratingVie
 
               {/* 도트 */}
               <div
-                className={`h-1.5 w-1.5 rounded-full transition-colors duration-300 ${
+                className={`h-0.75 w-0.75 rounded-full transition-colors duration-300 ${
                   isFuture ? 'bg-gray-200' : 'bg-primary'
                 }`}
               />

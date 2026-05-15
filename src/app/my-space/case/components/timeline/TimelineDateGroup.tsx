@@ -21,7 +21,7 @@ export function TimelineDateGroup({ group }: TimelineDateGroupProps) {
 
   return (
     <>
-      <div className="mb-1">
+      <div className="mb-4">
         {/* 날짜 헤더 */}
         <div className="mb-2 flex items-center gap-3">
           <EventIconContainer width={12} height={12} />

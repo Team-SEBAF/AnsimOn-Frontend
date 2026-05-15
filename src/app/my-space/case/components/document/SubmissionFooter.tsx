@@ -1,10 +1,14 @@
+import type { UseFormRegister } from 'react-hook-form';
+import type { DocumentFormValues } from '@/types/document';
+
 interface Props {
-  accuserName: string | null;
-  submitterName: string | null;
-  policeStation: string | null;
+  register: UseFormRegister<DocumentFormValues>;
 }
 
-export function SubmissionFooter({ accuserName, submitterName, policeStation }: Props) {
+const inputClass =
+  'typo-body-3 w-40 border-b bg-transparent text-center text-black outline-none placeholder:text-gray-300';
+
+export function SubmissionFooter({ register }: Props) {
   return (
     <div className="flex flex-col items-center gap-6">
       {/* 법적 고지 */}
@@ -15,7 +19,7 @@ export function SubmissionFooter({ accuserName, submitterName, policeStation }: 
         수 있습니다
       </p>
 
-      {/* 날짜 */}
+      {/* 날짜 (수동 기입용 — 편집 불가) */}
       <div className="typo-body-3 flex items-end justify-center gap-2 text-black">
         <span>20</span>
         <span className="w-16 border-b px-0.5" />
@@ -28,16 +32,24 @@ export function SubmissionFooter({ accuserName, submitterName, policeStation }: 
 
       {/* 고소인 · 제출인 */}
       <div className="flex flex-col gap-6">
-        {[
-          { label: '고소인', value: accuserName },
-          { label: '제출인', value: submitterName },
-        ].map(({ label, value }) => (
-          <div key={label} className="typo-body-3 flex items-end gap-2 text-black">
-            <span>{label}</span>
-            <span className="w-40 border-b px-0.5 text-center">{value ?? ''}</span>
-            <span>(인)</span>
-          </div>
-        ))}
+        <div className="typo-body-3 flex items-end gap-2 text-black">
+          <span>고소인</span>
+          <input
+            {...register('submission_footer.accuser_name')}
+            placeholder="성명 입력"
+            className={inputClass}
+          />
+          <span>(인)</span>
+        </div>
+        <div className="typo-body-3 flex items-end gap-2 text-black">
+          <span>제출인</span>
+          <input
+            {...register('submission_footer.submitter_name')}
+            placeholder="성명 입력"
+            className={inputClass}
+          />
+          <span>(인)</span>
+        </div>
       </div>
 
       {/* 안내 문구 */}
@@ -52,7 +64,11 @@ export function SubmissionFooter({ accuserName, submitterName, policeStation }: 
       {/* 경찰서 */}
       <div className="flex items-end justify-center gap-2 pt-6">
         <div className="flex w-40 flex-col items-center">
-          <span className="typo-body-4 text-gray-900">{policeStation ?? ''}</span>
+          <input
+            {...register('submission_footer.submission_target_police_station')}
+            placeholder="경찰서명 입력"
+            className="typo-body-4 w-full bg-transparent text-center text-gray-900 outline-none placeholder:text-gray-300"
+          />
           <span className="w-full border-b" />
         </div>
         <span className="typo-heading-1 shrink-0 text-gray-900">귀중</span>

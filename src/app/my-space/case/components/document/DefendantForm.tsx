@@ -27,7 +27,11 @@ const ROWS: RowConfig<DocumentFormValues>[] = [
       { type: 'label', text: '성 명' },
       { name: 'section_2_accused.name', placeholder: '피고소인 성명을 입력하세요' },
       { type: 'label', text: '주민등록번호' },
-      { name: 'section_2_accused.resident_registration_number', placeholder: '0000000-0000000' },
+      {
+        name: 'section_2_accused.resident_registration_number',
+        placeholder: '0000000-0000000',
+        format: 'resident-number',
+      },
     ],
   },
   {
@@ -53,9 +57,24 @@ const ROWS: RowConfig<DocumentFormValues>[] = [
   {
     cells: [
       { type: 'label', text: '전화' },
-      { name: 'section_2_accused.contact.mobile', placeholder: '010-0000-0000', prefix: '휴대폰' },
-      { name: 'section_2_accused.contact.home', placeholder: '02-0000-0000', prefix: '자택' },
-      { name: 'section_2_accused.contact.office', placeholder: '02-0000-0000', prefix: '사무실' },
+      {
+        name: 'section_2_accused.contact.mobile',
+        placeholder: '010-0000-0000',
+        prefix: '휴대폰',
+        format: 'phone',
+      },
+      {
+        name: 'section_2_accused.contact.home',
+        placeholder: '02-0000-0000',
+        prefix: '자택',
+        format: 'phone',
+      },
+      {
+        name: 'section_2_accused.contact.office',
+        placeholder: '02-0000-0000',
+        prefix: '사무실',
+        format: 'phone',
+      },
     ],
   },
   {

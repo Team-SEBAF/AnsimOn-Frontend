@@ -31,6 +31,31 @@ function getFieldError(errors: FieldErrors, path: string) {
 
 const cellBase = 'flex min-h-18 items-center border-r border-b border-gray-200 px-4 py-6';
 
+function formatPhone(raw: string): string {
+  const d = raw.replace(/\D/g, '');
+  if (d.startsWith('02')) {
+    const num = d.slice(0, 10);
+    if (num.length <= 2) return num;
+    if (num.length <= 6) return `${num.slice(0, 2)}-${num.slice(2)}`;
+    return `${num.slice(0, 2)}-${num.slice(2, 6)}-${num.slice(6)}`;
+  }
+  const num = d.slice(0, 11);
+  if (num.length <= 3) return num;
+  if (num.length <= 7) return `${num.slice(0, 3)}-${num.slice(3)}`;
+  return `${num.slice(0, 3)}-${num.slice(3, 7)}-${num.slice(7)}`;
+}
+
+function formatResidentNumber(raw: string): string {
+  const d = raw.replace(/\D/g, '').slice(0, 14);
+  if (d.length <= 6) return d;
+  return `${d.slice(0, 6)}-${d.slice(6)}`;
+}
+
+const FORMATTERS: Record<string, (v: string) => string> = {
+  phone: formatPhone,
+  'resident-number': formatResidentNumber,
+};
+
 export function FormTable<T extends FieldValues>({
   rows,
   register,
@@ -74,6 +99,11 @@ export function FormTable<T extends FieldValues>({
 
             const fieldError = getFieldError(errors as FieldErrors, cell.name);
             const hasError = !!fieldError;
+            const formatFn = cell.format ? FORMATTERS[cell.format] : undefined;
+            const { onChange: rhfOnChange, ...restRegister } = register(
+              cell.name as Path<T>,
+              cell.rules as RegisterOptions<T, Path<T>>,
+            );
 
             return (
               <div key={i} className={cellBase}>
@@ -82,7 +112,11 @@ export function FormTable<T extends FieldValues>({
                     <span className="typo-heading-5 shrink-0 text-gray-500">{cell.prefix}</span>
                   )}
                   <input
-                    {...register(cell.name as Path<T>, cell.rules as RegisterOptions<T, Path<T>>)}
+                    {...restRegister}
+                    onChange={(e) => {
+                      if (formatFn) e.target.value = formatFn(e.target.value);
+                      rhfOnChange(e);
+                    }}
                     placeholder={cell.placeholder}
                     aria-invalid={hasError}
                     className="typo-body-7 w-full bg-transparent text-gray-900 outline-none placeholder:text-gray-300"

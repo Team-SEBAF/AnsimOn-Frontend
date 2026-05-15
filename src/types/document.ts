@@ -24,6 +24,8 @@ export type InputCell<T extends FieldValues = FieldValues> = {
   prefix?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rules?: RegisterOptions<any, any>;
+  /** 자동 포맷 */
+  format?: 'phone' | 'resident-number';
 };
 
 type CheckboxItem = {
