@@ -82,10 +82,12 @@ export function TimelineFormModal({
   });
 
   return (
-    <Modal.Root open={open} onOpenChange={onOpenChange} className="max-h-[60vh] w-135 flex-col">
+    <Modal.Root open={open} onOpenChange={onOpenChange} className="max-h-[80vh] w-135 flex-col">
       <Modal.Header
         title={mode === 'edit' ? '타임라인 수정하기' : '타임라인 추가하기'}
-        subTitle="날짜 기반으로 사건을 수정합니다"
+        subTitle={
+          mode === 'edit' ? '날짜 기반으로 사건을 수정합니다' : '날짜 기반으로 사건을 추가합니다'
+        }
       />
 
       <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto pr-2">
