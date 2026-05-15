@@ -27,6 +27,16 @@ import {
   SidebarSeparator,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuItem,
+  AppDropdownMenuContent,
+  AppDropdownMenuSeparator,
+} from '@/components/AppDropdownMenu';
+import EllipsisIcon from '@/assets/icons/ellipsis-vertical.svg';
+import { LogOut, User } from 'lucide-react';
+import { useLogout } from '@/hooks/useLogout';
 import SidebarIcon1 from '@/assets/icons/Sidebar-icon-1.svg';
 import SidebarIcon2 from '@/assets/icons/Sidebar-icon-2.svg';
 import SidebarIcon3 from '@/assets/icons/Sidebar-icon-3.svg';
@@ -58,6 +68,7 @@ export function MySpaceSidebar() {
   const pathname = usePathname();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const user = useAuthStore((s) => s.user);
+  const { handleLogout } = useLogout();
 
   return (
     <Sidebar
@@ -152,7 +163,6 @@ export function MySpaceSidebar() {
 
         <SidebarSeparator className="mx-0 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0" />
 
-        {/* TODO: 유저 메뉴 추후 연결 */}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -162,7 +172,7 @@ export function MySpaceSidebar() {
             >
               <div className="flex items-center gap-2 px-1 py-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:px-0">
                 <ProfileIcon className="size-5 shrink-0" />
-                <span className="typo-body-3 text-gray-600 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
+                <span className="typo-body-3 flex-1 text-gray-600 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0">
                   {isLoggedIn ? (
                     user?.name ? (
                       `${user.name}님`
@@ -173,6 +183,35 @@ export function MySpaceSidebar() {
                     'Guest'
                   )}
                 </span>
+                {isLoggedIn && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="shrink-0 p-1 text-gray-400 transition-opacity delay-150 duration-300 group-data-[collapsible=icon]:w-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <EllipsisIcon width={16} height={16} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <AppDropdownMenuContent side="top" align="end">
+                      <DropdownMenuItem
+                        disabled
+                        className="typo-body-6 cursor-not-allowed text-gray-400"
+                      >
+                        <User size={16} />
+                        마이페이지
+                      </DropdownMenuItem>
+                      <AppDropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={handleLogout}
+                        className="typo-body-6 text-error cursor-pointer hover:bg-gray-50 focus:bg-gray-50"
+                      >
+                        <LogOut size={16} />
+                        로그아웃
+                      </DropdownMenuItem>
+                    </AppDropdownMenuContent>
+                  </DropdownMenu>
+                )}
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>
