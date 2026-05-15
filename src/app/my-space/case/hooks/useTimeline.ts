@@ -38,24 +38,19 @@ export function useTimeline() {
 
 // ─── mutations ───────────────────────────────────────────
 
-/** 직접 추가 증거 생성 (폼 데이터만) */
+/** 직접 추가 증거 생성 (폼 데이터만) — invalidation은 호출부에서 처리 */
 export function useCreateTimelineEvidence() {
   const complaintId = useComplaintId();
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: TimelineFormDataRequest) =>
       createManualTimelineEvidence(complaintId, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timelineKeys.detail(complaintId) });
-    },
   });
 }
 
-/** AI 원본 또는 직접 추가 증거의 폼 데이터 수정 */
+/** AI 원본 또는 직접 추가 증거의 폼 데이터 수정 — invalidation은 호출부에서 처리 */
 export function useUpdateTimelineEvidence() {
   const complaintId = useComplaintId();
-  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
@@ -65,10 +60,15 @@ export function useUpdateTimelineEvidence() {
       timelineEvidenceId: string;
       payload: TimelineFormDataRequest;
     }) => updateTimelineEvidenceFormData(complaintId, timelineEvidenceId, payload),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: timelineKeys.detail(complaintId) });
-    },
   });
+}
+
+/** 타임라인 쿼리 무효화 헬퍼 */
+export function useInvalidateTimeline() {
+  const complaintId = useComplaintId();
+  const queryClient = useQueryClient();
+
+  return () => queryClient.invalidateQueries({ queryKey: timelineKeys.detail(complaintId) });
 }
 
 /** 타임라인 증거 복수 삭제 */
