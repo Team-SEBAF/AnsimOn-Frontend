@@ -9,7 +9,11 @@ import { buildPresignedUrlItems } from '../components/evidence/validate';
 import type { TimelineEvidence, TimelineTag } from '@/types/timeline';
 import type { TimelineFormValues } from './useTimelineForm';
 import { type LocalFile, TIMELINE_ATTACHMENT_CONFIG } from './useTimelineFiles';
-import { useCreateTimelineEvidence, useUpdateTimelineEvidence } from './useTimeline';
+import {
+  useCreateTimelineEvidence,
+  useUpdateTimelineEvidence,
+  useInvalidateTimeline,
+} from './useTimeline';
 import { useComplaintId } from './useComplaintId';
 
 // ─── 타입 ────────────────────────────────────────────────
@@ -50,6 +54,7 @@ export function useTimelineSubmit({
 
   const createEvidence = useCreateTimelineEvidence();
   const updateEvidence = useUpdateTimelineEvidence();
+  const invalidateTimeline = useInvalidateTimeline();
 
   const submit = async ({ formValues, tags, uploadFiles, deleteIds }: SubmitParams) => {
     setIsSubmitting(true);
@@ -98,6 +103,8 @@ export function useTimelineSubmit({
         }
       }
 
+      // 파일 업로드 포함 모든 작업 완료 후 타임라인 갱신
+      await invalidateTimeline();
       onClose();
     } finally {
       setIsSubmitting(false);

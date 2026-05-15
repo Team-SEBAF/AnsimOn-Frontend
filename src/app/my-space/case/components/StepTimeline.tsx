@@ -65,7 +65,7 @@ export function StepTimeline() {
         onOpenChange={setDownloadOpen}
         title="타임라인 다운로드"
         subTitle="타임라인으로 정리된 증거 자료 ZIP 파일입니다"
-        fileName="안심은_증거분석타임라인.zip"
+        fileName="안심온_증거분석타임라인.zip"
         onDownload={handleDownload}
         isDownloading={downloadTimeline.isPending}
       />

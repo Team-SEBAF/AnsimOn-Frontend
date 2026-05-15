@@ -112,11 +112,7 @@ export const StepDocument = forwardRef<StepDocumentHandle, Props>(function StepD
                 fieldName="section_5_complaint_reason.content"
                 register={docForm.register}
               />
-              <EvidenceSection
-                control={docForm.control}
-                watch={docForm.watch}
-                evidenceList={documentData.section_6_evidence.evidence_list_text}
-              />
+              <EvidenceSection control={docForm.control} watch={docForm.watch} />
               <RelatedCasesSection control={docForm.control} />
 
               {/* 8. 기타 */}
@@ -131,11 +127,7 @@ export const StepDocument = forwardRef<StepDocumentHandle, Props>(function StepD
                 </ContentBlock>
               </SectionBlock>
 
-              <SubmissionFooter
-                accuserName={documentData.submission_footer.accuser_name}
-                submitterName={documentData.submission_footer.submitter_name}
-                policeStation={documentData.submission_footer.submission_target_police_station}
-              />
+              <SubmissionFooter register={docForm.register} />
             </div>
           </div>
         </AppTabsContent>

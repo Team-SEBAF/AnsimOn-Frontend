@@ -10,10 +10,9 @@ import type { DocumentFormValues } from '@/types/document';
 interface Props {
   control: Control<DocumentFormValues>;
   watch: UseFormWatch<DocumentFormValues>;
-  evidenceList: string[];
 }
 
-export function EvidenceSection({ control, watch, evidenceList }: Props) {
+export function EvidenceSection({ control, watch }: Props) {
   const hasEvidence = watch('section_6_evidence.has_evidence_beyond_statement');
 
   return (
@@ -24,14 +23,12 @@ export function EvidenceSection({ control, watch, evidenceList }: Props) {
           name="section_6_evidence.has_evidence_beyond_statement"
           render={({ field }) => (
             <div className="flex flex-col gap-3">
-              {/* 없습니다 카드 */}
               <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 px-4 py-4">
                 <RadioBtn checked={!field.value} onChange={() => field.onChange(false)} />
                 <span className="typo-body-7 text-gray-700">
                   고소인은 고소장의 진술 외에 제출할 증거가 없습니다.
                 </span>
               </label>
-              {/* 있습니다 카드 */}
               <div className="flex flex-col gap-1 rounded-lg border border-gray-200 px-4 py-4">
                 <label className="flex cursor-pointer items-center gap-2">
                   <RadioBtn checked={field.value} onChange={() => field.onChange(true)} />
@@ -51,13 +48,19 @@ export function EvidenceSection({ control, watch, evidenceList }: Props) {
 
         {hasEvidence && (
           <ContentBlock title="제출 예정 증거 목록">
-            <ul className="flex flex-col gap-1 rounded-lg border border-gray-200 bg-white px-4 py-3">
-              {evidenceList.map((text, i) => (
-                <li key={i} className="typo-body-7 text-gray-500">
-                  • {text}
-                </li>
-              ))}
-            </ul>
+            <Controller
+              control={control}
+              name="section_6_evidence.evidence_list_text"
+              render={({ field }) => (
+                <textarea
+                  rows={4}
+                  placeholder="증거 내용을 입력하세요"
+                  value={field.value.join('\n')}
+                  onChange={(e) => field.onChange(e.target.value.split('\n'))}
+                  className="typo-body-7 focus:border-primary w-full resize-none rounded-lg border border-gray-200 bg-white px-4 py-3 text-gray-700 outline-none placeholder:text-gray-300"
+                />
+              )}
+            />
           </ContentBlock>
         )}
       </div>

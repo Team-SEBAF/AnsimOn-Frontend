@@ -48,14 +48,14 @@ export function IncidentLogFormModal({
     <Modal.Root
       open={open}
       onOpenChange={(o) => !o && onClose()}
-      className="max-h-[90vh] w-135 flex-col"
+      className="max-h-[80vh] w-135 flex-col"
     >
       <Modal.Header
         title={isEditMode ? '사건일지 수정' : '사건일지 작성'}
         subTitle="사건에 대해 자세하게 작성할수록 좋습니다"
       />
 
-      <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto">
+      <Modal.Body className="flex flex-1 flex-col gap-5 overflow-y-auto pr-2">
         {/* 제목 */}
         <Input
           label="제목"
@@ -122,18 +122,13 @@ export function IncidentLogFormModal({
             </Button>
           </div>
 
-          {/* 파일 2.5개 이상부터 스크롤 — 빈 상태(업로드 존)엔 높이 제한 없음 */}
-          <div
-            className={attachmentItems.length > 0 ? 'no-scrollbar max-h-28 overflow-y-auto' : ''}
-          >
-            <EvidenceContent
-              previewType="file"
-              items={attachmentItems}
-              onFilesAdd={handleFilesAdd}
-              onRemove={handleAttachmentRemove}
-              onClickUpload={() => fileInputRef.current?.click()}
-            />
-          </div>
+          <EvidenceContent
+            previewType="file"
+            items={attachmentItems}
+            onFilesAdd={handleFilesAdd}
+            onRemove={handleAttachmentRemove}
+            onClickUpload={() => fileInputRef.current?.click()}
+          />
 
           <input
             ref={fileInputRef}

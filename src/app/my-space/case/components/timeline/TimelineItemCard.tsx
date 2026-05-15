@@ -76,7 +76,7 @@ export function TimelineItemCard({ date, time, evidence }: TimelineItemCardProps
 
         {/* 본문 */}
         <div className="flex flex-1 flex-col justify-between">
-          <div className="space-y-0.5">
+          <div className="space-y-1.5">
             <p className="typo-heading-4 text-gray-900">{title}</p>
             <p className="typo-body-7 text-gray-900">{description}</p>
           </div>
