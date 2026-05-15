@@ -33,7 +33,7 @@ export function useLoginForm() {
       const { access_token, refresh_token, id_token } = await loginEmail(values);
 
       // 2. 쿠키 저장 + Zustand 상태 업데이트
-      login(access_token, refresh_token, id_token);
+      login(access_token, refresh_token, id_token, 'email');
 
       // 3. redirect 파라미터가 있으면 해당 경로로, 없으면 /my-space로 이동
       const redirect = searchParams.get('redirect') || '/my-space/case';

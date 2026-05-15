@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 import { getGoogleToken } from '@/api/auth/google';
 
+const appUrl = process.env.NEXT_PUBLIC_APP_URL!.replace(/\/$/, '');
+const cognitoDomain = process.env.NEXT_PUBLIC_COGNITO_DOMAIN!.replace(/\/$/, '');
+
 export function useGoogleAuth() {
   const logout = useAuthStore((state) => state.logout);
 
@@ -15,7 +18,7 @@ export function useGoogleAuth() {
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
       response_type: 'code',
       scope: 'openid email profile aws.cognito.signin.user.admin',
-      redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
+      redirect_uri: `${appUrl}/auth/login`,
       identity_provider: 'Google',
     });
 
@@ -23,7 +26,7 @@ export function useGoogleAuth() {
       params.set('state', redirect);
     }
 
-    window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/oauth2/authorize?${params.toString()}`;
+    window.location.href = `${cognitoDomain}/oauth2/authorize?${params.toString()}`;
   };
 
   // (2) 구글 로그아웃 함수
@@ -34,10 +37,10 @@ export function useGoogleAuth() {
     // 2. Cognito 세션 로그아웃
     const params = new URLSearchParams({
       client_id: process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID!,
-      logout_uri: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`,
+      logout_uri: `${appUrl}/auth/login`,
     });
 
-    window.location.href = `${process.env.NEXT_PUBLIC_COGNITO_DOMAIN}/logout?${params.toString()}`;
+    window.location.href = `${cognitoDomain}/logout?${params.toString()}`;
   };
 
   return { loginWithGoogle, logoutWithGoogle };
@@ -61,7 +64,7 @@ export function useGoogleLoginSideEffect() {
         const { access_token, refresh_token, id_token } = await getGoogleToken(code);
 
         // 2. 토큰 저장
-        login(access_token, refresh_token, id_token);
+        login(access_token, refresh_token, id_token, 'google');
         setGoogleLoading(false);
 
         // 3. OAuth state에서 redirect 경로 읽고 이동
