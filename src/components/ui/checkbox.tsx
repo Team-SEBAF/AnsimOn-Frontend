@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 
 const checkboxVariants = {
   default:
-    'border border-gray-200 data-[state=checked]:bg-primary data-[state=checked]:text-white data-[state=checked]:border-primary hover:bg-gray-100 bg-white',
+    'border-[1.5px] border-gray-200 bg-white data-[state=checked]:bg-primary data-[state=checked]:text-white data-[state=checked]:border-primary',
   ghost: '',
 };
 

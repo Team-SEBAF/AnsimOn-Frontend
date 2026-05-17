@@ -3,9 +3,12 @@
 import { useKeenSlider, KeenSliderPlugin } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import { useState } from 'react';
+import Image from 'next/image';
+import HeaderImage1 from '@/assets/HeaderImage1.png';
+import HeaderImage2 from '@/assets/Headerimage2.png';
+import HeaderImage3 from '@/assets/Headerimage3.png';
 
-/** 슬라이드 데이터 (실제 이미지로 교체 예정) */
-const SLIDES = ['이미지 1', '이미지 2', '이미지 3'];
+const SLIDES = [HeaderImage1, HeaderImage2, HeaderImage3];
 
 /** 자동 재생 간격 (ms) */
 const AUTOPLAY_INTERVAL = 4000;
@@ -72,11 +75,14 @@ export default function Slider() {
       {/* 슬라이더 컨테이너 */}
       <div ref={sliderRef} className="keen-slider w-160">
         {/* TODO: 실제 이미지로 교체 예정 (640x357px) */}
-        {SLIDES.map((label, idx) => (
+        {SLIDES.map((src, idx) => (
           <div key={idx} className="keen-slider__slide">
-            <div className="rounded-5 flex h-89.25 w-160 items-center justify-center bg-gray-200 text-gray-400">
-              {label}
-            </div>
+            <Image
+              src={src}
+              alt={`슬라이드 ${idx + 1}`}
+              className="rounded-5 h-89.25 w-160 object-cover"
+              priority={idx === 0}
+            />
           </div>
         ))}
       </div>
