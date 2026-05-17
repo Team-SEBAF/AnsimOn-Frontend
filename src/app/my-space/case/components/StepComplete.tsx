@@ -178,7 +178,7 @@ export function StepComplete() {
                 <div className="mb-1 flex items-center gap-2">
                   <span className="typo-heading-4 text-gray-900">{method.title}</span>
                   {method.badge && (
-                    <span className="typo-body-8 bg-primary rounded-full px-2 py-0.5 text-white">
+                    <span className="typo-body-8 bg-primary/10 text-primary inline-flex h-5 items-center rounded-full px-1.5">
                       {method.badge}
                     </span>
                   )}
